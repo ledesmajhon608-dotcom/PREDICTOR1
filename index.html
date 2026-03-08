@@ -2,37 +2,216 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predicciones de Partidos</title>
+<title>Predictor de Fútbol</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+h1{
+color:#22c55e;
+}
+
+select,button{
+padding:10px;
+margin:10px;
+font-size:16px;
+border-radius:8px;
+border:none;
+}
+
+button{
+background:#22c55e;
+color:white;
+cursor:pointer;
+}
+
+.resultado{
+margin-top:30px;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+display:inline-block;
+width:300px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>⚽ Predicciones de Partidos</h1>
+<h1>⚽ Predictor de Fútbol</h1>
+
+<h3>Selecciona Liga</h3>
 
 <select id="liga">
-<option value="">Seleccionar Liga</option>
-<option value="Liga MX">Liga MX</option>
-<option value="MLS">MLS</option>
+<option value="">-- Selecciona Liga --</option>
+<option value="premier">Premier League</option>
+<option value="laliga">La Liga</option>
+<option value="seriea">Serie A</option>
+<option value="bundesliga">Bundesliga</option>
+<option value="ligue1">Ligue 1</option>
 </select>
 
-<br><br>
+<br>
 
-<select id="local">
-<option value="">Equipo Local</option>
-</select>
+<h3>Equipo Local</h3>
+<select id="local"></select>
 
-<select id="visitante">
-<option value="">Equipo Visitante</option>
-</select>
+<h3>Equipo Visitante</h3>
+<select id="visitante"></select>
 
-<br><br>
+<br>
 
-<button id="btnCalcular">Calcular Predicción</button>
+<button onclick="calcular()">Calcular Predicción</button>
 
-<div id="resultado"></div>
+<div class="resultado" id="resultado"></div>
 
-<script src="app.js"></script>
+<script>
+
+const ligas = {
+
+premier:[
+"Manchester City",
+"Arsenal",
+"Liverpool",
+"Chelsea",
+"Manchester United",
+"Tottenham"
+],
+
+laliga:[
+"Real Madrid",
+"Barcelona",
+"Atletico Madrid",
+"Sevilla",
+"Real Sociedad",
+"Valencia"
+],
+
+seriea:[
+"Inter",
+"Milan",
+"Juventus",
+"Napoli",
+"Roma",
+"Lazio"
+],
+
+bundesliga:[
+"Bayern Munich",
+"Borussia Dortmund",
+"Leipzig",
+"Leverkusen",
+"Wolfsburg"
+],
+
+ligue1:[
+"PSG",
+"Marseille",
+"Monaco",
+"Lyon",
+"Lille"
+]
+
+};
+
+const ligaSelect = document.getElementById("liga");
+const localSelect = document.getElementById("local");
+const visitanteSelect = document.getElementById("visitante");
+
+ligaSelect.addEventListener("change", cargarEquipos);
+
+function cargarEquipos(){
+
+const liga = ligaSelect.value;
+
+localSelect.innerHTML="";
+visitanteSelect.innerHTML="";
+
+if(!ligas[liga]) return;
+
+ligas[liga].forEach(equipo=>{
+
+let op1=document.createElement("option");
+op1.value=equipo;
+op1.text=equipo;
+localSelect.appendChild(op1);
+
+let op2=document.createElement("option");
+op2.value=equipo;
+op2.text=equipo;
+visitanteSelect.appendChild(op2);
+
+});
+
+}
+
+function calcular(){
+
+const local=localSelect.value;
+const visitante=visitanteSelect.value;
+
+if(local==visitante){
+alert("Selecciona equipos diferentes");
+return;
+}
+
+/* Probabilidades */
+
+const probLocal=(Math.random()*40+40).toFixed(1);
+const probVisita=(100-probLocal).toFixed(1);
+const empate=(Math.random()*25).toFixed(1);
+
+/* Goles esperados */
+
+const golesEsperados=(Math.random()*3+1).toFixed(2);
+
+/* Over Under */
+
+const over15=(Math.random()*100).toFixed(0);
+const over25=(Math.random()*100).toFixed(0);
+
+/* Ambos marcan */
+
+const ambos=(Math.random()*100).toFixed(0);
+
+/* Corners */
+
+const corners=(Math.random()*6+7).toFixed(1);
+
+document.getElementById("resultado").innerHTML=`
+
+<h2>${local} vs ${visitante}</h2>
+
+<p>🏠 Local: <b>${probLocal}%</b></p>
+<p>🤝 Empate: <b>${empate}%</b></p>
+<p>✈️ Visita: <b>${probVisita}%</b></p>
+
+<hr>
+
+<p>⚽ Goles esperados: <b>${golesEsperados}</b></p>
+
+<p>📈 Over 1.5 goles: <b>${over15}%</b></p>
+<p>📈 Over 2.5 goles: <b>${over25}%</b></p>
+
+<hr>
+
+<p>🔥 Ambos marcan: <b>${ambos}%</b></p>
+
+<p>🚩 Corners estimados: <b>${corners}</b></p>
+
+`;
+
+}
+
+</script>
 
 </body>
 </html>

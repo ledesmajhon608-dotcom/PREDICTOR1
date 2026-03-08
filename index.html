@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Predicciones de Partidos</title>
 </head>
 
@@ -18,16 +19,16 @@
 <br><br>
 
 <select id="local">
-<option>Equipo Local</option>
+<option value="">Equipo Local</option>
 </select>
 
 <select id="visitante">
-<option>Equipo Visitante</option>
+<option value="">Equipo Visitante</option>
 </select>
 
 <br><br>
 
-<button onclick="calcular()">Calcular Predicción</button>
+<button id="btnCalcular">Calcular Predicción</button>
 
 <div id="resultado"></div>
 

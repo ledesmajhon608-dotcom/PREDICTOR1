@@ -24,13 +24,15 @@ ligaSelect.addEventListener("change", function(){
 
 const liga = ligaSelect.value;
 
-localSelect.innerHTML = "";
-visitanteSelect.innerHTML = "";
+localSelect.innerHTML = '<option>Equipo Local</option>';
+visitanteSelect.innerHTML = '<option>Equipo Visitante</option>';
 
-equipos[liga].forEach(e => {
+if(!equipos[liga]) return;
 
-localSelect.innerHTML += `<option>${e}</option>`;
-visitanteSelect.innerHTML += `<option>${e}</option>`;
+equipos[liga].forEach(function(e){
+
+localSelect.innerHTML += `<option value="${e}">${e}</option>`;
+visitanteSelect.innerHTML += `<option value="${e}">${e}</option>`;
 
 });
 
@@ -40,6 +42,11 @@ function calcular(){
 
 const local = localSelect.value;
 const visitante = visitanteSelect.value;
+
+if(local === visitante){
+alert("Selecciona equipos diferentes");
+return;
+}
 
 const probLocal = Math.floor(Math.random()*50)+30;
 const probVisita = 100 - probLocal;

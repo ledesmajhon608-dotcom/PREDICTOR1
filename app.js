@@ -24,15 +24,23 @@ ligaSelect.addEventListener("change", function(){
 
 const liga = ligaSelect.value;
 
-localSelect.innerHTML = '<option>Equipo Local</option>';
-visitanteSelect.innerHTML = '<option>Equipo Visitante</option>';
+localSelect.innerHTML = '<option value="">Equipo Local</option>';
+visitanteSelect.innerHTML = '<option value="">Equipo Visitante</option>';
 
 if(!equipos[liga]) return;
 
 equipos[liga].forEach(function(e){
 
-localSelect.innerHTML += `<option value="${e}">${e}</option>`;
-visitanteSelect.innerHTML += `<option value="${e}">${e}</option>`;
+const optionLocal = document.createElement("option");
+optionLocal.value = e;
+optionLocal.text = e;
+
+const optionVisit = document.createElement("option");
+optionVisit.value = e;
+optionVisit.text = e;
+
+localSelect.appendChild(optionLocal);
+visitanteSelect.appendChild(optionVisit);
 
 });
 
@@ -43,13 +51,19 @@ function calcular(){
 const local = localSelect.value;
 const visitante = visitanteSelect.value;
 
+if(local === "" || visitante === ""){
+alert("Selecciona los equipos");
+return;
+}
+
 if(local === visitante){
-alert("Selecciona equipos diferentes");
+alert("Los equipos deben ser diferentes");
 return;
 }
 
 const probLocal = Math.floor(Math.random()*50)+30;
 const probVisita = 100 - probLocal;
+
 const goles = (Math.random()*3).toFixed(1);
 const ambos = Math.random() > 0.5 ? "SI" : "NO";
 const corners = Math.floor(Math.random()*10)+5;

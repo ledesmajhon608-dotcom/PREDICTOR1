@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Predicciones de Fútbol</title>
-
-<link rel="stylesheet" href="styles.css">
-
+<title>Predicciones de Partidos</title>
 </head>
 
 <body>
 
 <h1>⚽ Predicciones de Partidos</h1>
-
-<div class="panel">
 
 <select id="liga">
 <option value="">Seleccionar Liga</option>
@@ -24,17 +15,19 @@
 <option value="MLS">MLS</option>
 </select>
 
+<br><br>
+
 <select id="local">
-<option value="">Equipo Local</option>
+<option>Equipo Local</option>
 </select>
 
 <select id="visitante">
-<option value="">Equipo Visitante</option>
+<option>Equipo Visitante</option>
 </select>
 
-<button onclick="calcular()">Calcular Predicción</button>
+<br><br>
 
-</div>
+<button onclick="calcular()">Calcular Predicción</button>
 
 <div id="resultado"></div>
 

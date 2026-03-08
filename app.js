@@ -1,41 +1,67 @@
-const partidos = [
+const equipos = {
 
-{
-liga:"Liga MX",
-local:"America",
-visitante:"Chivas",
-prob_local:55,
-prob_empate:25,
-prob_visita:20
-},
+"Liga MX":[
+"America",
+"Chivas",
+"Tigres",
+"Monterrey"
+],
 
-{
-liga:"MLS",
-local:"Inter Miami",
-visitante:"LA Galaxy",
-prob_local:60,
-prob_empate:20,
-prob_visita:20
-}
+"MLS":[
+"Inter Miami",
+"LA Galaxy",
+"Atlanta United",
+"Seattle Sounders"
+]
 
-];
+};
 
-const contenedor = document.getElementById("partidos");
+const ligaSelect = document.getElementById("liga");
+const localSelect = document.getElementById("local");
+const visitanteSelect = document.getElementById("visitante");
 
-partidos.forEach(p => {
+ligaSelect.addEventListener("change", function(){
 
-contenedor.innerHTML += `
-<div class="card">
+const liga = ligaSelect.value;
 
-<h2>${p.local} vs ${p.visitante}</h2>
+localSelect.innerHTML = "";
+visitanteSelect.innerHTML = "";
 
-<p>${p.liga}</p>
+equipos[liga].forEach(e => {
 
-<p>Local: ${p.prob_local}%</p>
-<p>Empate: ${p.prob_empate}%</p>
-<p>Visita: ${p.prob_visita}%</p>
-
-</div>
-`;
+localSelect.innerHTML += `<option>${e}</option>`;
+visitanteSelect.innerHTML += `<option>${e}</option>`;
 
 });
+
+});
+
+function calcular(){
+
+const local = localSelect.value;
+const visitante = visitanteSelect.value;
+
+const probLocal = Math.floor(Math.random()*50)+30;
+const probVisita = 100 - probLocal;
+const goles = (Math.random()*3).toFixed(1);
+const ambos = Math.random() > 0.5 ? "SI" : "NO";
+const corners = Math.floor(Math.random()*10)+5;
+
+document.getElementById("resultado").innerHTML = `
+
+<div class="card">
+
+<h2>${local} vs ${visitante}</h2>
+
+<p>🏆 Probabilidad Local: ${probLocal}%</p>
+<p>✈️ Probabilidad Visita: ${probVisita}%</p>
+
+<p>⚽ Goles esperados: ${goles}</p>
+<p>🔥 Ambos marcan: ${ambos}</p>
+<p>🚩 Corners estimados: ${corners}</p>
+
+</div>
+
+`;
+
+}

@@ -38,7 +38,11 @@ background:#1e293b;
 padding:20px;
 border-radius:10px;
 display:inline-block;
-width:300px;
+width:320px;
+}
+
+hr{
+border:1px solid #334155;
 }
 
 </style>
@@ -51,12 +55,18 @@ width:300px;
 <h3>Selecciona Liga</h3>
 
 <select id="liga">
+
 <option value="">-- Selecciona Liga --</option>
+
 <option value="premier">Premier League</option>
 <option value="laliga">La Liga</option>
 <option value="seriea">Serie A</option>
 <option value="bundesliga">Bundesliga</option>
 <option value="ligue1">Ligue 1</option>
+<option value="brasil">Brasileirão</option>
+<option value="argentina">Liga Argentina</option>
+<option value="mls">MLS</option>
+
 </select>
 
 <br>
@@ -118,6 +128,30 @@ ligue1:[
 "Monaco",
 "Lyon",
 "Lille"
+],
+
+brasil:[
+"Flamengo",
+"Palmeiras",
+"Santos",
+"Corinthians",
+"Sao Paulo"
+],
+
+argentina:[
+"Boca Juniors",
+"River Plate",
+"Racing",
+"Independiente",
+"San Lorenzo"
+],
+
+mls:[
+"Inter Miami",
+"LA Galaxy",
+"LAFC",
+"Atlanta United",
+"New York City"
 ]
 
 };
@@ -158,6 +192,11 @@ function calcular(){
 const local=localSelect.value;
 const visitante=visitanteSelect.value;
 
+if(!local || !visitante){
+alert("Selecciona los equipos");
+return;
+}
+
 if(local==visitante){
 alert("Selecciona equipos diferentes");
 return;
@@ -166,14 +205,14 @@ return;
 /* Probabilidades */
 
 const probLocal=(Math.random()*40+40).toFixed(1);
-const probVisita=(100-probLocal).toFixed(1);
 const empate=(Math.random()*25).toFixed(1);
+const probVisita=(100-probLocal).toFixed(1);
 
 /* Goles esperados */
 
 const golesEsperados=(Math.random()*3+1).toFixed(2);
 
-/* Over Under */
+/* Over */
 
 const over15=(Math.random()*100).toFixed(0);
 const over25=(Math.random()*100).toFixed(0);

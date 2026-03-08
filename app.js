@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", function(){
+
 const equipos = {
 "Liga MX": ["America","Chivas","Tigres","Monterrey"],
 "MLS": ["Inter Miami","LA Galaxy","Atlanta United","Seattle Sounders"]
@@ -6,35 +8,47 @@ const equipos = {
 const liga = document.getElementById("liga");
 const local = document.getElementById("local");
 const visitante = document.getElementById("visitante");
+const btn = document.getElementById("btnCalcular");
 
-liga.onchange = function(){
+liga.addEventListener("change", function(){
 
-local.innerHTML = "";
-visitante.innerHTML = "";
+local.innerHTML = '<option value="">Equipo Local</option>';
+visitante.innerHTML = '<option value="">Equipo Visitante</option>';
 
 const lista = equipos[liga.value];
-
 if(!lista) return;
 
-for(let i=0;i<lista.length;i++){
+lista.forEach(function(equipo){
 
-let option1 = document.createElement("option");
-option1.text = lista[i];
+let opt1 = document.createElement("option");
+opt1.value = equipo;
+opt1.textContent = equipo;
 
-let option2 = document.createElement("option");
-option2.text = lista[i];
+let opt2 = document.createElement("option");
+opt2.value = equipo;
+opt2.textContent = equipo;
 
-local.add(option1);
-visitante.add(option2);
+local.appendChild(opt1);
+visitante.appendChild(opt2);
 
-}
+});
 
-}
+});
 
-function calcular(){
+btn.addEventListener("click", function(){
 
 const equipoLocal = local.value;
 const equipoVisitante = visitante.value;
+
+if(!equipoLocal || !equipoVisitante){
+alert("Selecciona ambos equipos");
+return;
+}
+
+if(equipoLocal === equipoVisitante){
+alert("Los equipos deben ser diferentes");
+return;
+}
 
 const probLocal = Math.floor(Math.random()*50)+30;
 const probVisita = 100 - probLocal;
@@ -45,4 +59,6 @@ document.getElementById("resultado").innerHTML =
 "<p>Probabilidad Local: "+probLocal+"%</p>"+
 "<p>Probabilidad Visita: "+probVisita+"%</p>";
 
-}
+});
+
+});

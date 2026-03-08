@@ -1,8 +1,21 @@
 document.addEventListener("DOMContentLoaded", function(){
 
 const equipos = {
-"Liga MX": ["America","Chivas","Tigres","Monterrey"],
-"MLS": ["Inter Miami","LA Galaxy","Atlanta United","Seattle Sounders"]
+
+"Liga MX":[
+{name:"America",ataque:1.8,defensa:0.9,corners:6},
+{name:"Chivas",ataque:1.4,defensa:1.2,corners:5},
+{name:"Tigres",ataque:1.7,defensa:1.0,corners:6},
+{name:"Monterrey",ataque:1.6,defensa:1.1,corners:5}
+],
+
+"MLS":[
+{name:"Inter Miami",ataque:1.9,defensa:1.3,corners:6},
+{name:"LA Galaxy",ataque:1.5,defensa:1.4,corners:5},
+{name:"Atlanta United",ataque:1.6,defensa:1.5,corners:6},
+{name:"Seattle Sounders",ataque:1.4,defensa:1.2,corners:5}
+]
+
 };
 
 const liga = document.getElementById("liga");
@@ -15,21 +28,18 @@ liga.addEventListener("change", function(){
 local.innerHTML = '<option value="">Equipo Local</option>';
 visitante.innerHTML = '<option value="">Equipo Visitante</option>';
 
-const lista = equipos[liga.value];
-if(!lista) return;
+equipos[liga.value].forEach(e=>{
 
-lista.forEach(function(equipo){
+let o1 = document.createElement("option");
+o1.value = e.name;
+o1.textContent = e.name;
 
-let opt1 = document.createElement("option");
-opt1.value = equipo;
-opt1.textContent = equipo;
+let o2 = document.createElement("option");
+o2.value = e.name;
+o2.textContent = e.name;
 
-let opt2 = document.createElement("option");
-opt2.value = equipo;
-opt2.textContent = equipo;
-
-local.appendChild(opt1);
-visitante.appendChild(opt2);
+local.appendChild(o1);
+visitante.appendChild(o2);
 
 });
 
@@ -37,27 +47,45 @@ visitante.appendChild(opt2);
 
 btn.addEventListener("click", function(){
 
-const equipoLocal = local.value;
-const equipoVisitante = visitante.value;
+const ligaSel = liga.value;
 
-if(!equipoLocal || !equipoVisitante){
-alert("Selecciona ambos equipos");
+const eqLocal = equipos[ligaSel].find(e=>e.name===local.value);
+const eqVisit = equipos[ligaSel].find(e=>e.name===visitante.value);
+
+if(!eqLocal || !eqVisit){
+alert("Selecciona equipos");
 return;
 }
 
-if(equipoLocal === equipoVisitante){
-alert("Los equipos deben ser diferentes");
-return;
-}
+const golesLocal = (eqLocal.ataque * eqVisit.defensa).toFixed(2);
+const golesVisit = (eqVisit.ataque * eqLocal.defensa).toFixed(2);
 
-const probLocal = Math.floor(Math.random()*50)+30;
-const probVisita = 100 - probLocal;
+const probLocal = Math.round((golesLocal/(golesLocal*1+golesVisit))*100);
+const probVisita = 100-probLocal;
 
-document.getElementById("resultado").innerHTML =
+const ambos = (golesLocal>1 && golesVisit>1) ? "SI" : "NO";
 
-"<h2>"+equipoLocal+" vs "+equipoVisitante+"</h2>"+
-"<p>Probabilidad Local: "+probLocal+"%</p>"+
-"<p>Probabilidad Visita: "+probVisita+"%</p>";
+const corners = eqLocal.corners + eqVisit.corners;
+
+document.getElementById("resultado").innerHTML = `
+
+<div style="background:#1e1e1e;padding:20px;margin:20px;border-radius:10px">
+
+<h2>${eqLocal.name} vs ${eqVisit.name}</h2>
+
+<p>🏆 Probabilidad Local: ${probLocal}%</p>
+<p>✈️ Probabilidad Visita: ${probVisita}%</p>
+
+<p>⚽ Goles esperados Local: ${golesLocal}</p>
+<p>⚽ Goles esperados Visitante: ${golesVisit}</p>
+
+<p>🔥 Ambos marcan: ${ambos}</p>
+
+<p>🚩 Corners estimados: ${corners}</p>
+
+</div>
+
+`;
 
 });
 

@@ -1,13 +1,14 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Predictor de Fútbol</title>
+<title>Predictor de Fútbol PRO</title>
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#0f172a;
 color:white;
 text-align:center;
@@ -18,31 +19,14 @@ h1{
 color:#22c55e;
 }
 
-/* selects y boton */
-
-select,button{
-padding:10px;
-margin:10px;
-font-size:16px;
-border-radius:8px;
-border:none;
-}
-
-button{
-background:#22c55e;
-color:white;
-cursor:pointer;
-}
-
-/* contenedor equipos */
+/* equipos */
 
 .equipos{
 display:flex;
 justify-content:center;
 align-items:center;
-gap:20px;
+gap:30px;
 flex-wrap:wrap;
-margin-top:10px;
 }
 
 .equipo{
@@ -57,24 +41,69 @@ font-weight:bold;
 margin-top:25px;
 }
 
-/* resultado */
+/* selects */
+
+select{
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:5px;
+}
+
+/* boton */
+
+button{
+margin-top:20px;
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#22c55e;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+/* card resultado */
 
 .resultado{
 margin-top:30px;
 background:#1e293b;
 padding:20px;
-border-radius:10px;
-display:block;
-width:320px;
+border-radius:12px;
+width:340px;
 margin-left:auto;
 margin-right:auto;
 }
 
-hr{
-border:1px solid #334155;
+/* logos */
+
+.teams{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
 }
 
-/* móvil */
+.teams img{
+width:40px;
+}
+
+/* barras */
+
+.bar{
+background:#334155;
+height:10px;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:12px;
+}
+
+.fill{
+background:#22c55e;
+height:100%;
+}
+
+/* movil */
 
 @media(max-width:600px){
 
@@ -100,41 +129,29 @@ margin:10px 0;
 <select id="liga">
 
 <option value="">-- Selecciona Liga --</option>
-
 <option value="premier">Premier League</option>
 <option value="laliga">La Liga</option>
 <option value="seriea">Serie A</option>
-<option value="bundesliga">Bundesliga</option>
-<option value="ligue1">Ligue 1</option>
-<option value="brasil">Brasileirão</option>
-<option value="argentina">Liga Argentina</option>
-<option value="mls">MLS</option>
 
 </select>
 
-<br>
+<br><br>
 
 <div class="equipos">
 
 <div class="equipo">
-
-<h3>Equipo Local</h3>
+<label>Equipo Local</label>
 <select id="local"></select>
-
 </div>
 
 <div class="vs">VS</div>
 
 <div class="equipo">
-
-<h3>Equipo Visitante</h3>
+<label>Equipo Visitante</label>
 <select id="visitante"></select>
-
 </div>
 
 </div>
-
-<br>
 
 <button onclick="calcular()">Calcular Predicción</button>
 
@@ -142,15 +159,16 @@ margin:10px 0;
 
 <script>
 
-const ligas = {
+/* equipos */
+
+const ligas={
 
 premier:[
 "Manchester City",
 "Arsenal",
 "Liverpool",
 "Chelsea",
-"Manchester United",
-"Tottenham"
+"Manchester United"
 ],
 
 laliga:[
@@ -158,7 +176,6 @@ laliga:[
 "Barcelona",
 "Atletico Madrid",
 "Sevilla",
-"Real Sociedad",
 "Valencia"
 ],
 
@@ -167,143 +184,134 @@ seriea:[
 "Milan",
 "Juventus",
 "Napoli",
-"Roma",
-"Lazio"
-],
-
-bundesliga:[
-"Bayern Munich",
-"Borussia Dortmund",
-"Leipzig",
-"Leverkusen",
-"Wolfsburg"
-],
-
-ligue1:[
-"PSG",
-"Marseille",
-"Monaco",
-"Lyon",
-"Lille"
-],
-
-brasil:[
-"Flamengo",
-"Palmeiras",
-"Santos",
-"Corinthians",
-"Sao Paulo"
-],
-
-argentina:[
-"Boca Juniors",
-"River Plate",
-"Racing",
-"Independiente",
-"San Lorenzo"
-],
-
-mls:[
-"Inter Miami",
-"LA Galaxy",
-"LAFC",
-"Atlanta United",
-"New York City"
+"Roma"
 ]
 
 };
 
-const ligaSelect = document.getElementById("liga");
-const localSelect = document.getElementById("local");
-const visitanteSelect = document.getElementById("visitante");
+/* logos */
 
-ligaSelect.addEventListener("change", cargarEquipos);
+const logos={
+
+"Manchester City":"https://crests.football-data.org/65.png",
+"Arsenal":"https://crests.football-data.org/57.png",
+"Liverpool":"https://crests.football-data.org/64.png",
+"Chelsea":"https://crests.football-data.org/61.png",
+"Manchester United":"https://crests.football-data.org/66.png",
+
+"Real Madrid":"https://crests.football-data.org/86.png",
+"Barcelona":"https://crests.football-data.org/81.png",
+"Atletico Madrid":"https://crests.football-data.org/78.png",
+"Sevilla":"https://crests.football-data.org/559.png",
+"Valencia":"https://crests.football-data.org/95.png",
+
+"Inter":"https://crests.football-data.org/108.png",
+"Milan":"https://crests.football-data.org/98.png",
+"Juventus":"https://crests.football-data.org/109.png",
+"Napoli":"https://crests.football-data.org/113.png",
+"Roma":"https://crests.football-data.org/100.png"
+
+};
+
+/* selects */
+
+const ligaSelect=document.getElementById("liga")
+const localSelect=document.getElementById("local")
+const visitanteSelect=document.getElementById("visitante")
+
+ligaSelect.addEventListener("change",cargarEquipos)
 
 function cargarEquipos(){
 
-const liga = ligaSelect.value;
+const liga=ligaSelect.value
 
-localSelect.innerHTML="";
-visitanteSelect.innerHTML="";
+localSelect.innerHTML=""
+visitanteSelect.innerHTML=""
 
-if(!ligas[liga]) return;
+if(!ligas[liga]) return
 
-ligas[liga].forEach(equipo=>{
+ligas[liga].forEach(eq=>{
 
-let op1=document.createElement("option");
-op1.value=equipo;
-op1.text=equipo;
-localSelect.appendChild(op1);
+let op1=document.createElement("option")
+op1.text=eq
+op1.value=eq
+localSelect.appendChild(op1)
 
-let op2=document.createElement("option");
-op2.value=equipo;
-op2.text=equipo;
-visitanteSelect.appendChild(op2);
+let op2=document.createElement("option")
+op2.text=eq
+op2.value=eq
+visitanteSelect.appendChild(op2)
 
-});
+})
 
 }
+
+/* calculo */
 
 function calcular(){
 
-const local=localSelect.value;
-const visitante=visitanteSelect.value;
-
-if(!local || !visitante){
-alert("Selecciona los equipos");
-return;
-}
+const local=localSelect.value
+const visitante=visitanteSelect.value
 
 if(local==visitante){
-alert("Selecciona equipos diferentes");
-return;
+alert("Selecciona equipos diferentes")
+return
 }
 
-/* Probabilidades */
+/* fuerza simple */
 
-const probLocal=(Math.random()*40+40).toFixed(1);
-const empate=(Math.random()*25).toFixed(1);
-const probVisita=(100-probLocal).toFixed(1);
+let fuerzaLocal=Math.random()*1.5+1
+let fuerzaVisita=Math.random()*1.5+1
 
-/* Goles esperados */
+let total=fuerzaLocal+fuerzaVisita
 
-const golesEsperados=(Math.random()*3+1).toFixed(2);
+let probLocal=((fuerzaLocal/total)*100).toFixed(1)
+let probVisita=((fuerzaVisita/total)*100).toFixed(1)
+let empate=(100-probLocal-probVisita).toFixed(1)
 
-/* Over */
+/* goles */
 
-const over15=(Math.random()*100).toFixed(0);
-const over25=(Math.random()*100).toFixed(0);
+let goles=((fuerzaLocal+fuerzaVisita)/2+Math.random()).toFixed(2)
 
-/* Ambos marcan */
+/* otros */
 
-const ambos=(Math.random()*100).toFixed(0);
+let ambos=(50+Math.random()*40).toFixed(0)
+let corners=(7+Math.random()*5).toFixed(1)
 
-/* Corners */
-
-const corners=(Math.random()*6+7).toFixed(1);
+/* resultado */
 
 document.getElementById("resultado").innerHTML=`
 
-<h2>${local} vs ${visitante}</h2>
+<div class="teams">
 
-<p>🏠 Local: <b>${probLocal}%</b></p>
-<p>🤝 Empate: <b>${empate}%</b></p>
-<p>✈️ Visita: <b>${probVisita}%</b></p>
+<div>
+<img src="${logos[local]}"><br>${local}
+</div>
+
+<strong>VS</strong>
+
+<div>
+<img src="${logos[visitante]}"><br>${visitante}
+</div>
+
+</div>
+
+<p>Local ${probLocal}%</p>
+<div class="bar"><div class="fill" style="width:${probLocal}%"></div></div>
+
+<p>Empate ${empate}%</p>
+<div class="bar"><div class="fill" style="width:${empate}%"></div></div>
+
+<p>Visita ${probVisita}%</p>
+<div class="bar"><div class="fill" style="width:${probVisita}%"></div></div>
 
 <hr>
 
-<p>⚽ Goles esperados: <b>${golesEsperados}</b></p>
-
-<p>📈 Over 1.5 goles: <b>${over15}%</b></p>
-<p>📈 Over 2.5 goles: <b>${over25}%</b></p>
-
-<hr>
-
+<p>⚽ Goles esperados: <b>${goles}</b></p>
 <p>🔥 Ambos marcan: <b>${ambos}%</b></p>
-
 <p>🚩 Corners estimados: <b>${corners}</b></p>
 
-`;
+`
 
 }
 

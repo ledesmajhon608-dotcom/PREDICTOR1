@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Predictor PRO - Smart Tips</title>
+    <title>Predictor PRO - Logos Reparados</title>
 
     <style>
         :root {
@@ -13,7 +13,6 @@
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --border: #334155;
-            --gold: #fbbf24;
         }
 
         body {
@@ -70,7 +69,6 @@
             font-weight: bold;
             box-shadow: 0 10px 20px -5px rgba(34, 197, 94, 0.4);
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .resultado {
@@ -82,14 +80,11 @@
             padding: 20px;
             box-sizing: border-box;
             border: 1px solid var(--border);
-            animation: slideUp 0.3s ease-out;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .header-teams { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
-        .team-box img { width: 50px; height: 50px; object-fit: contain; }
-        .team-box span { display: block; font-size: 13px; font-weight: bold; margin-top: 5px; }
+        .team-box img { width: 65px; height: 65px; object-fit: contain; background: rgba(255,255,255,0.05); border-radius: 50%; padding: 5px; }
+        .team-box span { display: block; font-size: 13px; font-weight: bold; margin-top: 8px; }
 
         .prob-row { margin-bottom: 12px; }
         .prob-info { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
@@ -101,23 +96,15 @@
         .card-mini small { color: var(--text-dim); font-size: 10px; text-transform: uppercase; }
         .card-mini div { font-size: 16px; font-weight: bold; margin-top: 3px; }
 
-        /* Estilo del Tip Sugerido */
-        .tip-container {
-            margin-top: 15px;
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px dashed var(--accent);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: left;
-        }
-        .tip-header { color: var(--accent); font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .tip-container { margin-top: 15px; background: rgba(34, 197, 94, 0.1); border: 1px dashed var(--accent); border-radius: 15px; padding: 15px; text-align: left; }
+        .tip-header { color: var(--accent); font-weight: bold; font-size: 14px; }
         .tip-content { font-size: 15px; margin-top: 5px; color: var(--text-main); font-weight: 500; }
     </style>
 </head>
 <body>
 
     <h1>⚽ Predictor PRO</h1>
-    <div class="subtitle">Smart Betting AI</div>
+    <div class="subtitle">Logos & Smart Tips</div>
 
     <div class="selector-container">
         <label>Competición</label>
@@ -142,28 +129,33 @@
     <div id="contenedor-resultado" style="width: 100%;"></div>
 
 <script>
+// IDs de football-data para automatizar logos europeos
+const idLogos = {
+    "Arsenal": 57, "Aston Villa": 58, "Chelsea": 61, "Liverpool": 64, "Manchester City": 65, "Manchester United": 66,
+    "Tottenham": 73, "Real Madrid": 86, "Barcelona": 81, "Atletico Madrid": 78, "Sevilla": 559, "Inter": 108,
+    "Milan": 98, "Juventus": 109, "Napoli": 113, "Lazio": 110, "Fiorentina": 99, "Bayern Munich": 5, "Borussia Dortmund": 4
+};
+
+// Logos manuales para Liga BetPlay
+const logosManuales = {
+    "Atlético Nacional": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Escudo_de_Atl%C3%A9tico_Nacional.png",
+    "Millonarios": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Escudo_de_Millonarios_F.C.svg/1200px-Escudo_de_Millonarios_F.C.svg.png",
+    "Santa Fe": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Independiente_Santa_Fe_logo.png",
+    "América de Cali": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Escudo_de_Am%C3%A9rica_de_Cali.png",
+    "Junior": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Escudo_del_Junior_de_Barranquilla.png"
+};
+
 const statsEquipos = {
-    "Arsenal": { atk: 2.3, def: 0.8 }, "Manchester City": { atk: 2.5, def: 1.0 }, "Liverpool": { atk: 2.4, def: 0.9 },
-    "Real Madrid": { atk: 2.4, def: 0.8 }, "Barcelona": { atk: 2.7, def: 1.1 },
-    "Atlético Nacional": { atk: 1.6, def: 1.0 }, "Millonarios": { atk: 1.5, def: 0.9 }, "Santa Fe": { atk: 1.4, def: 0.8 },
-    "América de Cali": { atk: 1.5, def: 1.1 }, "Junior": { atk: 1.5, def: 1.2 }, "Once Caldas": { atk: 1.3, def: 1.0 },
-    "Deportes Tolima": { atk: 1.5, def: 1.0 }, "Ind. Medellín": { atk: 1.4, def: 1.1 },
-    "default": { atk: 1.2, def: 1.4 }
+    "Arsenal": { atk: 2.3, def: 0.8 }, "Manchester City": { atk: 2.5, def: 1.0 }, "Real Madrid": { atk: 2.4, def: 0.8 }, 
+    "Lazio": { atk: 1.6, def: 1.1 }, "Fiorentina": { atk: 1.7, def: 1.2 }, "default": { atk: 1.2, def: 1.4 }
 };
 
 const ligas={
     premier:["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Chelsea","Crystal Palace","Everton","Fulham","Ipswich Town","Leicester City","Liverpool","Manchester City","Manchester United","Newcastle United","Nottingham Forest","Southampton","Tottenham","West Ham","Wolves"],
     laliga:["Real Madrid","Barcelona","Atletico Madrid","Athletic Club","Real Sociedad","Villarreal","Real Betis","Valencia","Sevilla","Girona","Osasuna","Celta Vigo","Alaves","Espanyol","Valladolid","Leganes","Rayo Vallecano","Mallorca","Las Palmas","Getafe"],
     betplay:["Atlético Nacional","Millonarios","Santa Fe","América de Cali","Junior","Ind. Medellín","Once Caldas","Deportes Tolima","Deportivo Cali","Pereira","Bucaramanga","La Equidad","Águilas Doradas","Envigado","Alianza","Pasto","Patriotas","Fortaleza","Jaguares","Boyacá Chicó"],
-    seriea:["Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina"],
-    bundesliga:["Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen"]
-}
-
-const logos={
-    "Arsenal":"https://crests.football-data.org/57.png","Manchester City":"https://crests.football-data.org/65.png","Real Madrid":"https://crests.football-data.org/86.png","Barcelona":"https://crests.football-data.org/81.png",
-    "Atlético Nacional":"https://upload.wikimedia.org/wikipedia/commons/9/9a/Escudo_de_Atl%C3%A9tico_Nacional.png",
-    "Millonarios":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Escudo_de_Millonarios_F.C.svg/1200px-Escudo_de_Millonarios_F.C.svg.png",
-    "Santa Fe":"https://upload.wikimedia.org/wikipedia/commons/e/e1/Independiente_Santa_Fe_logo.png"
+    seriea:["Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina","Bologna","Torino","Udinese","Monza","Lecce","Empoli","Cagliari","Genoa","Verona","Como","Parma","Venezia"],
+    bundesliga:["Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen","Wolfsburg","Eintracht Frankfurt","Stuttgart","Freiburg"]
 }
 
 const ligaSelect=document.getElementById("liga");
@@ -179,16 +171,10 @@ ligaSelect.addEventListener("change",function(){
     });
 });
 
-function obtenerTip(pL, pE, pV, p25, ambos) {
-    pL = parseFloat(pL); pE = parseFloat(pE); pV = parseFloat(pV); p25 = parseFloat(p25);
-    
-    if (pL > 60) return "🔥 Victoria Directa: " + localSelect.value;
-    if (pV > 60) return "🔥 Victoria Directa: " + visitanteSelect.value;
-    if (pL > 45 && pE > 20) return "🛡️ Doble Oportunidad: Local o Empate";
-    if (pV > 45 && pE > 20) return "🛡️ Doble Oportunidad: Visita o Empate";
-    if (p25 > 65) return "⚽ Alta de Goles: Más de 2.5 goles";
-    if (ambos === 'SÍ' && p25 > 50) return "🥅 Ambos marcan: SÍ";
-    return "⚖️ Partido Cerrado: Menos de 2.5 goles";
+function getLogoURL(nombre) {
+    if (logosManuales[nombre]) return logosManuales[nombre];
+    if (idLogos[nombre]) return `https://crests.football-data.org/${idLogos[nombre]}.png`;
+    return 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'; 
 }
 
 function calcular(){
@@ -206,20 +192,18 @@ function calcular(){
     let pV = ((expV / total) * 100).toFixed(1);
     let pE = (100 - pL - pV).toFixed(1);
 
-    let golesTotales = expL + expV;
-    let p15 = Math.min(99, (golesTotales * 40)).toFixed(1);
-    let p25 = Math.min(90, (golesTotales * 25)).toFixed(1);
-    let ambos = (expL > 0.9 && expV > 0.9) ? "SÍ" : "NO";
-    
-    const tipSugerido = obtenerTip(pL, pE, pV, p25, ambos);
-    const imgDef = 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg';
-
     document.getElementById("contenedor-resultado").innerHTML = `
         <div class="resultado">
             <div class="header-teams">
-                <div class="team-box"><img src="${logos[loc]||imgDef}"><span>${loc}</span></div>
+                <div class="team-box">
+                    <img src="${getLogoURL(loc)}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'">
+                    <span>${loc}</span>
+                </div>
                 <div class="vs-badge">VS</div>
-                <div class="team-box"><img src="${logos[vis]||imgDef}"><span>${vis}</span></div>
+                <div class="team-box">
+                    <img src="${getLogoURL(vis)}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'">
+                    <span>${vis}</span>
+                </div>
             </div>
 
             <div class="prob-row">
@@ -236,15 +220,10 @@ function calcular(){
             </div>
 
             <div class="grid-stats">
-                <div class="card-mini"><small>Ambos Marcan</small><div>${ambos}</div></div>
-                <div class="card-mini"><small>Córners Est.</small><div>${Math.floor(7+(golesTotales*1.5))}</div></div>
-                <div class="card-mini"><small>Goles +1.5</small><div>${p15}%</div></div>
-                <div class="card-mini"><small>Goles +2.5</small><div>${p25}%</div></div>
-            </div>
-
-            <div class="tip-container">
-                <div class="tip-header">✨ PICK RECOMENDADO</div>
-                <div class="tip-content">${tipSugerido}</div>
+                <div class="card-mini"><small>Ambos Marcan</small><div>${(expL>0.9&&expV>0.9)?'SÍ':'NO'}</div></div>
+                <div class="card-mini"><small>Córners Est.</small><div>${Math.floor(7+(expL+expV)*1.5)}</div></div>
+                <div class="card-mini"><small>Goles +1.5</small><div>${Math.min(99, (expL+expV)*40).toFixed(1)}%</div></div>
+                <div class="card-mini"><small>Goles +2.5</small><div>${Math.min(90, (expL+expV)*25).toFixed(1)}%</div></div>
             </div>
         </div>
     `;
@@ -254,8 +233,6 @@ function calcular(){
         document.getElementById("b2").style.width = pE + "%";
         document.getElementById("b3").style.width = pV + "%";
     }, 100);
-    
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 </script>
 </body>

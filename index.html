@@ -1,140 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predictor PRO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor PRO - Algoritmo Estadístico</title>
 
-<style>
-body{
-font-family: 'Segoe UI', Arial, sans-serif;
-background:#0f172a;
-color:white;
-text-align:center;
-padding:20px;
-}
+    <style>
+        body{
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background:#0f172a;
+            color:white;
+            text-align:center;
+            padding:20px;
+        }
 
-h1{ color:#22c55e; margin-bottom: 5px; }
+        h1{ color:#22c55e; margin-bottom: 5px; }
 
-.equipos{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top: 20px;
-}
+        .equipos{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:20px;
+            flex-wrap:wrap;
+            margin-top: 20px;
+        }
 
-.equipo{
-display:flex;
-flex-direction:column;
-align-items:center;
-width: 150px;
-}
+        .equipo{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            width: 150px;
+        }
 
-.vs{ font-size:22px; font-weight:bold; color: #64748b; margin-top: 10px; }
+        .vs{ font-size:22px; font-weight:bold; color: #64748b; margin-top: 10px; }
 
-select{
-padding:10px;
-border-radius:8px;
-border: 1px solid #334155;
-margin-top:5px;
-background: #1e293b;
-color: white;
-width: 100%;
-cursor: pointer;
-}
+        select{
+            padding:10px;
+            border-radius:8px;
+            border: 1px solid #334155;
+            margin-top:5px;
+            background: #1e293b;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+        }
 
-button{
-margin-top:30px;
-padding:15px 25px;
-border:none;
-border-radius:8px;
-background:#22c55e;
-color:white;
-font-size:16px;
-cursor:pointer;
-font-weight: bold;
-transition: 0.3s;
-}
+        button{
+            margin-top:30px;
+            padding:15px 25px;
+            border:none;
+            border-radius:8px;
+            background:#22c55e;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-button:hover { background: #16a34a; transform: translateY(-2px); }
+        button:hover { background: #16a34a; transform: translateY(-2px); }
 
-.resultado{
-margin-top:30px;
-background:#1e293b;
-padding:20px;
-border-radius:15px;
-width:100%;
-max-width:380px;
-margin-left:auto;
-margin-right:auto;
-border: 1px solid #334155;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
+        .resultado{
+            margin-top:30px;
+            background:#1e293b;
+            padding:20px;
+            border-radius:15px;
+            width:100%;
+            max-width:380px;
+            margin-left:auto;
+            margin-right:auto;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
 
-.teams{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
+        .teams{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
+        }
 
-.teams img{
-width:55px;
-height:55px;
-object-fit:contain;
-}
+        .teams img{
+            width:55px;
+            height:55px;
+            object-fit:contain;
+        }
 
-.stats-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-margin-top: 20px;
-border-top: 1px solid #334155;
-padding-top: 15px;
-}
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            border-top: 1px solid #334155;
+            padding-top: 15px;
+        }
 
-.stat-item { background: #0f172a; padding: 12px; border-radius: 10px; font-size: 13px; }
+        .stat-item { background: #0f172a; padding: 12px; border-radius: 10px; font-size: 13px; }
 
-.bar{
-background:#334155;
-height:10px;
-border-radius:10px;
-overflow:hidden;
-margin-bottom:12px;
-}
+        .bar{
+            background:#334155;
+            height:10px;
+            border-radius:10px;
+            overflow:hidden;
+            margin-bottom:12px;
+        }
 
-.fill{
-height:100%;
-transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-}
+        .fill{
+            height:100%;
+            transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
 
-.badge {
-padding: 3px 8px;
-border-radius: 5px;
-font-weight: bold;
-color: white;
-display: inline-block;
-margin-top: 5px;
-}
+        .badge {
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+            margin-top: 5px;
+        }
 
-/* Colores Dinámicos */
-.c-baja { background: #ef4444; }    /* Rojo */
-.c-media { background: #eab308; }   /* Amarillo */
-.c-alta { background: #22c55e; }    /* Verde */
+        /* Colores Dinámicos */
+        .c-baja { background: #ef4444; }    
+        .c-media { background: #eab308; }   
+        .c-alta { background: #22c55e; }    
 
-.text-baja { color: #ef4444; }
-.text-media { color: #eab308; }
-.text-alta { color: #22c55e; }
-
-</style>
+        .text-baja { color: #ef4444; }
+        .text-media { color: #eab308; }
+        .text-alta { color: #22c55e; }
+    </style>
 </head>
-
 <body>
 
 <h1>⚽ Predictor PRO</h1>
-<p style="color: #94a3b8;">Análisis por Algoritmo Fijo</p>
+<p style="color: #94a3b8;">Análisis por Algoritmo de Fuerza Relativa</p>
 
 <div style="max-width: 300px; margin: 0 auto;">
     <label>Competición</label>
@@ -165,23 +163,38 @@ margin-top: 5px;
 <div id="contenedor-resultado"></div>
 
 <script>
+// --- DATOS DE EQUIPOS (ATK: Goles a favor, DEF: Goles en contra recibidos de media) ---
+// Puedes actualizar estos números cada semana para mayor precisión.
+const statsEquipos = {
+    // Premier
+    "Manchester City": { atk: 2.5, def: 0.9 }, "Liverpool": { atk: 2.3, def: 1.0 },
+    "Arsenal": { atk: 2.1, def: 0.8 }, "Manchester United": { atk: 1.4, def: 1.5 },
+    "Ipswich Town": { atk: 0.9, def: 1.8 },
+    // La Liga
+    "Real Madrid": { atk: 2.4, def: 0.8 }, "Barcelona": { atk: 2.6, def: 1.1 },
+    // BetPlay
+    "Atlético Nacional": { atk: 1.6, def: 1.0 }, "Millonarios": { atk: 1.5, def: 0.9 },
+    "Junior": { atk: 1.4, def: 1.2 }, "Santa Fe": { atk: 1.3, def: 0.8 },
+    // Valor por defecto para equipos no listados
+    "default": { atk: 1.2, def: 1.3 }
+};
+
 const ligas={
-premier:["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Chelsea","Crystal Palace","Everton","Fulham","Ipswich Town","Leicester City","Liverpool","Manchester City","Manchester United","Newcastle United","Nottingham Forest","Southampton","Tottenham","West Ham","Wolves"],
-laliga:["Real Madrid","Barcelona","Atletico Madrid","Athletic Club","Real Sociedad","Villarreal","Real Betis","Valencia","Sevilla","Girona","Osasuna","Celta Vigo","Alaves","Espanyol","Valladolid","Leganes","Rayo Vallecano","Mallorca","Las Palmas","Getafe"],
-seriea:["Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina","Bologna","Torino","Udinese","Monza","Lecce","Empoli","Cagliari","Genoa","Verona","Como","Parma","Venezia"],
-bundesliga:["Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen","Wolfsburg","Eintracht Frankfurt","Stuttgart","Freiburg","Hoffenheim","Werder Bremen","Augsburg","Bochum","Mainz","Borussia Monchengladbach","Heidenheim","St. Pauli","Holstein Kiel","Union Berlin"],
-betplay:["Atlético Nacional","Millonarios","Santa Fe","América de Cali","Junior","Ind. Medellín","Once Caldas","Deportes Tolima","Deportivo Cali","Pereira","Bucaramanga","La Equidad","Águilas Doradas","Envigado","Alianza","Pasto","Patriotas","Fortaleza","Jaguares","Boyacá Chicó"]
+    premier:["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Chelsea","Crystal Palace","Everton","Fulham","Ipswich Town","Leicester City","Liverpool","Manchester City","Manchester United","Newcastle United","Nottingham Forest","Southampton","Tottenham","West Ham","Wolves"],
+    laliga:["Real Madrid","Barcelona","Atletico Madrid","Athletic Club","Real Sociedad","Villarreal","Real Betis","Valencia","Sevilla","Girona","Osasuna","Celta Vigo","Alaves","Espanyol","Valladolid","Leganes","Rayo Vallecano","Mallorca","Las Palmas","Getafe"],
+    seriea:["Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina","Bologna","Torino","Udinese","Monza","Lecce","Empoli","Cagliari","Genoa","Verona","Como","Parma","Venezia"],
+    bundesliga:["Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen","Wolfsburg","Eintracht Frankfurt","Stuttgart","Freiburg","Hoffenheim","Werder Bremen","Augsburg","Bochum","Mainz","Borussia Monchengladbach","Heidenheim","St. Pauli","Holstein Kiel","Union Berlin"],
+    betplay:["Atlético Nacional","Millonarios","Santa Fe","América de Cali","Junior","Ind. Medellín","Once Caldas","Deportes Tolima","Deportivo Cali","Pereira","Bucaramanga","La Equidad","Águilas Doradas","Envigado","Alianza","Pasto","Patriotas","Fortaleza","Jaguares","Boyacá Chicó"]
 }
 
 const logos={
-"Arsenal":"https://crests.football-data.org/57.png","Aston Villa":"https://crests.football-data.org/58.png","Bournemouth":"https://crests.football-data.org/1044.png","Brentford":"https://crests.football-data.org/402.png","Brighton":"https://crests.football-data.org/397.png","Chelsea":"https://crests.football-data.org/61.png","Crystal Palace":"https://crests.football-data.org/354.png","Everton":"https://crests.football-data.org/62.png","Fulham":"https://crests.football-data.org/63.png","Ipswich Town":"https://crests.football-data.org/349.png","Leicester City":"https://crests.football-data.org/338.png","Liverpool":"https://crests.football-data.org/64.png","Manchester City":"https://crests.football-data.org/65.png","Manchester United":"https://crests.football-data.org/66.png","Newcastle United":"https://crests.football-data.org/67.png","Nottingham Forest":"https://crests.football-data.org/651.png","Southampton":"https://crests.football-data.org/340.png","Tottenham":"https://crests.football-data.org/73.png","West Ham":"https://crests.football-data.org/563.png","Wolves":"https://crests.football-data.org/76.png",
-"Real Madrid":"https://crests.football-data.org/86.png","Barcelona":"https://crests.football-data.org/81.png",
-"Atlético Nacional":"https://upload.wikimedia.org/wikipedia/commons/9/9a/Escudo_de_Atl%C3%A9tico_Nacional.png",
-"Millonarios":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Escudo_de_Millonarios_F.C.svg/1200px-Escudo_de_Millonarios_F.C.svg.png",
-"Santa Fe":"https://upload.wikimedia.org/wikipedia/commons/e/e1/Independiente_Santa_Fe_logo.png",
-"América de Cali":"https://upload.wikimedia.org/wikipedia/commons/a/a8/Escudo_de_Am%C3%A9rica_de_Cali.png",
-"Junior":"https://upload.wikimedia.org/wikipedia/commons/d/d3/Escudo_del_Junior_de_Barranquilla.png",
-"Ind. Medellín":"https://upload.wikimedia.org/wikipedia/commons/5/5f/Escudo_del_Deportivo_Independiente_Medell%C3%ADn.png"
+    "Arsenal":"https://crests.football-data.org/57.png","Manchester City":"https://crests.football-data.org/65.png","Manchester United":"https://crests.football-data.org/66.png","Liverpool":"https://crests.football-data.org/64.png","Ipswich Town":"https://crests.football-data.org/349.png",
+    "Real Madrid":"https://crests.football-data.org/86.png","Barcelona":"https://crests.football-data.org/81.png",
+    "Atlético Nacional":"https://upload.wikimedia.org/wikipedia/commons/9/9a/Escudo_de_Atl%C3%A9tico_Nacional.png",
+    "Millonarios":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Escudo_de_Millonarios_F.C.svg/1200px-Escudo_de_Millonarios_F.C.svg.png",
+    "Santa Fe":"https://upload.wikimedia.org/wikipedia/commons/e/e1/Independiente_Santa_Fe_logo.png",
+    "América de Cali":"https://upload.wikimedia.org/wikipedia/commons/a/a8/Escudo_de_Am%C3%A9rica_de_Cali.png",
+    "Junior":"https://upload.wikimedia.org/wikipedia/commons/d/d3/Escudo_del_Junior_de_Barranquilla.png"
 }
 
 const ligaSelect=document.getElementById("liga")
@@ -207,21 +220,30 @@ function calcular(){
     const loc=localSelect.value; const vis=visitanteSelect.value;
     if(!loc || !vis || loc === vis) return;
 
-    // SEMILLA FIJA
-    let seed = 0;
-    for (let i = 0; i < loc.length; i++) seed += loc.charCodeAt(i);
-    for (let i = 0; i < vis.length; i++) seed += vis.charCodeAt(i) * 3;
+    // 1. OBTENER ESTADÍSTICAS (Usa default si el equipo no está en statsEquipos)
+    const sL = statsEquipos[loc] || statsEquipos["default"];
+    const sV = statsEquipos[vis] || statsEquipos["default"];
 
-    const rand = (s) => { var x = Math.sin(s) * 10000; return x - Math.floor(x); };
+    // 2. LÓGICA DE FUERZA (Ataque de uno vs Defensa del otro)
+    // El local recibe un bono de +0.3 por ventaja de campo
+    let fuerzaLocal = (sL.atk * sV.def) + 0.3;
+    let fuerzaVisita = (sV.atk * sL.def);
+    
+    // Simulación de probabilidad
+    let totalFuerza = fuerzaLocal + fuerzaVisita + 1.1; // 1.1 representa el factor empate
+    
+    let pL = ((fuerzaLocal / totalFuerza) * 100).toFixed(1);
+    let pV = ((fuerzaVisita / totalFuerza) * 100).toFixed(1);
+    let pE = (100 - pL - pV).toFixed(1);
 
-    let pE = (20 + (rand(seed) * 10)).toFixed(1);
-    let pL = ((rand(seed + 1) * 0.5 + 0.2) * (100 - pE)).toFixed(1);
-    let pV = (100 - pE - pL).toFixed(1);
-
-    let ambos = rand(seed + 2) > 0.48 ? "SÍ" : "NO";
-    let p15 = (65 + rand(seed + 3) * 30).toFixed(1);
-    let p25 = (35 + rand(seed + 4) * 50).toFixed(1);
-    let corn = Math.floor(8 + rand(seed + 5) * 5);
+    // 3. MERCADOS ADICIONALES
+    let golesEstimados = (fuerzaLocal + fuerzaVisita) / 2;
+    let ambos = (sL.atk > 1.2 && sV.atk > 1.2) ? "SÍ" : (golesEstimados > 1.5 ? "SÍ" : "NO");
+    
+    // Probabilidades de Over basándose en la fuerza ofensiva combinada
+    let p15 = Math.min(98.5, (golesEstimados * 45)).toFixed(1);
+    let p25 = Math.min(89.0, (golesEstimados * 30)).toFixed(1);
+    let corn = Math.floor(7 + (golesEstimados * 2));
 
     const imgDef = 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg';
 

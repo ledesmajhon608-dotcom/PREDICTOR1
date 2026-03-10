@@ -45,7 +45,9 @@
             <option value="seriea">Serie A</option>
             <option value="bundesliga">Bundesliga</option>
             <option value="ligue1">Ligue 1</option>
-            
+            <option value="mls">MLS (USA)</option>
+            <option value="argentina">Liga Profesional Argentina</option>
+            <option value="colombia">Primera A Colombia</option>
         </select>
 
         <label>LOCAL</label>
@@ -60,17 +62,27 @@
     <div id="contenedor-resultado" style="width: 100%;"></div>
 
     <script>
-        // REEMPLAZA ESTA LLAVE CON LA TUYA DE API-FOOTBALL
         const API_KEY = 'ea232d851cb4197391464e2c61df516b'; 
         
         let statsDinamicas = {};
-        const ligasIDs = { premier: 39, laliga: 140, betplay: 71, seriea: 135, bundesliga: 78, ligue1: 61 };
+        // IDs actualizados: MLS (253), Argentina (128), Colombia (71)
+        const ligasIDs = { 
+            premier: 39, 
+            laliga: 140, 
+            seriea: 135, 
+            bundesliga: 78, 
+            ligue1: 61,
+            mls: 253,
+            argentina: 128,
+            colombia: 71
+        };
 
         async function cargarDatosLiga(ligaId) {
             const btn = document.getElementById("btn-calcular");
             btn.innerText = "CARGANDO DATOS...";
             btn.disabled = true;
 
+            // Nota: Para Argentina y Colombia 2024 es el año correcto actualmente
             const url = `https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`;
             
             try {
@@ -86,6 +98,8 @@
                 
                 if (!data.response || data.response.length === 0) {
                     alert("No hay datos disponibles para esta liga ahora.");
+                    btn.innerText = "CALCULAR PREDICCIÓN";
+                    btn.disabled = false;
                     return;
                 }
 
@@ -101,7 +115,6 @@
                     const name = item.team.name;
                     const pj = item.all.played || 1;
                     
-                    // Extraemos estadísticas reales de la API
                     statsDinamicas[name] = {
                         atk: (item.all.goals.for / pj).toFixed(2),
                         def: (item.all.goals.against / pj).toFixed(2)
@@ -113,10 +126,9 @@
 
                 btn.innerText = "CALCULAR PREDICCIÓN";
                 btn.disabled = false;
-                console.log("Datos de API cargados para ID:", ligaId);
 
             } catch (e) {
-                alert("Error de conexión con la API. Revisa tu Key.");
+                alert("Error de conexión con la API.");
                 btn.innerText = "ERROR DE CARGA";
             }
         }
@@ -134,7 +146,6 @@
             const sL = statsDinamicas[loc];
             const sV = statsDinamicas[vis];
 
-            // Algoritmo de Probabilidad
             const expL = (sL.atk * sV.def * 1.15);
             const expV = (sV.atk * sL.def);
             const total = expL + expV + 1.2;

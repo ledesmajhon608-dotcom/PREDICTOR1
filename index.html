@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor PRO - Multi-Liga</title>
+    <title>Predictor PRO - Fix Colombia</title>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --accent: #22c55e; --text-main: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-main); padding: 15px; display: flex; flex-direction: column; align-items: center; }
@@ -70,18 +70,16 @@
 
         const ligasIDs = { 
             premier: 39, laliga: 140, seriea: 135, bundesliga: 78, ligue1: 61,
-            mls: 253, brasil: 71, argentina: 128, colombia: 239 
+            mls: 253, brasil: 71, argentina: 128, colombia: 71 
         };
 
-        // Función principal de carga
         async function cargarDatosLiga(ligaId) {
             const btn = document.getElementById("btn-calcular");
-            btn.innerText = "CONECTANDO API...";
+            btn.innerText = "BUSCANDO EQUIPOS...";
             btn.disabled = true;
 
-            // Intentamos temporadas 2026, 2025 y 2024 en orden
             const temporadas = [2026, 2025, 2024];
-            let dataExitosa = null;
+            let rawData = null;
 
             for (let season of temporadas) {
                 try {
@@ -92,39 +90,50 @@
                     const data = await res.json();
                     
                     if (data.response && data.response.length > 0) {
-                        dataExitosa = data.response[0].league.standings[0];
-                        console.log(`Datos cargados de la temporada ${season}`);
+                        // Aquí está el truco: capturamos TODOS los grupos de standings
+                        rawData = data.response[0].league.standings;
                         break; 
                     }
-                } catch (e) { console.error("Error intentando temporada " + season); }
+                } catch (e) { console.error("Error en temporada " + season); }
             }
 
-            if (dataExitosa) {
-                poblarSelects(dataExitosa);
+            if (rawData) {
+                poblarSelects(rawData);
                 btn.innerText = "CALCULAR PREDICCIÓN";
                 btn.disabled = false;
             } else {
-                alert("No se encontraron datos para esta liga. Intenta con otra.");
-                btn.innerText = "ERROR - ELIGE OTRA";
+                alert("Error: No hay datos disponibles.");
+                btn.innerText = "ERROR DE CARGA";
             }
         }
 
-        function poblarSelects(standings) {
+        function poblarSelects(allGroups) {
             const locSel = document.getElementById("local");
             const visSel = document.getElementById("visitante");
             locSel.innerHTML = ""; visSel.innerHTML = "";
             statsDinamicas = {};
 
-            standings.forEach(item => {
-                const name = item.team.name;
-                const pj = item.all.played || 1;
-                statsDinamicas[name] = {
-                    atk: (item.all.goals.for / pj).toFixed(2),
-                    def: (item.all.goals.against / pj).toFixed(2)
-                };
-                locSel.add(new Option(name, name));
-                visSel.add(new Option(name, name));
+            // Unificamos todos los equipos de todos los grupos (A, B, General)
+            allGroups.forEach(group => {
+                group.forEach(item => {
+                    const name = item.team.name;
+                    // Si el equipo ya está (para no repetir), lo saltamos
+                    if (statsDinamicas[name]) return;
+
+                    const pj = item.all.played || 1;
+                    statsDinamicas[name] = {
+                        atk: (item.all.goals.for / pj).toFixed(2),
+                        def: (item.all.goals.against / pj).toFixed(2)
+                    };
+                    
+                    locSel.add(new Option(name, name));
+                    visSel.add(new Option(name, name));
+                });
             });
+
+            // Ordenamos alfabéticamente para que sea fácil encontrar al equipo
+            Array.from(locSel.options).sort((a, b) => a.text.localeCompare(b.text)).forEach(opt => locSel.add(opt));
+            Array.from(visSel.options).sort((a, b) => a.text.localeCompare(b.text)).forEach(opt => visSel.add(opt));
         }
 
         document.getElementById("liga").onchange = function() {
@@ -139,7 +148,6 @@
             const sL = statsDinamicas[loc];
             const sV = statsDinamicas[vis];
 
-            // Algoritmo PRO
             const expL = (sL.atk * sV.def * 1.15);
             const expV = (sV.atk * sL.def);
             const total = expL + expV + 1.2;
@@ -149,7 +157,7 @@
             const pE = (100 - pL - pV).toFixed(1);
             const gT = (parseFloat(expL) + parseFloat(expV)).toFixed(2);
 
-            let rec = pL > 48 ? "Gana " + loc : pV > 48 ? "Gana " + vis : "Doble Oportunidad (1X)";
+            let rec = pL > 48 ? "Gana " + loc : pV > 48 ? "Gana " + vis : "Doble Oportunidad";
 
             document.getElementById("contenedor-resultado").innerHTML = `
                 <div class="resultado">

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Predictor PRO de Fútbol</title>
+<title>Predictor PRO</title>
 
 <style>
 
@@ -18,7 +18,7 @@ h1{
 color:#22c55e;
 }
 
-/* equipos */
+/* contenedor equipos */
 
 .equipos{
 display:flex;
@@ -216,132 +216,5 @@ const logos={
 /* selects */
 
 const ligaSelect=document.getElementById("liga")
-const localSelect=document.getElementById("local")
-const visitanteSelect=document.getElementById("visitante")
-
-ligaSelect.addEventListener("change",cargarEquipos)
-
-function cargarEquipos(){
-
-const liga=ligaSelect.value
-
-localSelect.innerHTML=""
-visitanteSelect.innerHTML=""
-
-if(!ligas[liga]) return
-
-ligas[liga].forEach(eq=>{
-
-let op1=document.createElement("option")
-op1.value=eq
-op1.text=eq
-localSelect.appendChild(op1)
-
-let op2=document.createElement("option")
-op2.value=eq
-op2.text=eq
-visitanteSelect.appendChild(op2)
-
-})
-
-}
-
-/* modelo simple goles */
-
-function calcular(){
-
-const local=localSelect.value
-const visitante=visitanteSelect.value
-
-if(!local || !visitante){
-alert("Selecciona equipos")
-return
-}
-
-if(local==visitante){
-alert("Equipos diferentes")
-return
-}
-
-/* fuerza equipos */
-
-let ataqueLocal=Math.random()*1.6+0.8
-let defensaLocal=Math.random()*1.6+0.8
-
-let ataqueVisita=Math.random()*1.6+0.8
-let defensaVisita=Math.random()*1.6+0.8
-
-/* goles esperados */
-
-let golesLocal=(ataqueLocal/defensaVisita*1.4).toFixed(2)
-let golesVisita=(ataqueVisita/defensaLocal*1.2).toFixed(2)
-
-let golesTotal=(parseFloat(golesLocal)+parseFloat(golesVisita)).toFixed(2)
-
-/* probabilidades */
-
-let probLocal=(golesLocal/(golesLocal+golesVisita)*100).toFixed(1)
-let probVisita=(golesVisita/(golesLocal+golesVisita)*100).toFixed(1)
-let empate=(100-probLocal-probVisita).toFixed(1)
-
-/* overs */
-
-let over15=Math.min(95,(golesTotal/3)*100).toFixed(0)
-let over25=Math.min(90,(golesTotal/4)*100).toFixed(0)
-
-/* ambos */
-
-let ambos=(golesLocal*golesVisita*20).toFixed(0)
-
-/* corners */
-
-let corners=(8+Math.random()*4).toFixed(1)
-
-/* resultado */
-
-document.getElementById("resultado").innerHTML=`
-
-<div class="teams">
-
-<div>
-<img src="${logos[local]}"><br>${local}
-</div>
-
-<strong>VS</strong>
-
-<div>
-<img src="${logos[visitante]}"><br>${visitante}
-</div>
-
-</div>
-
-<p>Local ${probLocal}%</p>
-<div class="bar"><div class="fill" style="width:${probLocal}%"></div></div>
-
-<p>Empate ${empate}%</p>
-<div class="bar"><div class="fill" style="width:${empate}%"></div></div>
-
-<p>Visita ${probVisita}%</p>
-<div class="bar"><div class="fill" style="width:${probVisita}%"></div></div>
-
-<hr>
-
-<p>⚽ Goles esperados: <b>${golesTotal}</b></p>
-
-<p>📈 Over 1.5 goles: <b>${over15}%</b></p>
-<p>📈 Over 2.5 goles: <b>${over25}%</b></p>
-
-<hr>
-
-<p>🔥 Ambos marcan: <b>${ambos}%</b></p>
-<p>🚩 Corners estimados: <b>${corners}</b></p>
-
-`
-
-}
-
-</script>
-
-</body>
-</html>
+const localSelect=
 ```

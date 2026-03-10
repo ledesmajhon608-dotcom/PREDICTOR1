@@ -1,109 +1,65 @@
 const API_KEY = 'ea232d851cb4197391464e2c61df516b'; 
 let statsDinamicas = {};
-
-const ligasIDs = {
-    premier: 39,
-    laliga: 140,
-    betplay: 71,
-    seriea: 135,
-    bundesliga: 78,
-    ligue1: 61,
-    mls: 253
-};
-
+const ligasIDs = { premier: 39, laliga: 140, betplay: 71, seriea: 135, bundesliga: 78, ligue1: 61, mls: 253 };
 const ligaSelect = document.getElementById("liga");
 const localSelect = document.getElementById("local");
 const visitanteSelect = document.getElementById("visitante");
 
 async function cargarDatosLiga(ligaId) {
     const url = `https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`;
-    
     try {
         const response = await fetch(url, {
-            "method": "GET",
-            "headers": {
-                "x-rapidapi-host": "v3.football.api-sports.io",
-                "x-rapidapi-key": API_KEY
-            }
+            method: "GET",
+            headers: { "x-rapidapi-host": "v3.football.api-sports.io", "x-rapidapi-key": API_KEY }
         });
-
         const data = await response.json();
-        
-        if (!data.response || data.response.length === 0) {
-            alert("No se encontraron datos para esta liga.");
-            return;
-        }
-
+        if (!data.response || data.response.length === 0) return;
         const standings = data.response[0].league.standings[0];
-
         localSelect.innerHTML = "";
         visitanteSelect.innerHTML = "";
         statsDinamicas = {};
-
         standings.forEach(item => {
             const team = item.team.name;
             const pj = item.all.played || 1; 
-            
             statsDinamicas[team] = {
                 atk: (item.all.goals.for / pj).toFixed(2),
                 def: (item.all.goals.against / pj).toFixed(2)
             };
-
             localSelect.add(new Option(team, team));
             visitanteSelect.add(new Option(team, team));
         });
-
-        console.log("Datos cargados correctamente");
-
-    } catch (error) {
-        console.error(error);
-        alert("Error de conexión. Revisa tu consola.");
-    }
+    } catch (e) { console.error("Error API:", e); }
 }
 
 ligaSelect.addEventListener("change", function() {
-    if (this.value) {
-        cargarDatosLiga(ligasIDs[this.value]);
-    }
+    if (this.value) cargarDatosLiga(ligasIDs[this.value]);
 });
 
 function calcular() {
     const loc = localSelect.value; 
     const vis = visitanteSelect.value;
     if (!loc || !vis || loc === vis) return;
-
     const sL = statsDinamicas[loc];
     const sV = statsDinamicas[vis];
-
     let expL = (sL.atk * sV.def * 1.15);
     let expV = (sV.atk * sL.def);
     let total = expL + expV + 1.2; 
-    
     let pL = ((expL / total) * 100).toFixed(1);
     let pV = ((expV / total) * 100).toFixed(1);
     let pE = (100 - pL - pV).toFixed(1);
-
-    let gTotales = parseFloat(expL) + parseFloat(expV);
-    let p25 = Math.min(90, (gTotales * 25)).toFixed(1);
-
-    renderizarResultado(loc, vis, pL, pE, pV, gTotales, p25);
+    let gT = parseFloat(expL) + parseFloat(expV);
+    let p25 = Math.min(90, (gT * 25)).toFixed(1);
+    renderizar(loc, vis, pL, pE, pV, gT, p25);
 }
 
-function renderizarResultado(loc, vis, pL, pE, pV, gTotales, p25) {
+function renderizar(loc, vis, pL, pE, pV, gT, p25) {
     document.getElementById("contenedor-resultado").innerHTML = `
         <div class="resultado">
             <div class="header-text">
-                <div class="team-display">
-                    <span class="team-label">LOCAL</span>
-                    <span class="team-name">${loc}</span>
-                </div>
+                <div class="team-display"><span class="team-label">LOCAL</span><span class="team-name">${loc}</span></div>
                 <div class="vs-circle">VS</div>
-                <div class="team-display">
-                    <span class="team-label">VISITA</span>
-                    <span class="team-name">${vis}</span>
-                </div>
+                <div class="team-display"><span class="team-label">VISITA</span><span class="team-name">${vis}</span></div>
             </div>
-
             <div class="prob-row">
                 <div class="prob-info"><span>Victoria Local</span><strong>${pL}%</strong></div>
                 <div class="bar-bg"><div id="b1" class="bar-fill" style="width:0%; background:#22c55e;"></div></div>
@@ -116,21 +72,17 @@ function renderizarResultado(loc, vis, pL, pE, pV, gTotales, p25) {
                 <div class="prob-info"><span>Victoria Visita</span><strong>${pV}%</strong></div>
                 <div class="bar-bg"><div id="b3" class="bar-fill" style="width:0%; background:#ef4444;"></div></div>
             </div>
-
             <div class="grid-stats">
                 <div class="card-mini"><small>Ambos Marcan</small><div>${(pL>30&&pV>30)?'SÍ':'NO'}</div></div>
                 <div class="card-mini"><small>Goles +2.5</small><div>${p25}%</div></div>
-                <div class="card-mini"><small>Córners Est.</small><div>${Math.floor(7+(gTotales*1.5))}</div></div>
-                <div class="card-mini"><small>Goles +1.5</small><div>${Math.min(99, (gTotales*40)).toFixed(1)}%</div></div>
+                <div class="card-mini"><small>Córners Est.</small><div>${Math.floor(7+(gT*1.5))}</div></div>
+                <div class="card-mini"><small>Goles +1.5</small><div>${Math.min(99, (gT*40)).toFixed(1)}%</div></div>
             </div>
-
             <div class="tip-box">
                 <div class="tip-title">RECOMENDACIÓN</div>
                 <div class="tip-text">${pL > 45 ? 'Gana ' + loc : pV > 45 ? 'Gana ' + vis : 'Doble Oportunidad'}</div>
             </div>
-        </div>
-    `;
-
+        </div>`;
     setTimeout(() => {
         document.getElementById("b1").style.width = pL + "%";
         document.getElementById("b2").style.width = pE + "%";

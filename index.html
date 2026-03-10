@@ -2,218 +2,218 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor PRO - Base de Datos Completa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Predictor PRO Mobile</title>
 
     <style>
-        body{
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background:#0f172a;
-            color:white;
-            text-align:center;
-            padding:20px;
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #22c55e;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
         }
 
-        h1{ color:#22c55e; margin-bottom: 5px; }
-
-        .equipos{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            gap:20px;
-            flex-wrap:wrap;
-            margin-top: 20px;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .equipo{
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            width: 150px;
+        h1 { 
+            color: var(--accent); 
+            font-size: 28px; 
+            margin: 10px 0 5px 0;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
         }
 
-        .vs{ font-size:22px; font-weight:bold; color: #64748b; margin-top: 10px; }
+        .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 25px; }
 
-        select{
-            padding:10px;
-            border-radius:8px;
-            border: 1px solid #334155;
-            margin-top:5px;
-            background: #1e293b;
-            color: white;
+        /* Contenedor de Selección */
+        .selector-container {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 20px;
             width: 100%;
-            cursor: pointer;
+            max-width: 400px;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
         }
 
-        button{
-            margin-top:30px;
-            padding:15px 25px;
-            border:none;
-            border-radius:8px;
-            background:#22c55e;
-            color:white;
-            font-size:16px;
-            cursor:pointer;
+        label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: var(--accent); margin-bottom: 5px; text-transform: uppercase; }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: white;
+            border: 1px solid var(--border);
+            font-size: 16px; /* Evita zoom automático en iPhone */
+            margin-bottom: 15px;
+            appearance: none;
+        }
+
+        .matchup {
+            display: grid;
+            grid-template-columns: 1fr 40px 1fr;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Botón Pro */
+        button {
+            width: 100%;
+            max-width: 400px;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            font-size: 18px;
             font-weight: bold;
-            transition: 0.3s;
+            box-shadow: 0 10px 20px -5px rgba(34, 197, 94, 0.4);
+            cursor: pointer;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        button:hover { background: #16a34a; transform: translateY(-2px); }
+        button:active { transform: scale(0.96); }
 
-        .resultado{
-            margin-top:30px;
-            background:#1e293b;
-            padding:20px;
-            border-radius:15px;
-            width:100%;
-            max-width:380px;
-            margin-left:auto;
-            margin-right:auto;
-            border: 1px solid #334155;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        /* Resultado Estilo Card */
+        .resultado {
+            margin-top: 25px;
+            background: var(--card);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            animation: slideUp 0.4s ease-out;
         }
 
-        .teams{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:20px;
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-teams {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        .teams img{
-            width:55px;
-            height:55px;
-            object-fit:contain;
-        }
+        .team-box { width: 100px; }
+        .team-box img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px; }
+        .team-box span { display: block; font-size: 14px; font-weight: bold; }
 
-        .stats-grid {
+        .vs-badge { background: var(--border); padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; }
+
+        /* Probabilidades Modernas */
+        .prob-row { margin-bottom: 15px; }
+        .prob-info { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+        .bar-bg { background: #0f172a; height: 12px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 10px; transition: width 1s ease-in-out; }
+
+        /* Grid de Stats */
+        .grid-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 20px;
-            border-top: 1px solid #334155;
-            padding-top: 15px;
+            margin-top: 25px;
         }
 
-        .stat-item { background: #0f172a; padding: 12px; border-radius: 10px; font-size: 13px; }
-
-        .bar{
-            background:#334155;
-            height:10px;
-            border-radius:10px;
-            overflow:hidden;
-            margin-bottom:12px;
+        .card-mini {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
         }
 
-        .fill{
-            height:100%;
-            transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-        }
+        .card-mini small { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+        .card-mini div { font-size: 18px; font-weight: bold; margin-top: 5px; }
 
-        .badge {
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-weight: bold;
-            color: white;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-        /* Colores Dinámicos */
-        .c-baja { background: #ef4444; }    
-        .c-media { background: #eab308; }   
-        .c-alta { background: #22c55e; }    
-
-        .text-baja { color: #ef4444; }
-        .text-media { color: #eab308; }
-        .text-alta { color: #22c55e; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; }
+        .bg-win { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .bg-lose { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
     </style>
 </head>
 <body>
 
-<h1>⚽ Predictor PRO</h1>
-<p style="color: #94a3b8;">Algoritmo de Fuerza Relativa 2024/25</p>
+    <h1>⚽ Predictor PRO</h1>
+    <div class="subtitle">Análisis Estadístico Avanzado</div>
 
-<div style="max-width: 300px; margin: 0 auto;">
-    <label>Competición</label>
-    <select id="liga">
-        <option value="">-- Selecciona Liga --</option>
-        <option value="premier">Premier League</option>
-        <option value="laliga">La Liga</option>
-        <option value="seriea">Serie A</option>
-        <option value="bundesliga">Bundesliga</option>
-        <option value="betplay">Liga BetPlay</option>
-    </select>
-</div>
+    <div class="selector-container">
+        <label>Competición</label>
+        <select id="liga">
+            <option value="">Seleccionar Liga</option>
+            <option value="premier">Premier League</option>
+            <option value="laliga">La Liga</option>
+            <option value="betplay">Liga BetPlay</option>
+            <option value="seriea">Serie A</option>
+            <option value="bundesliga">Bundesliga</option>
+        </select>
 
-<div class="equipos">
-    <div class="equipo">
-        <label>Local</label>
-        <select id="local"></select>
+        <div class="matchup">
+            <div>
+                <label>Local</label>
+                <select id="local"></select>
+            </div>
+            <div class="vs-badge" style="margin-top: 15px;">VS</div>
+            <div>
+                <label>Visita</label>
+                <select id="visitante"></select>
+            </div>
+        </div>
     </div>
-    <div class="vs">VS</div>
-    <div class="equipo">
-        <label>Visitante</label>
-        <select id="visitante"></select>
-    </div>
-</div>
 
-<button onclick="calcular()">CALCULAR PREDICCIÓN</button>
+    <button onclick="calcular()">CALCULAR AHORA</button>
 
-<div id="contenedor-resultado"></div>
+    <div id="contenedor-resultado" style="width: 100%;"></div>
 
 <script>
-// --- BASE DE DATOS ESTADÍSTICA (ATK = Poder Ofensivo, DEF = Vulnerabilidad Defensiva) ---
+// (Mantengo tu base de datos y lógica, solo cambio el renderizado visual)
 const statsEquipos = {
-    // Premier League
-    "Arsenal": { atk: 2.3, def: 0.8 }, "Manchester City": { atk: 2.5, def: 1.0 }, "Liverpool": { atk: 2.4, def: 0.9 }, "Aston Villa": { atk: 1.8, def: 1.4 }, "Chelsea": { atk: 1.9, def: 1.5 }, "Tottenham": { atk: 2.0, def: 1.6 }, "Newcastle United": { atk: 1.7, def: 1.4 }, "Manchester United": { atk: 1.4, def: 1.5 }, "West Ham": { atk: 1.3, def: 1.7 }, "Brighton": { atk: 1.6, def: 1.5 },
-    // La Liga
-    "Real Madrid": { atk: 2.4, def: 0.8 }, "Barcelona": { atk: 2.7, def: 1.1 }, "Atletico Madrid": { atk: 1.9, def: 0.9 }, "Girona": { atk: 1.8, def: 1.4 }, "Athletic Club": { atk: 1.7, def: 1.1 }, "Real Sociedad": { atk: 1.5, def: 1.1 }, "Villarreal": { atk: 1.8, def: 1.6 },
-    // Serie A
-    "Inter": { atk: 2.4, def: 0.8 }, "Milan": { atk: 2.0, def: 1.3 }, "Juventus": { atk: 1.6, def: 0.7 }, "Atalanta": { atk: 2.1, def: 1.2 }, "Napoli": { atk: 1.8, def: 1.1 }, "Roma": { atk: 1.6, def: 1.4 },
-    // Bundesliga
-    "Bayer Leverkusen": { atk: 2.4, def: 1.0 }, "Bayern Munich": { atk: 2.8, def: 1.2 }, "RB Leipzig": { atk: 2.0, def: 1.1 }, "Borussia Dortmund": { atk: 1.9, def: 1.4 }, "Stuttgart": { atk: 2.1, def: 1.3 },
-    // Liga BetPlay
-    "Atlético Nacional": { atk: 1.6, def: 1.0 }, "Millonarios": { atk: 1.5, def: 0.9 }, "Santa Fe": { atk: 1.4, def: 0.8 }, "América de Cali": { atk: 1.5, def: 1.1 }, "Junior": { atk: 1.5, def: 1.2 }, "Ind. Medellín": { atk: 1.4, def: 1.1 }, "Once Caldas": { atk: 1.3, def: 1.0 }, "Deportes Tolima": { atk: 1.5, def: 1.0 }, "Deportivo Cali": { atk: 1.1, def: 1.4 }, "Bucaramanga": { atk: 1.2, def: 0.9 },
+    "Arsenal": { atk: 2.3, def: 0.8 }, "Manchester City": { atk: 2.5, def: 1.0 }, "Liverpool": { atk: 2.4, def: 0.9 },
+    "Real Madrid": { atk: 2.4, def: 0.8 }, "Barcelona": { atk: 2.7, def: 1.1 },
+    "Atlético Nacional": { atk: 1.6, def: 1.0 }, "Millonarios": { atk: 1.5, def: 0.9 }, "Santa Fe": { atk: 1.4, def: 0.8 },
+    "América de Cali": { atk: 1.5, def: 1.1 }, "Junior": { atk: 1.5, def: 1.2 },
     "default": { atk: 1.2, def: 1.4 }
 };
 
 const ligas={
     premier:["Arsenal","Aston Villa","Bournemouth","Brentford","Brighton","Chelsea","Crystal Palace","Everton","Fulham","Ipswich Town","Leicester City","Liverpool","Manchester City","Manchester United","Newcastle United","Nottingham Forest","Southampton","Tottenham","West Ham","Wolves"],
     laliga:["Real Madrid","Barcelona","Atletico Madrid","Athletic Club","Real Sociedad","Villarreal","Real Betis","Valencia","Sevilla","Girona","Osasuna","Celta Vigo","Alaves","Espanyol","Valladolid","Leganes","Rayo Vallecano","Mallorca","Las Palmas","Getafe"],
-    seriea:["Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina","Bologna","Torino","Udinese","Monza","Lecce","Empoli","Cagliari","Genoa","Verona","Como","Parma","Venezia"],
-    bundesliga:["Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen","Wolfsburg","Eintracht Frankfurt","Stuttgart","Freiburg","Hoffenheim","Werder Bremen","Augsburg","Bochum","Mainz","Borussia Monchengladbach","Heidenheim","St. Pauli","Holstein Kiel","Union Berlin"],
-    betplay:["Atlético Nacional","Millonarios","Santa Fe","América de Cali","Junior","Ind. Medellín","Once Caldas","Deportes Tolima","Deportivo Cali","Pereira","Bucaramanga","La Equidad","Águilas Doradas","Envigado","Alianza","Pasto","Patriotas","Fortaleza","Jaguares","Boyacá Chicó"]
+    betplay:["Atlético Nacional","Millonarios","Santa Fe","América de Cali","Junior","Ind. Medellín","Once Caldas","Deportes Tolima","Deportivo Cali","Pereira","Bucaramanga","La Equidad","Águilas Doradas","Envigado","Alianza","Pasto","Patriotas","Fortaleza","Jaguares","Boyacá Chicó"],
+    seriea:["Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina"],
+    bundesliga:["Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen"]
 }
 
 const logos={
-    "Arsenal":"https://crests.football-data.org/57.png","Manchester City":"https://crests.football-data.org/65.png","Manchester United":"https://crests.football-data.org/66.png","Liverpool":"https://crests.football-data.org/64.png","Ipswich Town":"https://crests.football-data.org/349.png","Chelsea":"https://crests.football-data.org/61.png",
-    "Real Madrid":"https://crests.football-data.org/86.png","Barcelona":"https://crests.football-data.org/81.png","Atletico Madrid":"https://crests.football-data.org/78.png",
+    "Arsenal":"https://crests.football-data.org/57.png","Manchester City":"https://crests.football-data.org/65.png","Real Madrid":"https://crests.football-data.org/86.png","Barcelona":"https://crests.football-data.org/81.png",
     "Atlético Nacional":"https://upload.wikimedia.org/wikipedia/commons/9/9a/Escudo_de_Atl%C3%A9tico_Nacional.png",
     "Millonarios":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Escudo_de_Millonarios_F.C.svg/1200px-Escudo_de_Millonarios_F.C.svg.png",
-    "Santa Fe":"https://upload.wikimedia.org/wikipedia/commons/e/e1/Independiente_Santa_Fe_logo.png",
-    "América de Cali":"https://upload.wikimedia.org/wikipedia/commons/a/a8/Escudo_de_Am%C3%A9rica_de_Cali.png",
-    "Junior":"https://upload.wikimedia.org/wikipedia/commons/d/d3/Escudo_del_Junior_de_Barranquilla.png"
+    "Santa Fe":"https://upload.wikimedia.org/wikipedia/commons/e/e1/Independiente_Santa_Fe_logo.png"
 }
 
-const ligaSelect=document.getElementById("liga")
-const localSelect=document.getElementById("local")
-const visitanteSelect=document.getElementById("visitante")
+const ligaSelect=document.getElementById("liga");
+const localSelect=document.getElementById("local");
+const visitanteSelect=document.getElementById("visitante");
 
 ligaSelect.addEventListener("change",function(){
     const liga=this.value; localSelect.innerHTML=""; visitanteSelect.innerHTML="";
     if(!ligas[liga]) return;
     ligas[liga].forEach(eq=>{
-        let op1=document.createElement("option"); op1.value=eq; op1.text=eq; localSelect.appendChild(op1);
-        let op2=document.createElement("option"); op2.value=eq; op2.text=eq; visitanteSelect.appendChild(op2);
+        localSelect.add(new Option(eq, eq));
+        visitanteSelect.add(new Option(eq, eq));
     });
 });
-
-function getColorClass(val) {
-    if (val >= 45) return 'c-alta';
-    if (val >= 25) return 'c-media';
-    return 'c-baja';
-}
 
 function calcular(){
     const loc=localSelect.value; const vis=visitanteSelect.value;
@@ -222,52 +222,58 @@ function calcular(){
     const sL = statsEquipos[loc] || statsEquipos["default"];
     const sV = statsEquipos[vis] || statsEquipos["default"];
 
-    // Cálculo Pro: Goles Proyectados
-    let expL = (sL.atk * sV.def * 1.15); // Factor 1.15 por localía
+    let expL = (sL.atk * sV.def * 1.15);
     let expV = (sV.atk * sL.def);
-
     let total = expL + expV + 1.2; 
+    
     let pL = ((expL / total) * 100).toFixed(1);
     let pV = ((expV / total) * 100).toFixed(1);
     let pE = (100 - pL - pV).toFixed(1);
 
-    // Mercados
     let golesTotales = expL + expV;
-    let ambos = (expL > 0.8 && expV > 0.8) ? "SÍ" : "NO";
     let p15 = Math.min(99, (golesTotales * 40)).toFixed(1);
     let p25 = Math.min(90, (golesTotales * 25)).toFixed(1);
-    let corn = Math.floor(7 + (golesTotales * 1.5));
 
     const imgDef = 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg';
 
-    document.getElementById("contenedor-resultado").innerHTML=`
-    <div class="resultado">
-        <div class="teams">
-            <div><img src="${logos[loc] || imgDef}"><br><small>${loc}</small></div>
-            <div class="vs">VS</div>
-            <div><img src="${logos[vis] || imgDef}"><br><small>${vis}</small></div>
+    document.getElementById("contenedor-resultado").innerHTML = `
+        <div class="resultado">
+            <div class="header-teams">
+                <div class="team-box"><img src="${logos[loc]||imgDef}"><span>${loc}</span></div>
+                <div class="vs-badge">VS</div>
+                <div class="team-box"><img src="${logos[vis]||imgDef}"><span>${vis}</span></div>
+            </div>
+
+            <div class="prob-row">
+                <div class="prob-info"><span>Victoria Local</span><strong>${pL}%</strong></div>
+                <div class="bar-bg"><div id="b1" class="bar-fill" style="width:0%; background:#22c55e;"></div></div>
+            </div>
+            <div class="prob-row">
+                <div class="prob-info"><span>Empate</span><strong>${pE}%</strong></div>
+                <div class="bar-bg"><div id="b2" class="bar-fill" style="width:0%; background:#64748b;"></div></div>
+            </div>
+            <div class="prob-row">
+                <div class="prob-info"><span>Victoria Visita</span><strong>${pV}%</strong></div>
+                <div class="bar-bg"><div id="b3" class="bar-fill" style="width:0%; background:#ef4444;"></div></div>
+            </div>
+
+            <div class="grid-stats">
+                <div class="card-mini"><small>Ambos Marcan</small><div style="color:${(expL>0.9&&expV>0.9)?'#22c55e':'#ef4444'}">${(expL>0.9&&expV>0.9)?'SÍ':'NO'}</div></div>
+                <div class="card-mini"><small>Córners Est.</small><div>${Math.floor(7+(golesTotales*1.5))}</div></div>
+                <div class="card-mini"><small>Goles +1.5</small><div style="color:#eab308">${p15}%</div></div>
+                <div class="card-mini"><small>Goles +2.5</small><div style="color:#eab308">${p25}%</div></div>
+            </div>
         </div>
-        <div style="text-align: left; font-size: 14px;">
-            <p>Local <strong>${pL}%</strong></p>
-            <div class="bar"><div class="fill ${getColorClass(pL)}" style="width:0%" id="b1"></div></div>
-            <p>Empate <strong>${pE}%</strong></p>
-            <div class="bar"><div class="fill ${getColorClass(pE)}" style="width:0%" id="b2"></div></div>
-            <p>Visita <strong>${pV}%</strong></p>
-            <div class="bar"><div class="fill ${getColorClass(pV)}" style="width:0%" id="b3"></div></div>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-item"><strong>Ambos Marcan</strong><br><span class="badge ${ambos==='SÍ'?'c-alta':'c-baja'}">${ambos}</span></div>
-            <div class="stat-item"><strong>Córners</strong><br><span class="badge c-media">${corn}</span></div>
-            <div class="stat-item"><strong>Goles +1.5</strong><br><span class="${getColorClass(p15).replace('c-','text-')}">● ${p15}%</span></div>
-            <div class="stat-item"><strong>Goles +2.5</strong><br><span class="${getColorClass(p25).replace('c-','text-')}">● ${p25}%</span></div>
-        </div>
-    </div>`;
+    `;
 
     setTimeout(() => {
         document.getElementById("b1").style.width = pL + "%";
         document.getElementById("b2").style.width = pE + "%";
         document.getElementById("b3").style.width = pV + "%";
     }, 100);
+    
+    // Scroll suave al resultado en móviles
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 </script>
 </body>

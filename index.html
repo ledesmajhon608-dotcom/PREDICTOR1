@@ -268,9 +268,28 @@ let probLocal=((fuerzaLocal/total)*100).toFixed(1)
 let probVisita=((fuerzaVisita/total)*100).toFixed(1)
 let empate=(100-probLocal-probVisita).toFixed(1)
 
-/* goles */
+/* probabilidades over */
 
-let goles=((fuerzaLocal+fuerzaVisita)/2+Math.random()).toFixed(2)
+let over15
+let over25
+
+if(goles >= 3){
+over15 = 85 + Math.random()*10
+over25 = 65 + Math.random()*15
+}
+
+else if(goles >= 2){
+over15 = 70 + Math.random()*15
+over25 = 45 + Math.random()*15
+}
+
+else{
+over15 = 40 + Math.random()*20
+over25 = 20 + Math.random()*15
+}
+
+over15 = over15.toFixed(0)
+over25 = over25.toFixed(0)
 
 /* otros */
 

@@ -5,7 +5,6 @@
 <title>Predictor PRO</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#0f172a;
@@ -43,6 +42,8 @@ padding:10px;
 border-radius:8px;
 border:none;
 margin-top:5px;
+background: #1e293b;
+color: white;
 }
 
 button{
@@ -74,8 +75,8 @@ margin-bottom:10px;
 }
 
 .teams img{
-width:40px;
-height:40px;
+width:50px;
+height:50px;
 object-fit:contain;
 }
 
@@ -90,8 +91,8 @@ margin-bottom:12px;
 .fill{
 background:#22c55e;
 height:100%;
+transition: width 0.5s ease;
 }
-
 </style>
 </head>
 
@@ -102,25 +103,17 @@ height:100%;
 <h3>Selecciona Liga</h3>
 
 <select id="liga">
-
 <option value="">-- Selecciona Liga --</option>
 <option value="premier">Premier League</option>
 <option value="laliga">La Liga</option>
 <option value="seriea">Serie A</option>
 <option value="bundesliga">Bundesliga</option>
 <option value="ligue1">Ligue 1</option>
-<option value="mls">MLS</option>
-<option value="brasil">Brasileirao</option>
-<option value="argentina">Liga Argentina</option>
-<option value="colombia">Liga Colombiana</option>
-<option value="saudi">Liga Saudí</option>
-
 </select>
 
 <br><br>
 
 <div class="equipos">
-
 <div class="equipo">
 <label>Equipo Local</label>
 <select id="local"></select>
@@ -132,7 +125,6 @@ height:100%;
 <label>Equipo Visitante</label>
 <select id="visitante"></select>
 </div>
-
 </div>
 
 <button onclick="calcular()">Calcular Predicción</button>
@@ -140,11 +132,7 @@ height:100%;
 <div class="resultado" id="resultado"></div>
 
 <script>
-
-/* LIGAS COMPLETAS */
-
 const ligas={
-
 premier:[
 "Arsenal","Aston Villa","Bournemouth","Brentford","Brighton",
 "Chelsea","Crystal Palace","Everton","Fulham","Ipswich Town",
@@ -152,132 +140,104 @@ premier:[
 "Newcastle United","Nottingham Forest","Southampton",
 "Tottenham","West Ham","Wolves"
 ],
-
 laliga:[
 "Real Madrid","Barcelona","Atletico Madrid","Athletic Club",
 "Real Sociedad","Villarreal","Real Betis","Valencia",
 "Sevilla","Getafe","Osasuna","Celta Vigo","Girona",
 "Las Palmas","Mallorca","Rayo Vallecano","Alaves",
-"Granada","Cadiz","Almeria"
+"Espanyol","Valladolid","Leganes"
 ],
-
 seriea:[
 "Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta",
-"Fiorentina","Bologna","Torino","Udinese","Sassuolo","Monza",
-"Lecce","Empoli","Cagliari","Frosinone","Genoa","Verona","Salernitana"
+"Fiorentina","Bologna","Torino","Udinese","Monza",
+"Lecce","Empoli","Cagliari","Genoa","Verona","Como","Parma","Venezia"
 ],
-
 bundesliga:[
 "Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen",
-"Wolfsburg","Eintracht Frankfurt","Stuttgart","Union Berlin",
-"Freiburg","Hoffenheim","Werder Bremen","Augsburg","Bochum",
-"Mainz","Koln","Borussia Monchengladbach","Heidenheim","Darmstadt"
+"Wolfsburg","Eintracht Frankfurt","Stuttgart","Freiburg",
+"Hoffenheim","Werder Bremen","Augsburg","Bochum",
+"Mainz","Borussia Monchengladbach","Heidenheim","St. Pauli","Holstein Kiel","Union Berlin"
 ],
-
 ligue1:[
 "PSG","Marseille","Monaco","Lyon","Lille","Nice","Lens","Rennes",
-"Nantes","Strasbourg","Toulouse","Montpellier","Reims",
-"Brest","Metz","Clermont","Lorient","Le Havre"
-],
-
-mls:[
-"Inter Miami","LA Galaxy","Los Angeles FC","Seattle Sounders",
-"Portland Timbers","Austin FC","Dallas","Houston Dynamo",
-"Sporting Kansas City","Minnesota United","Chicago Fire",
-"Columbus Crew","FC Cincinnati","Atlanta United","Orlando City",
-"New York City","New York Red Bulls","Philadelphia Union",
-"Toronto FC","CF Montreal"
-],
-
-brasil:[
-"Flamengo","Palmeiras","Corinthians","Sao Paulo","Fluminense",
-"Gremio","Internacional","Atletico Mineiro","Botafogo",
-"Bragantino","Bahia","Vasco da Gama","Fortaleza"
-],
-
-argentina:[
-"Boca Juniors","River Plate","Racing","Independiente",
-"San Lorenzo","Estudiantes","Lanus","Banfield",
-"Rosario Central","Newells","Talleres","Velez"
-],
-
-colombia:[
-"Atletico Nacional","Millonarios","America de Cali","Junior",
-"Santa Fe","Medellin","Deportivo Cali","Tolima",
-"Pereira","Once Caldas"
-],
-
-saudi:[
-"Al Nassr","Al Hilal","Al Ittihad","Al Ahli",
-"Al Shabab","Al Ettifaq","Al Taawoun"
+"Nantes","Strasbourg","Toulouse","Montpellier","Reims","Brest"
 ]
-
 }
 
-/* LOGOS PRINCIPALES */
-
 const logos={
-
-"Manchester City":"https://crests.football-data.org/65.png",
+// Premier League
 "Arsenal":"https://crests.football-data.org/57.png",
-"Liverpool":"https://crests.football-data.org/64.png",
+"Aston Villa":"https://crests.football-data.org/58.png",
+"Bournemouth":"https://crests.football-data.org/1044.png",
+"Brentford":"https://crests.football-data.org/402.png",
+"Brighton":"https://crests.football-data.org/397.png",
 "Chelsea":"https://crests.football-data.org/61.png",
+"Crystal Palace":"https://crests.football-data.org/354.png",
+"Everton":"https://crests.football-data.org/62.png",
+"Fulham":"https://crests.football-data.org/63.png",
+"Ipswich Town":"https://crests.football-data.org/349.png",
+"Leicester City":"https://crests.football-data.org/338.png",
+"Liverpool":"https://crests.football-data.org/64.png",
+"Manchester City":"https://crests.football-data.org/65.png",
 "Manchester United":"https://crests.football-data.org/66.png",
-
+"Newcastle United":"https://crests.football-data.org/67.png",
+"Nottingham Forest":"https://crests.football-data.org/651.png",
+"Southampton":"https://crests.football-data.org/340.png",
+"Tottenham":"https://crests.football-data.org/73.png",
+"West Ham":"https://crests.football-data.org/563.png",
+"Wolves":"https://crests.football-data.org/76.png",
+// La Liga
 "Real Madrid":"https://crests.football-data.org/86.png",
 "Barcelona":"https://crests.football-data.org/81.png",
 "Atletico Madrid":"https://crests.football-data.org/78.png",
-
+"Athletic Club":"https://crests.football-data.org/77.png",
+"Sevilla":"https://crests.football-data.org/94.png",
+"Valencia":"https://crests.football-data.org/95.png",
+"Villarreal":"https://crests.football-data.org/102.png",
+"Girona":"https://crests.football-data.org/298.png",
+"Real Betis":"https://crests.football-data.org/90.png",
+"Real Sociedad":"https://crests.football-data.org/92.png",
+// Serie A
 "Inter":"https://crests.football-data.org/108.png",
 "Milan":"https://crests.football-data.org/98.png",
 "Juventus":"https://crests.football-data.org/109.png",
-
+"Napoli":"https://crests.football-data.org/113.png",
+"Roma":"https://crests.football-data.org/100.png",
+"Lazio":"https://crests.football-data.org/110.png",
+"Atalanta":"https://crests.football-data.org/102.png",
+// Bundesliga
 "Bayern Munich":"https://crests.football-data.org/5.png",
 "Borussia Dortmund":"https://crests.football-data.org/4.png",
-
-"PSG":"https://crests.football-data.org/524.png"
-
+"Bayer Leverkusen":"https://crests.football-data.org/3.png",
+"RB Leipzig":"https://crests.football-data.org/28.png",
+// Ligue 1
+"PSG":"https://crests.football-data.org/524.png",
+"Marseille":"https://crests.football-data.org/516.png",
+"Monaco":"https://crests.football-data.org/548.png"
 }
-
-/* SELECTS */
 
 const ligaSelect=document.getElementById("liga")
 const localSelect=document.getElementById("local")
 const visitanteSelect=document.getElementById("visitante")
 
 ligaSelect.addEventListener("change",function(){
-
 const liga=this.value
-
 localSelect.innerHTML=""
 visitanteSelect.innerHTML=""
-
 if(!ligas[liga]) return
-
 ligas[liga].forEach(eq=>{
-
-let op1=document.createElement("option")
-op1.value=eq
-op1.text=eq
-localSelect.appendChild(op1)
-
-let op2=document.createElement("option")
-op2.value=eq
-op2.text=eq
-visitanteSelect.appendChild(op2)
-
+let op1=document.createElement("option"); op1.value=eq; op1.text=eq; localSelect.appendChild(op1);
+let op2=document.createElement("option"); op2.value=eq; op2.text=eq; visitanteSelect.appendChild(op2);
 })
-
 })
 
 function calcular(){
-
 const local=localSelect.value
 const visitante=visitanteSelect.value
+if(!local || !visitante) return;
 
 let golesLocal=Math.random()*2+0.5
 let golesVisita=Math.random()*2+0.5
-
 let empate=20+Math.random()*10
 let restante=100-empate
 
@@ -288,35 +248,22 @@ probLocal=probLocal.toFixed(1)
 probVisita=probVisita.toFixed(1)
 empate=empate.toFixed(1)
 
+const imgDefecto = 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg';
+
 document.getElementById("resultado").innerHTML=`
-
 <div class="teams">
-
-<div>
-<img src="${logos[local] || 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'}"><br>${local}
-</div>
-
+<div><img src="${logos[local] || imgDefecto}"><br>${local}</div>
 <strong>VS</strong>
-
-<div>
-<img src="${logos[visitante] || 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'}"><br>${visitante}
+<div><img src="${logos[visitante] || imgDefecto}"><br>${visitante}</div>
 </div>
-
-</div>
-
 <p>Local ${probLocal}%</p>
 <div class="bar"><div class="fill" style="width:${probLocal}%"></div></div>
-
 <p>Empate ${empate}%</p>
 <div class="bar"><div class="fill" style="width:${empate}%"></div></div>
-
 <p>Visita ${probVisita}%</p>
 <div class="bar"><div class="fill" style="width:${probVisita}%"></div></div>
-
 `
-
 }
-
 </script>
 
 </body>

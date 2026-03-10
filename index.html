@@ -161,43 +161,43 @@ margin:10px 0;
 const ligas={
 
 premier:[
-"Manchester City","Arsenal","Liverpool","Chelsea","Manchester United","Tottenham","Newcastle","Aston Villa"
+"Manchester City","Arsenal","Liverpool","Chelsea","Manchester United","Tottenham","Newcastle United","Aston Villa","West Ham","Everton","Brighton","Crystal Palace"
 ],
 
 laliga:[
-"Real Madrid","Barcelona","Atletico Madrid","Sevilla","Valencia","Real Sociedad","Betis","Villarreal"
+"Real Madrid","Barcelona","Atletico Madrid","Athletic Club","Real Sociedad","Villarreal","Real Betis","Valencia","Sevilla","Getafe","Girona"
 ],
 
 seriea:[
-"Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina"
+"Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina","Bologna","Torino"
 ],
 
 bundesliga:[
-"Bayern Munich","Borussia Dortmund","RB Leipzig","Leverkusen","Wolfsburg","Frankfurt"
+"Bayern Munich","Borussia Dortmund","RB Leipzig","Bayer Leverkusen","Eintracht Frankfurt","Stuttgart","Union Berlin"
 ],
 
 ligue1:[
-"PSG","Marseille","Monaco","Lyon","Lille","Nice"
+"PSG","Marseille","Monaco","Lyon","Lille","Nice","Lens"
 ],
 
 mls:[
-"Inter Miami","LA Galaxy","LAFC","Atlanta United","New York City","Seattle Sounders"
+"Inter Miami","LA Galaxy","Los Angeles FC","Seattle Sounders","Atlanta United","Orlando City","New York City"
 ],
 
 brasil:[
-"Flamengo","Palmeiras","Corinthians","Santos","Sao Paulo","Fluminense"
+"Flamengo","Palmeiras","Corinthians","Sao Paulo","Fluminense","Gremio","Internacional"
 ],
 
 argentina:[
-"Boca Juniors","River Plate","Racing","Independiente","San Lorenzo"
+"Boca Juniors","River Plate","Racing","Independiente","San Lorenzo","Rosario Central"
 ],
 
 colombia:[
-"Atletico Nacional","Millonarios","America de Cali","Junior","Santa Fe","Medellin"
+"Atletico Nacional","Millonarios","America de Cali","Junior","Santa Fe","Medellin","Deportivo Cali"
 ],
 
 saudi:[
-"Al Nassr","Al Hilal","Al Ittihad","Al Ahli","Al Ettifaq"
+"Al Nassr","Al Hilal","Al Ittihad","Al Ahli","Al Shabab"
 ]
 
 }
@@ -216,20 +216,15 @@ const logos={
 "Real Madrid":"https://crests.football-data.org/86.png",
 "Barcelona":"https://crests.football-data.org/81.png",
 "Atletico Madrid":"https://crests.football-data.org/78.png",
-"Sevilla":"https://crests.football-data.org/559.png",
-"Valencia":"https://crests.football-data.org/95.png",
 
 "Inter":"https://crests.football-data.org/108.png",
 "Milan":"https://crests.football-data.org/98.png",
 "Juventus":"https://crests.football-data.org/109.png",
-"Napoli":"https://crests.football-data.org/113.png",
-"Roma":"https://crests.football-data.org/100.png",
 
 "Bayern Munich":"https://crests.football-data.org/5.png",
 "Borussia Dortmund":"https://crests.football-data.org/4.png",
 
 "PSG":"https://crests.football-data.org/524.png",
-"Marseille":"https://crests.football-data.org/516.png",
 
 "Inter Miami":"https://upload.wikimedia.org/wikipedia/en/5/5c/Inter_Miami_CF_logo.svg",
 
@@ -245,6 +240,30 @@ const logos={
 "Al Nassr":"https://upload.wikimedia.org/wikipedia/en/5/5c/Al_Nassr_FC_logo.png",
 "Al Hilal":"https://upload.wikimedia.org/wikipedia/en/a/a2/Al-Hilal_SFC_logo.png"
 
+}
+
+/* FUERZA EQUIPOS */
+
+const fuerzaEquipos={
+"Manchester City":95,
+"Real Madrid":95,
+"Barcelona":92,
+"Bayern Munich":94,
+"Liverpool":93,
+"Inter":91,
+"PSG":92,
+"Juventus":89,
+"Arsenal":90,
+"Atletico Madrid":90,
+"Milan":89,
+"Napoli":88,
+"Chelsea":88,
+"Flamengo":88,
+"Palmeiras":90,
+"River Plate":87,
+"Boca Juniors":86,
+"Atletico Nacional":84,
+"Millonarios":83
 }
 
 /* SELECTS */
@@ -297,13 +316,15 @@ alert("Equipos deben ser diferentes")
 return
 }
 
-let golesLocal=Math.random()*2+0.5
-let golesVisita=Math.random()*2+0.5
+let fuerzaLocal=fuerzaEquipos[local] || 75
+let fuerzaVisita=fuerzaEquipos[visitante] || 75
+
+let golesLocal=(Math.random()*1.5)+(fuerzaLocal/100)
+let golesVisita=(Math.random()*1.5)+(fuerzaVisita/100)
 
 let golesTotal=golesLocal+golesVisita
 
 let empate=20+Math.random()*10
-
 let restante=100-empate
 
 let probLocal=(golesLocal/(golesLocal+golesVisita))*restante
@@ -319,7 +340,6 @@ let over15=Math.min(95,(golesTotal/3)*100).toFixed(0)
 let over25=Math.min(90,(golesTotal/4)*100).toFixed(0)
 
 let ambos=(golesLocal*golesVisita*20).toFixed(0)
-
 let corners=(8+Math.random()*4).toFixed(1)
 
 /* RESULTADO */
@@ -370,4 +390,3 @@ document.getElementById("resultado").innerHTML=`
 
 </body>
 </html>
-```

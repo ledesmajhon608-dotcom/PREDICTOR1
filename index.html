@@ -1,91 +1,117 @@
-const API_KEY = 'ea232d851cb4197391464e2c61df516b'; 
-let statsDinamicas = {};
-const ligasIDs = { premier: 39, laliga: 140, betplay: 71, seriea: 135, bundesliga: 78, ligue1: 61, mls: 253 };
-const ligaSelect = document.getElementById("liga");
-const localSelect = document.getElementById("local");
-const visitanteSelect = document.getElementById("visitante");
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor PRO - Auto Update</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #22c55e; --text-main: #f8fafc; --text-dim: #94a3b8; --border: #334155; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text-main); padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: var(--accent); margin-bottom: 5px; }
+        .subtitle { color: var(--text-dim); font-size: 12px; margin-bottom: 20px; }
+        .selector-container { background: var(--card); padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
+        label { display: block; font-size: 10px; color: var(--accent); margin: 10px 0 5px; font-weight: bold; }
+        select { width: 100%; padding: 12px; border-radius: 8px; background: #0f172a; color: white; border: 1px solid var(--border); margin-bottom: 10px; }
+        button { width: 100%; max-width: 400px; padding: 15px; border: none; border-radius: 10px; background: var(--accent); color: white; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .resultado { margin-top: 20px; background: var(--card); border-radius: 15px; width: 100%; max-width: 400px; padding: 20px; border: 1px solid var(--border); }
+        .prob-row { margin-bottom: 10px; }
+        .bar-bg { background: #0f172a; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 5px; }
+        .bar-fill { height: 100%; transition: width 1s; }
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .card-mini { background: #0f172a; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; }
+    </style>
+</head>
+<body>
 
-async function cargarDatosLiga(ligaId) {
-    const url = `https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`;
-    try {
-        const response = await fetch(url, {
-            method: "GET",
-            headers: { "x-rapidapi-host": "v3.football.api-sports.io", "x-rapidapi-key": API_KEY }
-        });
-        const data = await response.json();
-        if (!data.response || data.response.length === 0) return;
-        const standings = data.response[0].league.standings[0];
-        localSelect.innerHTML = "";
-        visitanteSelect.innerHTML = "";
-        statsDinamicas = {};
-        standings.forEach(item => {
-            const team = item.team.name;
-            const pj = item.all.played || 1; 
-            statsDinamicas[team] = {
-                atk: (item.all.goals.for / pj).toFixed(2),
-                def: (item.all.goals.against / pj).toFixed(2)
-            };
-            localSelect.add(new Option(team, team));
-            visitanteSelect.add(new Option(team, team));
-        });
-    } catch (e) { console.error("Error API:", e); }
-}
+    <h1>⚽ Predictor PRO</h1>
+    <div class="subtitle">DATOS EN TIEMPO REAL</div>
 
-ligaSelect.addEventListener("change", function() {
-    if (this.value) cargarDatosLiga(ligasIDs[this.value]);
-});
+    <div class="selector-container">
+        <label>Liga</label>
+        <select id="liga">
+            <option value="">Seleccione Liga</option>
+            <option value="premier">Premier League</option>
+            <option value="laliga">La Liga</option>
+            <option value="betplay">Liga BetPlay (COL)</option>
+            <option value="seriea">Serie A</option>
+            <option value="bundesliga">Bundesliga</option>
+        </select>
 
-function calcular() {
-    const loc = localSelect.value; 
-    const vis = visitanteSelect.value;
-    if (!loc || !vis || loc === vis) return;
-    const sL = statsDinamicas[loc];
-    const sV = statsDinamicas[vis];
-    let expL = (sL.atk * sV.def * 1.15);
-    let expV = (sV.atk * sL.def);
-    let total = expL + expV + 1.2; 
-    let pL = ((expL / total) * 100).toFixed(1);
-    let pV = ((expV / total) * 100).toFixed(1);
-    let pE = (100 - pL - pV).toFixed(1);
-    let gT = parseFloat(expL) + parseFloat(expV);
-    let p25 = Math.min(90, (gT * 25)).toFixed(1);
-    renderizar(loc, vis, pL, pE, pV, gT, p25);
-}
+        <label>Local</label>
+        <select id="local"><option>Esperando liga...</option></select>
+        
+        <label>Visitante</label>
+        <select id="visitante"><option>Esperando liga...</option></select>
+    </div>
 
-function renderizar(loc, vis, pL, pE, pV, gT, p25) {
-    document.getElementById("contenedor-resultado").innerHTML = `
-        <div class="resultado">
-            <div class="header-text">
-                <div class="team-display"><span class="team-label">LOCAL</span><span class="team-name">${loc}</span></div>
-                <div class="vs-circle">VS</div>
-                <div class="team-display"><span class="team-label">VISITA</span><span class="team-name">${vis}</span></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Local</span><strong>${pL}%</strong></div>
-                <div class="bar-bg"><div id="b1" class="bar-fill" style="width:0%; background:#22c55e;"></div></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Empate</span><strong>${pE}%</strong></div>
-                <div class="bar-bg"><div id="b2" class="bar-fill" style="width:0%; background:#64748b;"></div></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Visita</span><strong>${pV}%</strong></div>
-                <div class="bar-bg"><div id="b3" class="bar-fill" style="width:0%; background:#ef4444;"></div></div>
-            </div>
-            <div class="grid-stats">
-                <div class="card-mini"><small>Ambos Marcan</small><div>${(pL>30&&pV>30)?'SÍ':'NO'}</div></div>
-                <div class="card-mini"><small>Goles +2.5</small><div>${p25}%</div></div>
-                <div class="card-mini"><small>Córners Est.</small><div>${Math.floor(7+(gT*1.5))}</div></div>
-                <div class="card-mini"><small>Goles +1.5</small><div>${Math.min(99, (gT*40)).toFixed(1)}%</div></div>
-            </div>
-            <div class="tip-box">
-                <div class="tip-title">RECOMENDACIÓN</div>
-                <div class="tip-text">${pL > 45 ? 'Gana ' + loc : pV > 45 ? 'Gana ' + vis : 'Doble Oportunidad'}</div>
-            </div>
-        </div>`;
-    setTimeout(() => {
-        document.getElementById("b1").style.width = pL + "%";
-        document.getElementById("b2").style.width = pE + "%";
-        document.getElementById("b3").style.width = pV + "%";
-    }, 100);
-}
+    <button onclick="calcular()">CALCULAR PREDICCIÓN</button>
+
+    <div id="contenedor-resultado" style="width: 100%;"></div>
+
+    <script>
+        const API_KEY = 'ea232d851cb4197391464e2c61df516b';
+        let statsDinamicas = {};
+        const ligasIDs = { premier: 39, laliga: 140, betplay: 71, seriea: 135, bundesliga: 78 };
+
+        async function cargarDatosLiga(ligaId) {
+            const url = `https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`;
+            try {
+                const res = await fetch(url, {
+                    method: "GET",
+                    headers: { "x-rapidapi-host": "v3.football.api-sports.io", "x-rapidapi-key": API_KEY }
+                });
+                const data = await res.json();
+                const standings = data.response[0].league.standings[0];
+                
+                document.getElementById("local").innerHTML = "";
+                document.getElementById("visitante").innerHTML = "";
+                statsDinamicas = {};
+
+                standings.forEach(item => {
+                    const name = item.team.name;
+                    const pj = item.all.played || 1;
+                    statsDinamicas[name] = {
+                        atk: (item.all.goals.for / pj).toFixed(2),
+                        def: (item.all.goals.against / pj).toFixed(2)
+                    };
+                    document.getElementById("local").add(new Option(name, name));
+                    document.getElementById("visitante").add(new Option(name, name));
+                });
+                alert("Datos de la liga actualizados");
+            } catch (e) { alert("Error al cargar datos"); }
+        }
+
+        document.getElementById("liga").onchange = function() {
+            if(this.value) cargarDatosLiga(ligasIDs[this.value]);
+        };
+
+        function calcular() {
+            const loc = document.getElementById("local").value;
+            const vis = document.getElementById("visitante").value;
+            if(!statsDinamicas[loc]) return;
+
+            const sL = statsDinamicas[loc];
+            const sV = statsDinamicas[vis];
+            const expL = (sL.atk * sV.def * 1.15);
+            const expV = (sV.atk * sL.def);
+            const total = expL + expV + 1.2;
+
+            const pL = ((expL / total) * 100).toFixed(1);
+            const pV = ((expV / total) * 100).toFixed(1);
+            const pE = (100 - pL - pV).toFixed(1);
+
+            document.getElementById("contenedor-resultado").innerHTML = `
+                <div class="resultado">
+                    <div style="text-align:center; font-weight:bold; margin-bottom:15px;">${loc} VS ${vis}</div>
+                    <div class="prob-row">Victoria Local: ${pL}% <div class="bar-bg"><div class="bar-fill" style="width:${pL}%; background:#22c55e;"></div></div></div>
+                    <div class="prob-row">Empate: ${pE}% <div class="bar-bg"><div class="bar-fill" style="width:${pE}%; background:#64748b;"></div></div></div>
+                    <div class="prob-row">Victoria Visita: ${pV}% <div class="bar-bg"><div class="bar-fill" style="width:${pV}%; background:#ef4444;"></div></div></div>
+                    <div class="grid-stats">
+                        <div class="card-mini">Goles +1.5<br><strong>${Math.min(99, (expL+expV)*40).toFixed(0)}%</strong></div>
+                        <div class="card-mini">Córners Est.<br><strong>${Math.floor(8 + (expL+expV))}</strong></div>
+                    </div>
+                </div>`;
+        }
+    </script>
+</body>
+</html>

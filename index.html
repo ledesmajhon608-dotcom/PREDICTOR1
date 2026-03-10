@@ -1,4 +1,4 @@
-const API_KEY = 'ea232d851cb4197391464e2c61df516b'; // <--- PEGA AQUÍ TU LLAVE
+const API_KEY = 'ea232d851cb4197391464e2c61df516b'; 
 let statsDinamicas = {};
 
 const ligasIDs = {
@@ -15,9 +15,8 @@ const ligaSelect = document.getElementById("liga");
 const localSelect = document.getElementById("local");
 const visitanteSelect = document.getElementById("visitante");
 
-// 1. FUNCIÓN PARA OBTENER DATOS REALES
 async function cargarDatosLiga(ligaId) {
-    const url = `https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`; // Temporada actual
+    const url = `https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`;
     
     try {
         const response = await fetch(url, {
@@ -29,18 +28,22 @@ async function cargarDatosLiga(ligaId) {
         });
 
         const data = await response.json();
+        
+        if (!data.response || data.response.length === 0) {
+            alert("No se encontraron datos para esta liga.");
+            return;
+        }
+
         const standings = data.response[0].league.standings[0];
 
-        // Limpiar selects y stats
         localSelect.innerHTML = "";
         visitanteSelect.innerHTML = "";
         statsDinamicas = {};
 
         standings.forEach(item => {
             const team = item.team.name;
-            const pj = item.all.played;
+            const pj = item.all.played || 1; 
             
-            // Calculamos stats en base a rendimiento real
             statsDinamicas[team] = {
                 atk: (item.all.goals.for / pj).toFixed(2),
                 def: (item.all.goals.against / pj).toFixed(2)
@@ -50,14 +53,14 @@ async function cargarDatosLiga(ligaId) {
             visitanteSelect.add(new Option(team, team));
         });
 
-        console.log("Datos actualizados para:", data.response[0].league.name);
+        console.log("Datos cargados correctamente");
 
     } catch (error) {
-        alert("Error al conectar con la API. Verifica tu API Key.");
+        console.error(error);
+        alert("Error de conexión. Revisa tu consola.");
     }
 }
 
-// Escuchar cuando el usuario cambia de liga
 ligaSelect.addEventListener("change", function() {
     if (this.value) {
         cargarDatosLiga(ligasIDs[this.value]);
@@ -69,7 +72,6 @@ function calcular() {
     const vis = visitanteSelect.value;
     if (!loc || !vis || loc === vis) return;
 
-    // Usamos los datos recién traídos de la API
     const sL = statsDinamicas[loc];
     const sV = statsDinamicas[vis];
 
@@ -84,7 +86,6 @@ function calcular() {
     let gTotales = parseFloat(expL) + parseFloat(expV);
     let p25 = Math.min(90, (gTotales * 25)).toFixed(1);
 
-    // (El resto de la función de renderizado HTML es igual a la que ya tenías)
     renderizarResultado(loc, vis, pL, pE, pV, gTotales, p25);
 }
 
@@ -125,7 +126,7 @@ function renderizarResultado(loc, vis, pL, pE, pV, gTotales, p25) {
 
             <div class="tip-box">
                 <div class="tip-title">RECOMENDACIÓN</div>
-                <div class="tip-text">${pL > 45 ? 'Gana ' + loc : pV > 45 ? 'Gana ' + vis : 'Doble Oportunidad / Empate'}</div>
+                <div class="tip-text">${pL > 45 ? 'Gana ' + loc : pV > 45 ? 'Gana ' + vis : 'Doble Oportunidad'}</div>
             </div>
         </div>
     `;

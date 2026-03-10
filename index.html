@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Predictor de Fútbol PRO</title>
+<title>Predictor de Fútbol</title>
 
 <style>
 
@@ -24,7 +24,7 @@ color:#22c55e;
 display:flex;
 justify-content:center;
 align-items:center;
-gap:30px;
+gap:25px;
 flex-wrap:wrap;
 }
 
@@ -62,7 +62,7 @@ font-size:16px;
 cursor:pointer;
 }
 
-/* card resultado */
+/* resultado */
 
 .resultado{
 margin-top:30px;
@@ -72,19 +72,6 @@ border-radius:12px;
 width:340px;
 margin-left:auto;
 margin-right:auto;
-}
-
-/* logos */
-
-.teams{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-}
-
-.teams img{
-width:40px;
 }
 
 /* barras */
@@ -128,9 +115,11 @@ margin:10px 0;
 <select id="liga">
 
 <option value="">-- Selecciona Liga --</option>
+
 <option value="premier">Premier League</option>
 <option value="laliga">La Liga</option>
 <option value="seriea">Serie A</option>
+<option value="bundesliga">Bundesliga</option>
 
 </select>
 
@@ -139,15 +128,19 @@ margin:10px 0;
 <div class="equipos">
 
 <div class="equipo">
+
 <label>Equipo Local</label>
 <select id="local"></select>
+
 </div>
 
 <div class="vs">VS</div>
 
 <div class="equipo">
+
 <label>Equipo Visitante</label>
 <select id="visitante"></select>
+
 </div>
 
 </div>
@@ -158,7 +151,7 @@ margin:10px 0;
 
 <script>
 
-/* equipos */
+/* ligas */
 
 const ligas={
 
@@ -167,7 +160,8 @@ premier:[
 "Arsenal",
 "Liverpool",
 "Chelsea",
-"Manchester United"
+"Manchester United",
+"Tottenham"
 ],
 
 laliga:[
@@ -184,33 +178,16 @@ seriea:[
 "Juventus",
 "Napoli",
 "Roma"
+],
+
+bundesliga:[
+"Bayern Munich",
+"Borussia Dortmund",
+"Leipzig",
+"Leverkusen"
 ]
 
-};
-
-/* logos */
-
-const logos={
-
-"Manchester City":"https://crests.football-data.org/65.png",
-"Arsenal":"https://crests.football-data.org/57.png",
-"Liverpool":"https://crests.football-data.org/64.png",
-"Chelsea":"https://crests.football-data.org/61.png",
-"Manchester United":"https://crests.football-data.org/66.png",
-
-"Real Madrid":"https://crests.football-data.org/86.png",
-"Barcelona":"https://crests.football-data.org/81.png",
-"Atletico Madrid":"https://crests.football-data.org/78.png",
-"Sevilla":"https://crests.football-data.org/559.png",
-"Valencia":"https://crests.football-data.org/95.png",
-
-"Inter":"https://crests.football-data.org/108.png",
-"Milan":"https://crests.football-data.org/98.png",
-"Juventus":"https://crests.football-data.org/109.png",
-"Napoli":"https://crests.football-data.org/113.png",
-"Roma":"https://crests.football-data.org/100.png"
-
-};
+}
 
 /* selects */
 
@@ -232,13 +209,13 @@ if(!ligas[liga]) return
 ligas[liga].forEach(eq=>{
 
 let op1=document.createElement("option")
-op1.text=eq
 op1.value=eq
+op1.text=eq
 localSelect.appendChild(op1)
 
 let op2=document.createElement("option")
-op2.text=eq
 op2.value=eq
+op2.text=eq
 visitanteSelect.appendChild(op2)
 
 })
@@ -252,12 +229,17 @@ function calcular(){
 const local=localSelect.value
 const visitante=visitanteSelect.value
 
-if(local==visitante){
-alert("Selecciona equipos diferentes")
+if(!local || !visitante){
+alert("Selecciona equipos")
 return
 }
 
-/* fuerza simple */
+if(local==visitante){
+alert("Equipos deben ser diferentes")
+return
+}
+
+/* fuerza equipos */
 
 let fuerzaLocal=Math.random()*1.5+1
 let fuerzaVisita=Math.random()*1.5+1
@@ -268,51 +250,52 @@ let probLocal=((fuerzaLocal/total)*100).toFixed(1)
 let probVisita=((fuerzaVisita/total)*100).toFixed(1)
 let empate=(100-probLocal-probVisita).toFixed(1)
 
+/* goles esperados */
+
+let goles=((fuerzaLocal+fuerzaVisita)/2+Math.random()).toFixed(2)
+
 /* probabilidades over */
 
 let over15
 let over25
 
-if(goles >= 3){
-over15 = 85 + Math.random()*10
-over25 = 65 + Math.random()*15
+if(goles>=3){
+
+over15=85+Math.random()*10
+over25=65+Math.random()*15
+
 }
 
-else if(goles >= 2){
-over15 = 70 + Math.random()*15
-over25 = 45 + Math.random()*15
+else if(goles>=2){
+
+over15=70+Math.random()*15
+over25=45+Math.random()*15
+
 }
 
 else{
-over15 = 40 + Math.random()*20
-over25 = 20 + Math.random()*15
+
+over15=40+Math.random()*20
+over25=20+Math.random()*15
+
 }
 
-over15 = over15.toFixed(0)
-over25 = over25.toFixed(0)
+over15=over15.toFixed(0)
+over25=over25.toFixed(0)
 
-/* otros */
+/* ambos marcan */
 
 let ambos=(50+Math.random()*40).toFixed(0)
+
+/* corners */
+
 let corners=(7+Math.random()*5).toFixed(1)
 
 /* resultado */
 
 document.getElementById("resultado").innerHTML=`
 
-<div class="teams">
-
-<div>
-<img src="${logos[local]}"><br>${local}
-</div>
-
-<strong>VS</strong>
-
-<div>
-<img src="${logos[visitante]}"><br>${visitante}
-</div>
-
-</div>
+<h2>${local} vs ${visitante}</h2>
 
 <p>Local ${probLocal}%</p>
 <div class="bar"><div class="fill" style="width:${probLocal}%"></div></div>
@@ -326,7 +309,14 @@ document.getElementById("resultado").innerHTML=`
 <hr>
 
 <p>⚽ Goles esperados: <b>${goles}</b></p>
+
+<p>📈 Over 1.5 goles: <b>${over15}%</b></p>
+<p>📈 Over 2.5 goles: <b>${over25}%</b></p>
+
+<hr>
+
 <p>🔥 Ambos marcan: <b>${ambos}%</b></p>
+
 <p>🚩 Corners estimados: <b>${corners}</b></p>
 
 `

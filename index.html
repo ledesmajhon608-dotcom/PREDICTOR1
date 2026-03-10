@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,8 +18,6 @@ padding:20px;
 h1{
 color:#22c55e;
 }
-
-/* contenedor equipos */
 
 .equipos{
 display:flex;
@@ -40,16 +39,12 @@ font-weight:bold;
 margin-top:25px;
 }
 
-/* selects */
-
 select{
 padding:10px;
 border-radius:8px;
 border:none;
 margin-top:5px;
 }
-
-/* boton */
 
 button{
 margin-top:20px;
@@ -62,8 +57,6 @@ font-size:16px;
 cursor:pointer;
 }
 
-/* resultado */
-
 .resultado{
 margin-top:30px;
 background:#1e293b;
@@ -73,8 +66,6 @@ width:360px;
 margin-left:auto;
 margin-right:auto;
 }
-
-/* logos */
 
 .teams{
 display:flex;
@@ -86,8 +77,6 @@ margin-bottom:10px;
 .teams img{
 width:40px;
 }
-
-/* barras */
 
 .bar{
 background:#334155;
@@ -102,7 +91,10 @@ background:#22c55e;
 height:100%;
 }
 
-/* movil */
+hr{
+border:1px solid #334155;
+margin:15px 0;
+}
 
 @media(max-width:600px){
 
@@ -128,10 +120,16 @@ margin:10px 0;
 <select id="liga">
 
 <option value="">-- Selecciona Liga --</option>
-
 <option value="premier">Premier League</option>
 <option value="laliga">La Liga</option>
 <option value="seriea">Serie A</option>
+<option value="bundesliga">Bundesliga</option>
+<option value="ligue1">Ligue 1</option>
+<option value="mls">MLS</option>
+<option value="brasil">Brasileirao</option>
+<option value="argentina">Liga Argentina</option>
+<option value="colombia">Liga Colombiana</option>
+<option value="saudi">Liga Saudí</option>
 
 </select>
 
@@ -159,37 +157,53 @@ margin:10px 0;
 
 <script>
 
-/* ligas */
+/* LIGAS */
 
 const ligas={
 
 premier:[
-"Manchester City",
-"Arsenal",
-"Liverpool",
-"Chelsea",
-"Manchester United"
+"Manchester City","Arsenal","Liverpool","Chelsea","Manchester United","Tottenham","Newcastle","Aston Villa"
 ],
 
 laliga:[
-"Real Madrid",
-"Barcelona",
-"Atletico Madrid",
-"Sevilla",
-"Valencia"
+"Real Madrid","Barcelona","Atletico Madrid","Sevilla","Valencia","Real Sociedad","Betis","Villarreal"
 ],
 
 seriea:[
-"Inter",
-"Milan",
-"Juventus",
-"Napoli",
-"Roma"
+"Inter","Milan","Juventus","Napoli","Roma","Lazio","Atalanta","Fiorentina"
+],
+
+bundesliga:[
+"Bayern Munich","Borussia Dortmund","RB Leipzig","Leverkusen","Wolfsburg","Frankfurt"
+],
+
+ligue1:[
+"PSG","Marseille","Monaco","Lyon","Lille","Nice"
+],
+
+mls:[
+"Inter Miami","LA Galaxy","LAFC","Atlanta United","New York City","Seattle Sounders"
+],
+
+brasil:[
+"Flamengo","Palmeiras","Corinthians","Santos","Sao Paulo","Fluminense"
+],
+
+argentina:[
+"Boca Juniors","River Plate","Racing","Independiente","San Lorenzo"
+],
+
+colombia:[
+"Atletico Nacional","Millonarios","America de Cali","Junior","Santa Fe","Medellin"
+],
+
+saudi:[
+"Al Nassr","Al Hilal","Al Ittihad","Al Ahli","Al Ettifaq"
 ]
 
 }
 
-/* logos */
+/* LOGOS */
 
 const logos={
 
@@ -198,6 +212,7 @@ const logos={
 "Liverpool":"https://crests.football-data.org/64.png",
 "Chelsea":"https://crests.football-data.org/61.png",
 "Manchester United":"https://crests.football-data.org/66.png",
+"Tottenham":"https://crests.football-data.org/73.png",
 
 "Real Madrid":"https://crests.football-data.org/86.png",
 "Barcelona":"https://crests.football-data.org/81.png",
@@ -209,11 +224,31 @@ const logos={
 "Milan":"https://crests.football-data.org/98.png",
 "Juventus":"https://crests.football-data.org/109.png",
 "Napoli":"https://crests.football-data.org/113.png",
-"Roma":"https://crests.football-data.org/100.png"
+"Roma":"https://crests.football-data.org/100.png",
+
+"Bayern Munich":"https://crests.football-data.org/5.png",
+"Borussia Dortmund":"https://crests.football-data.org/4.png",
+
+"PSG":"https://crests.football-data.org/524.png",
+"Marseille":"https://crests.football-data.org/516.png",
+
+"Inter Miami":"https://upload.wikimedia.org/wikipedia/en/5/5c/Inter_Miami_CF_logo.svg",
+
+"Flamengo":"https://upload.wikimedia.org/wikipedia/commons/9/93/Flamengo-RJ_%28BRA%29.png",
+"Palmeiras":"https://upload.wikimedia.org/wikipedia/en/1/10/Palmeiras_logo.svg",
+
+"Boca Juniors":"https://upload.wikimedia.org/wikipedia/commons/4/41/CABJ70.png",
+"River Plate":"https://upload.wikimedia.org/wikipedia/en/f/f1/Club_Atl%C3%A9tico_River_Plate_logo.svg",
+
+"Atletico Nacional":"https://upload.wikimedia.org/wikipedia/en/7/7b/Atletico_Nacional.png",
+"Millonarios":"https://upload.wikimedia.org/wikipedia/en/3/3a/Millonarios_FC_logo.png",
+
+"Al Nassr":"https://upload.wikimedia.org/wikipedia/en/5/5c/Al_Nassr_FC_logo.png",
+"Al Hilal":"https://upload.wikimedia.org/wikipedia/en/a/a2/Al-Hilal_SFC_logo.png"
 
 }
 
-/* selects */
+/* SELECTS */
 
 const ligaSelect=document.getElementById("liga")
 const localSelect=document.getElementById("local")
@@ -246,7 +281,7 @@ visitanteSelect.appendChild(op2)
 
 }
 
-/* calculo */
+/* CALCULO */
 
 function calcular(){
 
@@ -263,26 +298,17 @@ alert("Equipos deben ser diferentes")
 return
 }
 
-/* ataque defensa */
-
-let ataqueLocal=Math.random()*1.6+0.8
-let defensaLocal=Math.random()*1.6+0.8
-
-let ataqueVisita=Math.random()*1.6+0.8
-let defensaVisita=Math.random()*1.6+0.8
-
-/* goles esperados */
-
-let golesLocal=ataqueLocal/defensaVisita*1.4
-let golesVisita=ataqueVisita/defensaLocal*1.2
+let golesLocal=Math.random()*2+0.5
+let golesVisita=Math.random()*2+0.5
 
 let golesTotal=golesLocal+golesVisita
 
-/* probabilidades */
+let empate=20+Math.random()*10
 
-let probLocal=(golesLocal/(golesLocal+golesVisita))*100
-let probVisita=(golesVisita/(golesLocal+golesVisita))*100
-let empate=100-probLocal-probVisita
+let restante=100-empate
+
+let probLocal=(golesLocal/(golesLocal+golesVisita))*restante
+let probVisita=(golesVisita/(golesLocal+golesVisita))*restante
 
 probLocal=probLocal.toFixed(1)
 probVisita=probVisita.toFixed(1)
@@ -290,33 +316,27 @@ empate=empate.toFixed(1)
 
 golesTotal=golesTotal.toFixed(2)
 
-/* overs */
-
 let over15=Math.min(95,(golesTotal/3)*100).toFixed(0)
 let over25=Math.min(90,(golesTotal/4)*100).toFixed(0)
 
-/* ambos */
-
 let ambos=(golesLocal*golesVisita*20).toFixed(0)
-
-/* corners */
 
 let corners=(8+Math.random()*4).toFixed(1)
 
-/* resultado */
+/* RESULTADO */
 
 document.getElementById("resultado").innerHTML=`
 
 <div class="teams">
 
 <div>
-<img src="${logos[local]}"><br>${local}
+<img src="${logos[local] || 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'}"><br>${local}
 </div>
 
 <strong>VS</strong>
 
 <div>
-<img src="${logos[visitante]}"><br>${visitante}
+<img src="${logos[visitante] || 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Soccer_ball.svg'}"><br>${visitante}
 </div>
 
 </div>

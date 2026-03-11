@@ -298,18 +298,33 @@ const pL=((expL/total)*100).toFixed(1);
 const pV=((expV/total)*100).toFixed(1);
 const pE=(100-pL-pV).toFixed(1);
 
-const gT=(expL+expV);
+const gT = expL + expV;
 
-const ambosProb=Math.min(85,Math.max(25,(expL*expV)*30));
-const ambosSi=ambosProb.toFixed(0);
-const ambosNo=(100-ambosSi).toFixed(0);
+/* ---------------- GOLES ---------------- */
 
-const over25=Math.min(70,Math.max(18,gT*18));
-const over15=Math.min(85,Math.max(45,gT*24));
+const over15 = Math.min(88, Math.max(52, 45 + (gT * 12)));
+const over25 = Math.min(68, Math.max(22, 25 + (gT * 14)));
 
-let cornersLinea=gT>2.4?8.5:7.5;
-const probCorners=Math.min(75,Math.max(40,gT*20));
+/* ---------------- AMBOS MARCAN ---------------- */
 
+const ambosProb =
+Math.min(78,
+Math.max(28,
+(expL * 0.55 + expV * 0.55) * 35
+));
+
+const ambosSi = ambosProb.toFixed(0);
+const ambosNo = (100 - ambosSi).toFixed(0);
+
+/* ---------------- CORNERS ---------------- */
+
+let cornersLinea;
+
+if(gT > 2.7) cornersLinea = 8.5;
+else if(gT > 2.1) cornersLinea = 8;
+else cornersLinea = 7.5;
+
+const probCorners = Math.min(72, Math.max(42, 48 + (gT * 8)));
 let rec="Partido parejo";
 
 if(pL>48) rec="Gana "+l;

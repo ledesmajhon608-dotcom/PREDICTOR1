@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predictor PRO3.0</title>
+<title>Predictor PRO Ultra</title>
 
 <style>
 
@@ -27,7 +27,12 @@ align-items:center;
 }
 
 h1{color:var(--accent);margin-bottom:5px;}
-.subtitle{color:var(--dim);font-size:11px;margin-bottom:20px;}
+
+.subtitle{
+color:var(--dim);
+font-size:11px;
+margin-bottom:20px;
+}
 
 .selector{
 background:var(--card);
@@ -91,12 +96,16 @@ border-bottom:1px solid var(--border);
 padding-bottom:10px;
 }
 
-.team{font-weight:bold;font-size:14px;}
+.team{
+font-weight:bold;
+font-size:14px;
+}
 
 .vs{
 background:var(--bg);
 border:1px solid var(--border);
-width:30px;height:30px;
+width:30px;
+height:30px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -111,7 +120,10 @@ overflow:hidden;
 margin-top:5px;
 }
 
-.fill{height:100%;}
+.fill{
+height:100%;
+transition:width 1s ease;
+}
 
 .stats{
 display:grid;
@@ -150,6 +162,7 @@ text-align:center;
 
 <label>COMPETICIÓN</label>
 <select id="liga">
+
 <option value="">Seleccionar</option>
 <option value="39">Premier League</option>
 <option value="140">La Liga</option>
@@ -160,6 +173,7 @@ text-align:center;
 <option value="71">Brasileirão</option>
 <option value="128">Liga Argentina</option>
 <option value="239">Liga BetPlay</option>
+
 </select>
 
 <label>LOCAL</label>
@@ -180,8 +194,6 @@ const API="https://v3.football.api-sports.io/standings";
 const KEY="ea232d851cb4197391464e2c61df516b";
 
 let equipos={};
-
-/* ajuste por liga */
 
 const leagueFactor={
 39:1.05,
@@ -244,17 +256,20 @@ data.forEach(group=>{
 group.forEach(t=>{
 
 const name=t.team.name;
+
 if(equipos[name])return;
 
 const pj=t.all.played||1;
 
 equipos[name]={
+
 atk:t.all.goals.for/pj,
 def:t.all.goals.against/pj,
 rank:t.rank,
 win:t.all.win,
 draw:t.all.draw,
 lose:t.all.lose
+
 };
 
 loc.add(new Option(name,name));
@@ -266,12 +281,14 @@ vis.add(new Option(name,name));
 
 }
 
-/* POISSON */
-
 function poisson(lambda,k){
+
 let fact=1;
+
 for(let i=1;i<=k;i++) fact*=i;
+
 return (Math.pow(lambda,k)*Math.exp(-lambda))/fact;
+
 }
 
 function calcular(){
@@ -288,39 +305,41 @@ const sV=equipos[v];
 const formL=(sL.win+sL.draw*0.5)/(sL.win+sL.draw+sL.lose);
 const formV=(sV.win+sV.draw*0.5)/(sV.win+sV.draw+sV.lose);
 
-/* ranking agresivo */
-
 const rankFactor=(sV.rank-sL.rank)*0.07;
-
-/* localía mejorada */
 
 const expL=(sL.atk*sV.def*1.25)+(formL*0.6)+rankFactor;
 const expV=(sV.atk*sL.def*0.95)+(formV*0.5);
 
-/* goles ajustados por liga */
+/* NORMALIZACIÓN GOLES */
 
-const gT=(expL+expV)*leagueFactor[liga];
+let gT=(expL+expV)/2.4;
 
-/* poisson */
+gT=gT*leagueFactor[liga];
+
+gT=Math.max(1.6,Math.min(3.2,gT));
+
+/* POISSON */
 
 const p0=poisson(gT,0);
 const p1=poisson(gT,1);
 const p2=poisson(gT,2);
 
-const over15=((1-(p0+p1))*100);
-const over25=((1-(p0+p1+p2))*100);
+const over15=(1-(p0+p1))*100;
+const over25=(1-(p0+p1+p2))*100;
 
-/* ambos marcan */
+/* AMBOS MARCAN */
 
 const pLocal0=poisson(expL,0);
 const pVis0=poisson(expV,0);
 
-const ambosProb=(1-(pLocal0+pVis0-(pLocal0*pVis0)))*100;
+let ambosProb=(1-(pLocal0+pVis0-(pLocal0*pVis0)))*100;
+
+ambosProb=Math.max(32,Math.min(72,ambosProb));
 
 const ambosSi=ambosProb.toFixed(0);
 const ambosNo=(100-ambosSi).toFixed(0);
 
-/* corners mejorados */
+/* CORNERS */
 
 const attackPressure=(sL.atk+sV.atk);
 
@@ -332,7 +351,7 @@ else cornersLinea=7.5;
 
 const probCorners=Math.min(74,Math.max(44,50+(attackPressure*8)));
 
-/* probabilidades */
+/* 1X2 */
 
 const total=expL+expV+1.3;
 
@@ -340,7 +359,7 @@ const pL=((expL/total)*100).toFixed(1);
 const pV=((expV/total)*100).toFixed(1);
 const pE=(100-pL-pV).toFixed(1);
 
-/* recomendación */
+/* RECOMENDACIÓN */
 
 let rec="Partido parejo";
 
@@ -353,19 +372,32 @@ document.getElementById("resultado").innerHTML=`
 <div class="resultado">
 
 <div class="header">
+
 <div class="team">${l}</div>
+
 <div class="vs">VS</div>
+
 <div class="team">${v}</div>
+
 </div>
 
 Victoria Local ${pL}%
-<div class="bar"><div class="fill" style="width:${pL}%;background:#22c55e"></div></div>
+
+<div class="bar">
+<div class="fill" style="width:${pL}%;background:#22c55e"></div>
+</div>
 
 Empate ${pE}%
-<div class="bar"><div class="fill" style="width:${pE}%;background:#64748b"></div></div>
+
+<div class="bar">
+<div class="fill" style="width:${pE}%;background:#64748b"></div>
+</div>
 
 Victoria Visitante ${pV}%
-<div class="bar"><div class="fill" style="width:${pV}%;background:#ef4444"></div></div>
+
+<div class="bar">
+<div class="fill" style="width:${pV}%;background:#ef4444"></div>
+</div>
 
 <div class="stats">
 
@@ -378,27 +410,35 @@ NO ${ambosNo}%
 <div class="mini">
 +1.5 goles<br>
 <b>${over15.toFixed(0)}%</b>
-<div class="bar"><div class="fill" style="width:${over15}%;background:#22c55e"></div></div>
+<div class="bar">
+<div class="fill" style="width:${over15}%;background:#22c55e"></div>
+</div>
 </div>
 
 <div class="mini">
 +2.5 goles<br>
 <b>${over25.toFixed(0)}%</b>
-<div class="bar"><div class="fill" style="width:${over25}%;background:#22c55e"></div></div>
+<div class="bar">
+<div class="fill" style="width:${over25}%;background:#22c55e"></div>
+</div>
 </div>
 
 <div class="mini">
 Corners línea<br>
 <b>${cornersLinea}</b>
-<div class="bar"><div class="fill" style="width:${probCorners}%;background:#f59e0b"></div></div>
+<div class="bar">
+<div class="fill" style="width:${probCorners}%;background:#f59e0b"></div>
+</div>
 ${probCorners.toFixed(0)}%
 </div>
 
 </div>
 
 <div class="tip">
+
 APUESTA RECOMENDADA<br>
 <b>${rec}</b>
+
 </div>
 
 </div>

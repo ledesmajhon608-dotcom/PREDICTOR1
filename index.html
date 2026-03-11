@@ -298,16 +298,19 @@ const pE=(100-pL-pV).toFixed(1);
 
 const gT=(expL+expV);
 
-// PROBABILIDADES NUEVAS
+// PROBABILIDADES CORREGIDAS
 
-const ambosProb=Math.min(85,Math.max(25,(expL*expV)*35));
+const ambosProb=Math.min(85,Math.max(25,(expL*expV)*30));
 const ambosSi=ambosProb.toFixed(0);
 const ambosNo=(100-ambosSi).toFixed(0);
 
-const over25=Math.min(80,Math.max(20,gT*22));
-const over15=Math.min(90,Math.max(40,gT*30));
+const over25=Math.min(70,Math.max(18,gT*18));
+const over15=Math.min(85,Math.max(45,gT*24));
 
-const corners=(7.5+(gT*0.4)).toFixed(1);
+// CORNERS SOLO 7.5 O 8.5
+
+let cornersLinea=gT>2.4?8.5:7.5;
+const probCorners=Math.min(75,Math.max(40,gT*20));
 
 let rec="Partido parejo";
 
@@ -356,7 +359,11 @@ NO ${ambosNo}%
 
 <div class="mini">
 Corners línea<br>
-<b>${corners}</b>
+<b>${cornersLinea}</b>
+<div class="bar">
+<div class="fill" style="width:${probCorners}%;background:#f59e0b"></div>
+</div>
+${probCorners.toFixed(0)}%
 </div>
 
 <div class="mini">

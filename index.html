@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -138,6 +139,7 @@ padding:12px;
 border-radius:10px;
 text-align:center;
 border:1px solid var(--border);
+font-size:13px;
 }
 
 .tip{
@@ -294,7 +296,18 @@ const pL=((expL/total)*100).toFixed(1);
 const pV=((expV/total)*100).toFixed(1);
 const pE=(100-pL-pV).toFixed(1);
 
-const gT=(expL+expV).toFixed(2);
+const gT=(expL+expV);
+
+// PROBABILIDADES NUEVAS
+
+const ambosProb=Math.min(85,Math.max(25,(expL*expV)*35));
+const ambosSi=ambosProb.toFixed(0);
+const ambosNo=(100-ambosSi).toFixed(0);
+
+const over25=Math.min(80,Math.max(20,gT*22));
+const over15=Math.min(90,Math.max(40,gT*30));
+
+const corners=(7.5+(gT*0.4)).toFixed(1);
 
 let rec="Partido parejo";
 
@@ -330,13 +343,26 @@ Victoria Visitante ${pV}%
 
 <div class="stats">
 
-<div class="mini">Ambos marcan<br><b>${expL>0.9&&expV>0.9?"SI":"NO"}</b></div>
+<div class="mini">
+Ambos marcan<br>
+<b>SI ${ambosSi}%</b><br>
+NO ${ambosNo}%
+</div>
 
-<div class="mini">+2.5 goles<br><b>${Math.min(95,gT*30).toFixed(0)}%</b></div>
+<div class="mini">
++2.5 goles<br>
+<b>${over25.toFixed(0)}%</b>
+</div>
 
-<div class="mini">Corners<br><b>${Math.floor(8+(gT*0.8))}</b></div>
+<div class="mini">
+Corners línea<br>
+<b>${corners}</b>
+</div>
 
-<div class="mini">+1.5 goles<br><b>${Math.min(99,gT*45).toFixed(0)}%</b></div>
+<div class="mini">
++1.5 goles<br>
+<b>${over15.toFixed(0)}%</b>
+</div>
 
 </div>
 
@@ -357,3 +383,4 @@ APUESTA RECOMENDADA<br>
 
 </body>
 </html>
+```

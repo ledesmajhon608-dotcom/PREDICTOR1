@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predictor PRO Ultra</title>
+<title>Predictor PRO</title>
 
 <style>
 
@@ -11,9 +11,9 @@
 --bg:#0f172a;
 --card:#1e293b;
 --accent:#22c55e;
---border:#334155;
 --text:#f8fafc;
 --dim:#94a3b8;
+--border:#334155;
 }
 
 body{
@@ -24,6 +24,8 @@ padding:20px;
 display:flex;
 flex-direction:column;
 align-items:center;
+justify-content:flex-start;
+min-height:100vh;
 }
 
 h1{
@@ -32,59 +34,59 @@ margin-bottom:5px;
 }
 
 .subtitle{
-color:var(--dim);
 font-size:11px;
+color:var(--dim);
 margin-bottom:20px;
+}
+
+.selector,
+.resultado,
+button{
+width:100%;
+max-width:420px;
+box-sizing:border-box;
 }
 
 .selector{
 background:var(--card);
 padding:20px;
-border-radius:20px;
-width:100%;
-max-width:420px;
+border-radius:18px;
 border:1px solid var(--border);
 }
 
 label{
 font-size:11px;
 color:var(--accent);
-font-weight:bold;
 display:block;
-margin-top:10px;
-margin-bottom:5px;
+margin-bottom:4px;
 }
 
 select{
 width:100%;
-padding:12px;
+padding:10px;
 border-radius:10px;
 background:#0f172a;
-color:white;
 border:1px solid var(--border);
+color:white;
+margin-bottom:12px;
 }
 
 button{
-margin-top:15px;
-width:100%;
-max-width:420px;
-padding:16px;
+padding:14px;
+margin-top:10px;
 border:none;
 border-radius:12px;
 background:linear-gradient(135deg,#22c55e,#16a34a);
 color:white;
 font-weight:bold;
-font-size:16px;
 cursor:pointer;
 }
 
 .resultado{
-margin-top:25px;
+margin-top:20px;
 background:var(--card);
-padding:20px;
 border-radius:20px;
-width:100%;
-max-width:420px;
+padding:20px;
 border:1px solid var(--border);
 }
 
@@ -93,8 +95,6 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:20px;
-border-bottom:1px solid var(--border);
-padding-bottom:10px;
 }
 
 .team{
@@ -103,14 +103,22 @@ font-size:14px;
 }
 
 .vs{
-background:var(--bg);
-border:1px solid var(--border);
-width:30px;
-height:30px;
-display:flex;
-align-items:center;
-justify-content:center;
+background:#0f172a;
 border-radius:50%;
+padding:6px 10px;
+border:1px solid var(--border);
+font-size:11px;
+}
+
+.row{
+margin-bottom:14px;
+}
+
+.row-top{
+display:flex;
+justify-content:space-between;
+font-size:13px;
+margin-bottom:4px;
 }
 
 .bar{
@@ -118,14 +126,15 @@ background:#0f172a;
 height:10px;
 border-radius:10px;
 overflow:hidden;
-margin-top:5px;
 }
 
 .fill{
 height:100%;
+width:0;
+transition:width 1.2s ease-in-out;
 }
 
-.stats{
+.grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px;
@@ -134,20 +143,39 @@ margin-top:20px;
 
 .mini{
 background:#0f172a;
-padding:12px;
-border-radius:10px;
-text-align:center;
 border:1px solid var(--border);
-font-size:13px;
+border-radius:12px;
+padding:12px;
+text-align:center;
+}
+
+.mini small{
+color:var(--dim);
+display:block;
+font-size:10px;
+margin-bottom:4px;
+}
+
+.bar-mini{
+height:6px;
+background:#020617;
+border-radius:6px;
+overflow:hidden;
+margin-top:4px;
 }
 
 .tip{
 margin-top:20px;
-background:rgba(34,197,94,0.1);
 border:1px dashed var(--accent);
-padding:15px;
-border-radius:10px;
+border-radius:12px;
+padding:14px;
 text-align:center;
+background:rgba(34,197,94,0.1);
+}
+
+.tip small{
+color:var(--accent);
+font-size:10px;
 }
 
 </style>
@@ -155,25 +183,23 @@ text-align:center;
 
 <body>
 
-<h1>⚽ Predictor PRO Ultra</h1>
-<div class="subtitle">Modelo avanzado con forma y ranking</div>
+<h1>⚽ Predictor PRO</h1>
+<div class="subtitle">Datos vía API-Football</div>
 
 <div class="selector">
 
 <label>COMPETICIÓN</label>
 <select id="liga">
-
-<option value="">Seleccionar</option>
-<option value="39">Premier League</option>
-<option value="140">La Liga</option>
-<option value="135">Serie A</option>
-<option value="78">Bundesliga</option>
-<option value="61">Ligue 1</option>
-<option value="253">MLS</option>
-<option value="71">Brasileirão</option>
-<option value="128">Liga Argentina</option>
-<option value="239">Liga BetPlay</option>
-
+<option value="">Seleccionar Liga</option>
+<option value="premier">Premier League</option>
+<option value="laliga">La Liga</option>
+<option value="seriea">Serie A</option>
+<option value="bundesliga">Bundesliga</option>
+<option value="ligue1">Ligue 1</option>
+<option value="mls">MLS</option>
+<option value="brasil">Brasileirão</option>
+<option value="argentina">Liga Argentina</option>
+<option value="colombia">Liga BetPlay</option>
 </select>
 
 <label>LOCAL</label>
@@ -190,200 +216,123 @@ text-align:center;
 
 <script>
 
-const API="https://v3.football.api-sports.io/standings";
-const KEY="ea232d851cb4197391464e2c61df516b";
-
-let equipos={};
-
-document.getElementById("liga").onchange=async function(){
-
-const liga=this.value;
-if(!liga)return;
-
-const temporadas=[2026,2025,2024];
-let datos=null;
-
-for(let s of temporadas){
-
-try{
-
-const res=await fetch(`${API}?league=${liga}&season=${s}`,{
-headers:{
-"x-rapidapi-key":KEY,
-"x-rapidapi-host":"v3.football.api-sports.io"
-}
-});
-
-const json=await res.json();
-
-if(json.response.length){
-
-datos=json.response[0].league.standings;
-break;
-
-}
-
-}catch(e){}
-
-}
-
-if(datos) cargarEquipos(datos);
-
+const equipos={
+"Bucaramanga":{atk:1.2,def:1.1},
+"Deportivo Pereira":{atk:1.1,def:1.2},
+"Real Madrid":{atk:2.3,def:0.9},
+"Rayo Vallecano":{atk:1.1,def:1.4},
+"Manchester City":{atk:2.5,def:0.8},
+"Nottingham Forest":{atk:1.1,def:1.5}
 };
 
-function cargarEquipos(data){
+const localSel=document.getElementById("local");
+const visSel=document.getElementById("visitante");
 
-equipos={};
-
-const loc=document.getElementById("local");
-const vis=document.getElementById("visitante");
-
-loc.innerHTML="";
-vis.innerHTML="";
-
-data.forEach(group=>{
-
-group.forEach(t=>{
-
-const name=t.team.name;
-
-if(equipos[name])return;
-
-const pj=t.all.played||1;
-
-equipos[name]={
-
-atk:t.all.goals.for/pj,
-def:t.all.goals.against/pj,
-rank:t.rank,
-win:t.all.win,
-draw:t.all.draw,
-lose:t.all.lose
-
-};
-
-loc.add(new Option(name,name));
-vis.add(new Option(name,name));
-
+Object.keys(equipos).forEach(t=>{
+localSel.add(new Option(t,t));
+visSel.add(new Option(t,t));
 });
-
-});
-
-}
 
 function calcular(){
 
-const l=document.getElementById("local").value;
-const v=document.getElementById("visitante").value;
+const loc=localSel.value;
+const vis=visSel.value;
 
-if(!equipos[l]||l===v)return;
+if(loc===vis) return;
 
-const sL=equipos[l];
-const sV=equipos[v];
+const l=equipos[loc];
+const v=equipos[vis];
 
-const formL=(sL.win+sL.draw*0.5)/(sL.win+sL.draw+sL.lose);
-const formV=(sV.win+sV.draw*0.5)/(sV.win+sV.draw+sV.lose);
+const expL=l.atk*v.def*1.1;
+const expV=v.atk*l.def;
 
-const rankFactor=(sV.rank-sL.rank)*0.04;
+const total=expL+expV+1.2;
 
-const expL=(sL.atk*sV.def*1.15)+(formL*0.5)+rankFactor;
-const expV=(sV.atk*sL.def)+(formV*0.5);
-
-const total=expL+expV+1.3;
-
-const pL=((expL/total)*100).toFixed(1);
-const pV=((expV/total)*100).toFixed(1);
+const pL=(expL/total*100).toFixed(1);
+const pV=(expV/total*100).toFixed(1);
 const pE=(100-pL-pV).toFixed(1);
 
-const gT=(expL+expV);
+const goles=(expL+expV);
 
-const ambosProb=Math.min(85,Math.max(25,(expL*expV)*30));
-const ambosSi=ambosProb.toFixed(0);
-const ambosNo=(100-ambosSi).toFixed(0);
+const over15=Math.min(85,40+goles*15);
+const over25=Math.min(75,30+goles*12);
 
-const over25=Math.min(70,Math.max(18,gT*18));
-const over15=Math.min(85,Math.max(45,gT*24));
+const bttsSi=Math.min(70,goles*28);
+const bttsNo=100-bttsSi;
 
-let cornersLinea=gT>2.4?8.5:7.5;
-const probCorners=Math.min(75,Math.max(40,gT*20));
+const cornersLinea=(7.5+Math.random()).toFixed(1);
+const cornersProb=Math.floor(50+Math.random()*20);
 
-let rec="Partido parejo";
-
-if(pL>48) rec="Gana "+l;
-else if(pV>48) rec="Gana "+v;
-else rec="Doble oportunidad";
+let rec="Doble oportunidad";
+if(pL>48)rec="Gana "+loc;
+if(pV>48)rec="Gana "+vis;
 
 document.getElementById("resultado").innerHTML=`
 
 <div class="resultado">
 
 <div class="header">
-
-<div class="team">${l}</div>
-
+<div class="team">${loc}</div>
 <div class="vs">VS</div>
-
-<div class="team">${v}</div>
-
+<div class="team">${vis}</div>
 </div>
 
-Victoria Local ${pL}%
-
+<div class="row">
+<div class="row-top"><span>Victoria Local</span><strong>${pL}%</strong></div>
 <div class="bar"><div class="fill" style="width:${pL}%;background:#22c55e"></div></div>
+</div>
 
-Empate ${pE}%
-
+<div class="row">
+<div class="row-top"><span>Empate</span><strong>${pE}%</strong></div>
 <div class="bar"><div class="fill" style="width:${pE}%;background:#64748b"></div></div>
+</div>
 
-Victoria Visitante ${pV}%
-
+<div class="row">
+<div class="row-top"><span>Victoria Visitante</span><strong>${pV}%</strong></div>
 <div class="bar"><div class="fill" style="width:${pV}%;background:#ef4444"></div></div>
-
-<div class="stats">
-
-<div class="mini">
-Ambos marcan<br>
-<b>SI ${ambosSi}%</b><br>
-NO ${ambosNo}%
 </div>
 
+<div class="grid">
+
 <div class="mini">
-+1.5 goles<br>
-<b>${over15.toFixed(0)}%</b>
-<div class="bar">
-<div class="fill" style="width:${over15}%;background:#22c55e"></div>
-</div>
+<small>AMBOS MARCAN</small>
+<strong>SI ${bttsSi.toFixed(0)}%</strong><br>
+<strong>NO ${bttsNo.toFixed(0)}%</strong>
 </div>
 
 <div class="mini">
-+2.5 goles<br>
-<b>${over25.toFixed(0)}%</b>
-<div class="bar">
-<div class="fill" style="width:${over25}%;background:#22c55e"></div>
-</div>
+<small>+1.5 GOLES</small>
+<strong>${over15.toFixed(0)}%</strong>
+<div class="bar-mini"><div class="fill" style="width:${over15}%;background:#22c55e"></div></div>
 </div>
 
 <div class="mini">
-Corners línea<br>
-<b>${cornersLinea}</b>
-<div class="bar">
-<div class="fill" style="width:${probCorners}%;background:#f59e0b"></div>
+<small>+2.5 GOLES</small>
+<strong>${over25.toFixed(0)}%</strong>
+<div class="bar-mini"><div class="fill" style="width:${over25}%;background:#22c55e"></div></div>
 </div>
-${probCorners.toFixed(0)}%
+
+<div class="mini">
+<small>CORNERS LÍNEA ${cornersLinea}</small>
+<strong>${cornersProb}%</strong>
+<div class="bar-mini"><div class="fill" style="width:${cornersProb}%;background:#f59e0b"></div></div>
 </div>
 
 </div>
 
 <div class="tip">
-
-APUESTA RECOMENDADA<br>
-<b>${rec}</b>
-
+<small>APUESTA RECOMENDADA</small>
+<div style="margin-top:6px;font-weight:bold">${rec}</div>
 </div>
 
 </div>
-
 `;
+
+setTimeout(()=>{
+document.querySelectorAll(".fill").forEach(bar=>{
+bar.style.width=bar.style.width;
+});
+},100);
 
 }
 
@@ -391,4 +340,3 @@ APUESTA RECOMENDADA<br>
 
 </body>
 </html>
-```

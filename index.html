@@ -1,204 +1,248 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predictor PRO Ultra + Escudos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor PRO Ultra v2.0</title>
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #1e293b;
+            --accent: #22c55e;
+            --border: #334155;
+            --text: #f8fafc;
+            --dim: #94a3b8;
+            --danger: #ef4444;
+        }
 
-<style>
-:root{
---bg:#0f172a; --card:#1e293b; --accent:#22c55e; --border:#334155; --text:#f8fafc; --dim:#94a3b8;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-body{
-font-family:Segoe UI, sans-serif; background:var(--bg); color:var(--text); padding:20px; display:flex; flex-direction:column; align-items:center;
-}
+        .container { width: 100%; max-width: 500px; }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 5px; font-size: 24px; }
+        .subtitle { color: var(--dim); font-size: 12px; text-align: center; margin-bottom: 25px; }
 
-h1{color:var(--accent);margin-bottom:5px;}
-.subtitle{ color:var(--dim); font-size:11px; margin-bottom:20px; }
+        .card {
+            background: var(--card);
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+        }
 
-.selector{
-background:var(--card); padding:20px; border-radius:20px; width:100%; max-width:420px; border:1px solid var(--border); box-sizing:border-box;
-}
+        label { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 1px; display: block; margin-top: 15px; }
+        select {
+            width: 100%; padding: 14px; border-radius: 12px; background: #0f172a;
+            color: white; border: 1px solid var(--border); margin-top: 5px; cursor: pointer;
+        }
 
-label{ font-size:11px; color:var(--accent); font-weight:bold; display:block; margin-top:10px; margin-bottom:5px; }
+        button {
+            margin-top: 20px; width: 100%; padding: 18px; border: none; border-radius: 15px;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            color: white; font-weight: bold; font-size: 16px; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.98); }
 
-select{
-width:100%; padding:12px; border-radius:10px; background:#0f172a; color:white; border:1px solid var(--border); outline: none;
-}
+        .resultado-box { margin-top: 30px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-button{
-margin-top:15px; width:100%; max-width:420px; padding:16px; border:none; border-radius:12px; background:linear-gradient(135deg,#22c55e,#16a34a); color:white; font-weight:bold; font-size:16px; cursor:pointer;
-}
+        .match-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .team-name { font-weight: 800; font-size: 16px; width: 40%; text-align: center; }
+        .vs-badge { background: var(--accent); color: #000; padding: 4px 8px; border-radius: 6px; font-weight: 900; font-size: 12px; }
 
-.resultado{
-margin-top:25px; background:var(--card); padding:20px; border-radius:20px; width:100%; max-width:420px; border:1px solid var(--border); box-sizing:border-box;
-}
+        .prob-bar-container { margin-bottom: 15px; }
+        .prob-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+        .bar-bg { background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+        .bar-fill { height: 100%; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-.header{
-display:flex; justify-content:space-around; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;
-}
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .stat-card { background: #0f172a; padding: 15px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { display: block; font-size: 18px; font-weight: 800; color: var(--accent); margin: 5px 0; }
+        .stat-label { font-size: 11px; color: var(--dim); text-transform: uppercase; }
 
-.team-info{ text-align: center; width: 40%; }
-.team-logo{ width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
-.team-name{ font-weight:bold; font-size:13px; display: block; }
-
-.vs{ background:var(--bg); border:1px solid var(--border); width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size: 10px; font-weight: bold; }
-
-.bar{ background:#0f172a; height:10px; border-radius:10px; overflow:hidden; margin-top:5px; margin-bottom: 10px; }
-.fill{ height:100%; transition:width 1s ease; }
-.stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
-.mini{ background:#0f172a; padding:12px; border-radius:10px; text-align:center; border:1px solid var(--border); font-size:13px; }
-.tip{ margin-top:20px; background:rgba(34,197,94,0.1); border:1px dashed var(--accent); padding:15px; border-radius:10px; text-align:center; }
-</style>
+        .recommendation {
+            margin-top: 25px; background: rgba(34, 197, 94, 0.15); border: 2px dashed var(--accent);
+            padding: 20px; border-radius: 18px; text-align: center;
+        }
+        .rec-tag { color: var(--accent); font-weight: 900; font-size: 20px; display: block; margin-top: 5px; }
+    </style>
 </head>
-
 <body>
 
-<h1>⚽ Predictor PRO Ultra</h1>
-<div class="subtitle">Modelo avanzado con Escudos y Ranking</div>
+<div class="container">
+    <h1>🚀 Predictor ELITE AI</h1>
+    <div class="subtitle">Algoritmo Poisson Ajustado por Localía y Defensa</div>
 
-<div class="selector">
-    <label>COMPETICIÓN</label>
-    <select id="liga">
-        <option value="">Seleccionar</option>
-        <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
-        <option value="140">La Liga 🇪🇸</option>
-        <option value="135">Serie A 🇮🇹</option>
-        <option value="78">Bundesliga 🇩🇪</option>
-        <option value="61">Ligue 1 🇫🇷</option>
-        <option value="239">Liga BetPlay 🇨🇴</option>
-        <option value="128">Liga Argentina 🇦🇷</option>
-        <option value="71">Brasileirão 🇧🇷</option>
-    </select>
+    <div class="card">
+        <label>COMPETICIÓN</label>
+        <select id="liga">
+            <option value="">Seleccionar Liga...</option>
+            <option value="39">Premier League (Inglaterra)</option>
+            <option value="140">La Liga (España)</option>
+            <option value="135">Serie A (Italia)</option>
+            <option value="78">Bundesliga (Alemania)</option>
+            <option value="61">Ligue 1 (Francia)</option>
+            <option value="253">MLS (USA)</option>
+            <option value="71">Brasileirão (Brasil)</option>
+            <option value="128">Liga Argentina</option>
+            <option value="239">Liga BetPlay (Colombia)</option>
+        </select>
 
-    <label>LOCAL</label>
-    <select id="local"><option value="">Selecciona liga...</option></select>
+        <label>EQUIPO LOCAL</label>
+        <select id="local"><option>Esperando liga...</option></select>
 
-    <label>VISITANTE</label>
-    <select id="visitante"><option value="">Selecciona liga...</option></select>
+        <label>EQUIPO VISITANTE</label>
+        <select id="visitante"><option>Esperando liga...</option></select>
+
+        <button onclick="generarPrediccion()">ANALIZAR PARTIDO</button>
+    </div>
+
+    <div id="resultado"></div>
 </div>
 
-<button onclick="calcular()">CALCULAR PREDICCIÓN</button>
-
-<div id="resultado"></div>
-
 <script>
-const API="https://v3.football.api-sports.io";
-const KEY="ea232d851cb4197391464e2c61df516b";
+const API_URL = "https://v3.football.api-sports.io/standings";
+const API_KEY = "ea232d851cb4197391464e2c61df516b"; // Tu llave actual
 
-let equipos={};
+let dbEquipos = {};
 
-document.getElementById("liga").onchange=async function(){
-    const liga=this.value;
-    if(!liga)return;
+// Carga de datos mejorada
+document.getElementById("liga").onchange = async function() {
+    const ligaId = this.value;
+    if(!ligaId) return;
 
-    const loc = document.getElementById("local");
-    const vis = document.getElementById("visitante");
-    loc.innerHTML = vis.innerHTML = "<option>Cargando equipos...</option>";
-
-    const temporadas=[2025, 2024, 2023]; // Ajustado para datos reales
-    let datos=null;
-
-    for(let s of temporadas){
-        try{
-            const res=await fetch(`${API}?league=${liga}&season=${s}`,{
-                headers:{ "x-rapidapi-key":KEY, "x-rapidapi-host":"v3.football.api-sports.io" }
-            });
-            const json=await res.json();
-            if(json.response && json.response.length > 0){
-                datos = json.response[0].league.standings;
-                break;
-            }
-        }catch(e){ console.error(e); }
-    }
-
-    if(datos) cargarEquipos(datos);
-    else loc.innerHTML = vis.innerHTML = "<option>Sin datos disponibles</option>";
+    try {
+        const response = await fetch(`${API_URL}?league=${ligaId}&season=2024`, {
+            headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
+        });
+        const data = await response.json();
+        const standings = data.response[0].league.standings[0];
+        procesarEquipos(standings);
+    } catch (e) { alert("Error cargando datos. Verifica tu conexión."); }
 };
 
-function cargarEquipos(data){
-    equipos={};
-    const loc=document.getElementById("local");
-    const vis=document.getElementById("visitante");
-    loc.innerHTML = vis.innerHTML = "";
+function procesarEquipos(data) {
+    dbEquipos = {};
+    const selectL = document.getElementById("local");
+    const selectV = document.getElementById("visitante");
+    selectL.innerHTML = ""; selectV.innerHTML = "";
 
-    data.forEach(group=>{
-        group.forEach(t=>{
-            const name=t.team.name;
-            if(equipos[name]) return;
-
-            const pj=t.all.played || 1;
-            equipos[name]={
-                atk: t.all.goals.for / pj,
-                def: t.all.goals.against / pj,
-                rank: t.rank,
-                win: t.all.win, draw: t.all.draw, lose: t.all.lose,
-                logo: t.team.logo // Guardamos la URL del escudo
-            };
-            loc.add(new Option(name, name));
-            vis.add(new Option(name, name));
-        });
+    data.forEach(t => {
+        const n = t.team.name;
+        // Guardamos stats específicas de Casa y Fuera para mayor precisión
+        dbEquipos[n] = {
+            hAtk: t.home.goals.for / (t.home.played || 1),
+            hDef: t.home.goals.against / (t.home.played || 1),
+            aAtk: t.away.goals.for / (t.away.played || 1),
+            aDef: t.away.goals.against / (t.away.played || 1),
+            points: t.points,
+            rank: t.rank,
+            form: t.form ? t.form.slice(-5) : "WWDDD"
+        };
+        selectL.add(new Option(n, n));
+        selectV.add(new Option(n, n));
     });
 }
 
-function poisson(lambda,k){
-    let fact=1;
-    for(let i=1;i<=k;i++) fact*=i;
-    return (Math.pow(lambda,k)*Math.exp(-lambda))/fact;
+function poisson(lambda, k) {
+    let fact = 1;
+    for(let i=1; i<=k; i++) fact *= i;
+    return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact;
 }
 
-function calcular(){
-    const l=document.getElementById("local").value;
-    const v=document.getElementById("visitante").value;
-    if(!equipos[l] || l===v) return alert("Selecciona dos equipos diferentes");
+function generarPrediccion() {
+    const lName = document.getElementById("local").value;
+    const vName = document.getElementById("visitante").value;
+    
+    if(lName === vName) return alert("Selecciona equipos distintos");
 
-    const sL=equipos[l];
-    const sV=equipos[v];
+    const L = dbEquipos[lName];
+    const V = dbEquipos[vName];
 
-    const formL=(sL.win+sL.draw*0.5)/(sL.win+sL.draw+sL.lose || 1);
-    const formV=(sV.win+sV.draw*0.5)/(sV.win+sV.draw+sV.lose || 1);
+    // CÁLCULO DE GOLES ESPERADOS (xG) mejorado
+    // El local ataca contra la defensa visitante fuera, y viceversa
+    let expL = (L.hAtk * V.aDef * 1.12); // 1.12 es el bono de localía estándar
+    let expV = (V.aAtk * L.hDef * 0.90); // 0.90 factor de dificultad visitante
 
-    const expL=(sL.atk*sV.def*1.25)+(formL*0.6);
-    const expV=(sV.atk*sL.def*0.95)+(formV*0.5);
+    // Factor de forma (últimos 5 partidos)
+    const calcularForma = (f) => (f.split('W').length - 1) * 0.15;
+    expL += calcularForma(L.form);
+    expV += calcularForma(V.form);
 
-    // Probabilidades 1X2 simplificadas
-    const total=expL+expV+1.3;
-    const pL=((expL/total)*100).toFixed(1);
-    const pV=((expV/total)*100).toFixed(1);
-    const pE=(100-pL-pV).toFixed(1);
+    // Probabilidades 1X2 usando matriz de Poisson simplificada
+    const pL0 = poisson(expL, 0); const pL1 = poisson(expL, 1); const pL2 = poisson(expL, 2);
+    const pV0 = poisson(expV, 0); const pV1 = poisson(expV, 1); const pV2 = poisson(expV, 2);
 
-    // Goles
-    let gT=(expL+expV)/2.2;
-    const over25=(1-(poisson(gT,0)+poisson(gT,1)+poisson(gT,2)))*100;
+    // Probabilidad de Empate (Suma de 0-0, 1-1, 2-2)
+    let probE = ((pL0 * pV0) + (pL1 * pV1) + (pL2 * pV2)) * 100;
+    
+    // Probabilidad de Victoria (Basada en fuerza relativa)
+    let totalPower = expL + expV;
+    let probL = (expL / totalPower) * (100 - probE);
+    let probV = (expV / totalPower) * (100 - probE);
 
-    document.getElementById("resultado").innerHTML=`
-        <div class="resultado">
-            <div class="header">
-                <div class="team-info">
-                    <img src="${sL.logo}" class="team-logo">
-                    <span class="team-name">${l}</span>
+    // Mercados Secundarios
+    const over25 = (1 - (pL0*pV0 + pL0*pV1 + pL1*pV0)) * 100;
+    const ambosMarcan = (1 - pL0) * (1 - pV0) * 100;
+
+    // Lógica de recomendación de BAJO RIESGO
+    let rec = "";
+    let colorRec = "var(--accent)";
+
+    if (probL > 55) rec = `Gana ${lName} (DNB)`; 
+    else if (probV > 55) rec = `Gana ${vName} (DNB)`;
+    else if (ambosMarcan > 65) rec = "Ambos Marcan (BTTS)";
+    else if (over25 > 60) rec = "Over 1.5 Goles";
+    else rec = "Doble Oportunidad Local";
+
+    document.getElementById("resultado").innerHTML = `
+        <div class="resultado-box">
+            <div class="card">
+                <div class="match-header">
+                    <div class="team-name">${lName}</div>
+                    <div class="vs-badge">VS</div>
+                    <div class="team-name">${vName}</div>
                 </div>
-                <div class="vs">VS</div>
-                <div class="team-info">
-                    <img src="${sV.logo}" class="team-logo">
-                    <span class="team-name">${v}</span>
+
+                <div class="prob-bar-container">
+                    <div class="prob-label"><span>Victoria Local</span> <b>${probL.toFixed(1)}%</b></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${probL}%; background:var(--accent)"></div></div>
+                </div>
+
+                <div class="prob-bar-container">
+                    <div class="prob-label"><span>Empate</span> <b>${probE.toFixed(1)}%</b></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${probE}%; background:var(--dim)"></div></div>
+                </div>
+
+                <div class="prob-bar-container">
+                    <div class="prob-label"><span>Victoria Visitante</span> <b>${probV.toFixed(1)}%</b></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${probV}%; background:var(--danger)"></div></div>
+                </div>
+
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Ambos Marcan</span>
+                        <span class="stat-val">${ambosMarcan.toFixed(0)}%</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Más de 2.5</span>
+                        <span class="stat-val">${over25.toFixed(0)}%</span>
+                    </div>
+                </div>
+
+                <div class="recommendation">
+                    <span style="font-size:11px; font-weight:bold; color:var(--dim)">ESTRATEGIA RECOMENDADA</span>
+                    <span class="rec-tag">${rec}</span>
                 </div>
             </div>
-
-            Victoria Local ${pL}%
-            <div class="bar"><div class="fill" style="width:${pL}%;background:#22c55e"></div></div>
-            Empate ${pE}%
-            <div class="bar"><div class="fill" style="width:${pE}%;background:#64748b"></div></div>
-            Victoria Visitante ${pV}%
-            <div class="bar"><div class="fill" style="width:${pV}%;background:#ef4444"></div></div>
-
-            <div class="stats">
-                <div class="mini">+2.5 Goles<br><b>${over25.toFixed(0)}%</b></div>
-                <div class="mini">Ranking<br><b>#${sL.rank} vs #${sV.rank}</b></div>
-            </div>
-
-            <div class="tip">RECOMENDACIÓN<br><b>${parseFloat(pL)>45 ? 'Gana '+l : (parseFloat(pV)>45 ? 'Gana '+v : 'Doble Oportunidad')}</b></div>
         </div>
     `;
 }

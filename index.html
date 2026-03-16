@@ -120,7 +120,7 @@ document.getElementById("liga").onchange = async function() {
     if(!ligaId) return;
 
     try {
-        const response = await fetch(`${API_URL}?league=${ligaId}&season=2024`, {
+        const response = await fetch(`${API_URL}?league=${ligaId}&season=2024`2025`, {
             headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
         });
         const data = await response.json();

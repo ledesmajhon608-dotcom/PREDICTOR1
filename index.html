@@ -1,453 +1,198 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Predictor PRO Ultra</title>
-
-<style>
-
-:root{
---bg:#0f172a;
---card:#1e293b;
---accent:#22c55e;
---border:#334155;
---text:#f8fafc;
---dim:#94a3b8;
-}
-
-body{
-font-family:Segoe UI;
-background:var(--bg);
-color:var(--text);
-padding:20px;
-display:flex;
-flex-direction:column;
-align-items:center;
-}
-
-h1{color:var(--accent);margin-bottom:5px;}
-
-.subtitle{
-color:var(--dim);
-font-size:11px;
-margin-bottom:20px;
-}
-
-.selector{
-background:var(--card);
-padding:20px;
-border-radius:20px;
-width:100%;
-max-width:420px;
-border:1px solid var(--border);
-box-sizing:border-box;
-}
-
-label{
-font-size:11px;
-color:var(--accent);
-font-weight:bold;
-display:block;
-margin-top:10px;
-margin-bottom:5px;
-}
-
-select{
-width:100%;
-padding:12px;
-border-radius:10px;
-background:#0f172a;
-color:white;
-border:1px solid var(--border);
-}
-
-button{
-margin-top:15px;
-width:100%;
-max-width:420px;
-padding:16px;
-border:none;
-border-radius:12px;
-background:linear-gradient(135deg,#22c55e,#16a34a);
-color:white;
-font-weight:bold;
-font-size:16px;
-cursor:pointer;
-}
-
-.resultado{
-margin-top:25px;
-background:var(--card);
-padding:20px;
-border-radius:20px;
-width:100%;
-max-width:420px;
-border:1px solid var(--border);
-box-sizing:border-box;
-}
-
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-border-bottom:1px solid var(--border);
-padding-bottom:10px;
-}
-
-.team{
-font-weight:bold;
-font-size:14px;
-}
-
-.vs{
-background:var(--bg);
-border:1px solid var(--border);
-width:30px;
-height:30px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:50%;
-}
-
-.bar{
-background:#0f172a;
-height:10px;
-border-radius:10px;
-overflow:hidden;
-margin-top:5px;
-}
-
-.fill{
-height:100%;
-transition:width 1s ease;
-}
-
-.stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:20px;
-}
-
-.mini{
-background:#0f172a;
-padding:12px;
-border-radius:10px;
-text-align:center;
-border:1px solid var(--border);
-font-size:13px;
-}
-
-.tip{
-margin-top:20px;
-background:rgba(34,197,94,0.1);
-border:1px dashed var(--accent);
-padding:15px;
-border-radius:10px;
-text-align:center;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor ELITE Pro</title>
+    <style>
+        :root{ --bg:#020617; --card:#1e293b; --accent:#10b981; --border:#334155; --text:#f8fafc; --dim:#94a3b8; --loss:#ef4444; }
+        body{ font-family:'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); padding:10px; display:flex; flex-direction:column; align-items:center; }
+        .container{ width:100%; max-width:450px; }
+        h1{ color:var(--accent); text-align:center; margin-bottom:5px; font-size:24px; }
+        .subtitle{ color:var(--dim); font-size:12px; text-align:center; margin-bottom:20px; }
+        .card{ background:var(--card); padding:20px; border-radius:16px; border:1px solid var(--border); box-sizing:border-box; margin-bottom:15px; }
+        label{ font-size:11px; color:var(--accent); font-weight:bold; display:block; margin:10px 0 5px; text-transform:uppercase; }
+        select{ width:100%; padding:12px; border-radius:8px; background:#0f172a; color:white; border:1px solid var(--border); outline:none; }
+        button{ width:100%; padding:16px; border:none; border-radius:12px; background:linear-gradient(135deg,#10b981,#059669); color:white; font-weight:800; font-size:16px; cursor:pointer; transition:0.3s; margin-top:10px; }
+        button:hover{ opacity:0.9; transform:scale(0.98); }
+        .res-card{ background:var(--card); border-radius:16px; border:1px solid var(--accent); padding:20px; margin-top:20px; }
+        .header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-weight:bold; }
+        .vs-badge{ background:var(--bg); padding:5px 10px; border-radius:20px; font-size:12px; border:1px solid var(--border); }
+        .prob-bar-container{ margin:15px 0; }
+        .prob-label{ display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
+        .bar-bg{ background:#0f172a; height:8px; border-radius:4px; overflow:hidden; }
+        .bar-fill{ height:100%; transition:width 1s ease-out; }
+        .grid-stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
+        .stat-box{ background:#0f172a; padding:10px; border-radius:8px; text-align:center; border:1px solid var(--border); }
+        .stat-box small{ color:var(--dim); font-size:10px; display:block; }
+        .stat-box b{ font-size:15px; color:var(--accent); }
+        .recommendation{ margin-top:15px; background:rgba(16,185,129,0.1); border:1px dashed var(--accent); padding:15px; border-radius:8px; text-align:center; }
+        .confianza{ font-size:10px; text-transform:uppercase; letter-spacing:1px; margin-top:5px; }
+    </style>
 </head>
-
 <body>
 
-<h1>⚽ Predictor PRO Ultra</h1>
-<div class="subtitle">Modelo avanzado con forma y ranking</div>
+<div class="container">
+    <h1>⚽ Predictor ELITE</h1>
+    <div class="subtitle">Algoritmo de Poisson + Factor de Forma v2.1</div>
 
-<div class="selector">
+    <div class="card">
+        <label>Competición</label>
+        <select id="liga">
+            <option value="">Seleccione Liga</option>
+            <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
+            <option value="140">La Liga 🇪🇸</option>
+            <option value="135">Serie A 🇮🇹</option>
+            <option value="78">Bundesliga 🇩🇪</option>
+            <option value="239">Liga BetPlay 🇨🇴</option>
+            <option value="128">Liga Argentina 🇦🇷</option>
+            <option value="71">Brasileirão 🇧🇷</option>
+        </select>
 
-<label>COMPETICIÓN</label>
-<select id="liga">
+        <label>Equipo Local</label>
+        <select id="local"></select>
 
-<option value="">Seleccionar</option>
-<option value="39">Premier League</option>
-<option value="140">La Liga</option>
-<option value="135">Serie A</option>
-<option value="78">Bundesliga</option>
-<option value="61">Ligue 1</option>
-<option value="253">MLS</option>
-<option value="71">Brasileirão</option>
-<option value="128">Liga Argentina</option>
-<option value="239">Liga BetPlay</option>
+        <label>Equipo Visitante</label>
+        <select id="visitante"></select>
 
-</select>
+        <button onclick="calcular()">ANALIZAR PARTIDO</button>
+    </div>
 
-<label>LOCAL</label>
-<select id="local"></select>
-
-<label>VISITANTE</label>
-<select id="visitante"></select>
-
+    <div id="resultado"></div>
 </div>
-
-<button onclick="calcular()">CALCULAR PREDICCIÓN</button>
-
-<div id="resultado"></div>
 
 <script>
+const KEY = "ea232d851cb4197391464e2c61df516b"; 
+let db = {};
 
-const API="https://v3.football.api-sports.io/standings";
-const KEY="ea232d851cb4197391464e2c61df516b";
-
-let equipos={};
-
-const leagueFactor={
-39:1.05,
-140:0.95,
-135:0.98,
-78:1.10,
-61:1.00,
-253:1.08,
-71:1.02,
-128:0.98,
-239:0.90
+document.getElementById("liga").onchange = async function() {
+    const liga = this.value;
+    if(!liga) return;
+    
+    // Intentar temporadas recientes
+    const seasons = [2025, 2024, 2023];
+    for(let s of seasons) {
+        try {
+            const res = await fetch(`https://v3.football.api-sports.io{liga}&season=${s}`, {
+                headers: { "x-rapidapi-key": KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
+            });
+            const data = await res.json();
+            if(data.response.length > 0) {
+                parsearEquipos(data.response[0].league.standings[0]);
+                break;
+            }
+        } catch(e) { console.error("Error cargando temporada", s); }
+    }
 };
 
-document.getElementById("liga").onchange=async function(){
+function parsearEquipos(standings) {
+    db = {};
+    const loc = document.getElementById("local");
+    const vis = document.getElementById("visitante");
+    loc.innerHTML = vis.innerHTML = "";
 
-const liga=this.value;
-if(!liga)return;
-
-const temporadas=[2026,2025,2024];
-let datos=null;
-
-for(let s of temporadas){
-
-try{
-
-const res=await fetch(`${API}?league=${liga}&season=${s}`,{
-headers:{
-"x-rapidapi-key":KEY,
-"x-rapidapi-host":"v3.football.api-sports.io"
-}
-});
-
-const json=await res.json();
-
-if(json.response.length){
-datos=json.response[0].league.standings;
-break;
+    standings.forEach(t => {
+        const pj = t.all.played || 1;
+        db[t.team.name] = {
+            atk: t.all.goals.for / pj,
+            def: t.all.goals.against / pj,
+            rank: t.rank,
+            form: (t.all.win * 3 + t.all.draw) / (pj * 3), // 0 a 1
+            name: t.team.name
+        };
+        loc.add(new Option(t.team.name, t.team.name));
+        vis.add(new Option(t.team.name, t.team.name));
+    });
 }
 
-}catch(e){}
-
+function poisson(lambda, k) {
+    return (Math.exp(-lambda) * Math.pow(lambda, k)) / factorial(k);
 }
 
-if(datos) cargarEquipos(datos);
-
-};
-
-function cargarEquipos(data){
-
-equipos={};
-
-const loc=document.getElementById("local");
-const vis=document.getElementById("visitante");
-
-loc.innerHTML="";
-vis.innerHTML="";
-
-data.forEach(group=>{
-
-group.forEach(t=>{
-
-const name=t.team.name;
-
-if(equipos[name])return;
-
-const pj=t.all.played||1;
-
-equipos[name]={
-
-atk:t.all.goals.for/pj,
-def:t.all.goals.against/pj,
-rank:t.rank,
-win:t.all.win,
-draw:t.all.draw,
-lose:t.all.lose
-
-};
-
-loc.add(new Option(name,name));
-vis.add(new Option(name,name));
-
-});
-
-});
-
+function factorial(n) {
+    if (n === 0) return 1;
+    let res = 1;
+    for (let i = 1; i <= n; i++) res *= i;
+    return res;
 }
 
-function poisson(lambda,k){
+function calcular() {
+    const lName = document.getElementById("local").value;
+    const vName = document.getElementById("visitante").value;
+    if(!db[lName] || lName === vName) return alert("Selecciona equipos distintos");
 
-let fact=1;
+    const L = db[lName];
+    const V = db[vName];
 
-for(let i=1;i<=k;i++) fact*=i;
+    // --- ALGORITMO DE PREDICCIÓN ELITE ---
+    // 1. Goles Esperados con ajuste de localía (1.25) y forma (0.3)
+    let expL = (L.atk * V.def * 1.25) + (L.form * 0.3);
+    let expV = (V.atk * L.def * 0.85) + (V.form * 0.2);
 
-return (Math.pow(lambda,k)*Math.exp(-lambda))/fact;
+    // 2. Matriz de Probabilidades (hasta 5 goles)
+    let probL = 0, probE = 0, probV = 0;
+    let mOver15 = 0, mOver25 = 0, mBTTS = 0;
 
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 6; j++) {
+            const pRes = poisson(expL, i) * poisson(expV, j);
+            if (i > j) probL += pRes;
+            else if (i === j) probE += pRes;
+            else probV += pRes;
+
+            if (i + j > 1) mOver15 += pRes;
+            if (i + j > 2) mOver25 += pRes;
+            if (i > 0 && j > 0) mBTTS += pRes;
+        }
+    }
+
+    // Normalización
+    const total = probL + probE + probV;
+    const pL = (probL/total*100).toFixed(1);
+    const pE = (probE/total*100).toFixed(1);
+    const pV = (probV/total*100).toFixed(1);
+
+    // Selección de Pick
+    let pick = "Doble Oportunidad L/E";
+    let color = "#64748b";
+    let conf = "BAJA";
+
+    if(parseFloat(pL) > 55) { pick = "Victoria " + lName; color = "#10b981"; conf = "ALTA"; }
+    else if(parseFloat(pV) > 50) { pick = "Victoria " + vName; color = "#ef4444"; conf = "ALTA"; }
+    else if(mOver15*100 > 75) { pick = "Más de 1.5 Goles"; color = "#f59e0b"; conf = "MEDIA"; }
+
+    document.getElementById("resultado").innerHTML = `
+        <div class="res-card">
+            <div class="header">
+                <span>${lName}</span>
+                <span class="vs-badge">VS</span>
+                <span>${vName}</span>
+            </div>
+
+            <div class="prob-bar-container">
+                <div class="prob-label"><span>Local</span> <b>${pL}%</b></div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${pL}%; background:#10b981"></div></div>
+                
+                <div class="prob-label" style="margin-top:10px"><span>Empate</span> <b>${pE}%</b></div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${pE}%; background:#64748b"></div></div>
+
+                <div class="prob-label" style="margin-top:10px"><span>Visitante</span> <b>${pV}%</b></div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${pV}%; background:#ef4444"></div></div>
+            </div>
+
+            <div class="grid-stats">
+                <div class="stat-box"><small>AMBOS MARCAN</small><b>${(mBTTS*100).toFixed(0)}%</b></div>
+                <div class="stat-box"><small>+2.5 GOLES</small><b>${(mOver25*100).toFixed(0)}%</b></div>
+            </div>
+
+            <div class="recommendation" style="border-color:${color}">
+                <small style="color:var(--dim)">PICK RECOMENDADO</small><br>
+                <b style="color:${color}; font-size:18px">${pick}</b>
+                <div class="confianza" style="color:${color}">Confianza ${conf}</div>
+            </div>
+        </div>
+    `;
 }
-
-function calcular(){
-
-const l=document.getElementById("local").value;
-const v=document.getElementById("visitante").value;
-const liga=document.getElementById("liga").value;
-
-if(!equipos[l]||l===v)return;
-
-const sL=equipos[l];
-const sV=equipos[v];
-
-const formL=(sL.win+sL.draw*0.5)/(sL.win+sL.draw+sL.lose);
-const formV=(sV.win+sV.draw*0.5)/(sV.win+sV.draw+sV.lose);
-
-const rankFactor=(sV.rank-sL.rank)*0.07;
-
-const expL=(sL.atk*sV.def*1.25)+(formL*0.6)+rankFactor;
-const expV=(sV.atk*sL.def*0.95)+(formV*0.5);
-
-/* NORMALIZACIÓN GOLES */
-
-let gT=(expL+expV)/2.4;
-
-gT=gT*leagueFactor[liga];
-
-gT=Math.max(1.6,Math.min(3.2,gT));
-
-/* POISSON */
-
-const p0=poisson(gT,0);
-const p1=poisson(gT,1);
-const p2=poisson(gT,2);
-
-const over15=(1-(p0+p1))*100;
-const over25=(1-(p0+p1+p2))*100;
-
-/* AMBOS MARCAN */
-
-const pLocal0=poisson(expL,0);
-const pVis0=poisson(expV,0);
-
-let ambosProb=(1-(pLocal0+pVis0-(pLocal0*pVis0)))*100;
-
-ambosProb=Math.max(32,Math.min(72,ambosProb));
-
-const ambosSi=ambosProb.toFixed(0);
-const ambosNo=(100-ambosSi).toFixed(0);
-
-/* CORNERS */
-
-const attackPressure=(sL.atk+sV.atk);
-
-let cornersLinea;
-
-if(attackPressure>3.2) cornersLinea=9;
-else if(attackPressure>2.6) cornersLinea=8.5;
-else cornersLinea=7.5;
-
-const probCorners=Math.min(74,Math.max(44,50+(attackPressure*8)));
-
-/* 1X2 */
-
-const total=expL+expV+1.3;
-
-const pL=((expL/total)*100).toFixed(1);
-const pV=((expV/total)*100).toFixed(1);
-const pE=(100-pL-pV).toFixed(1);
-
-/* RECOMENDACIÓN */
-
-let rec="Partido parejo";
-
-if(pL>48) rec="Gana "+l;
-else if(pV>48) rec="Gana "+v;
-else rec="Doble oportunidad";
-
-document.getElementById("resultado").innerHTML=`
-
-<div class="resultado">
-
-<div class="header">
-
-<div class="team">${l}</div>
-
-<div class="vs">VS</div>
-
-<div class="team">${v}</div>
-
-</div>
-
-Victoria Local ${pL}%
-
-<div class="bar">
-<div class="fill" style="width:${pL}%;background:#22c55e"></div>
-</div>
-
-Empate ${pE}%
-
-<div class="bar">
-<div class="fill" style="width:${pE}%;background:#64748b"></div>
-</div>
-
-Victoria Visitante ${pV}%
-
-<div class="bar">
-<div class="fill" style="width:${pV}%;background:#ef4444"></div>
-</div>
-
-<div class="stats">
-
-<div class="mini">
-Ambos marcan<br>
-<b>SI ${ambosSi}%</b><br>
-NO ${ambosNo}%
-</div>
-
-<div class="mini">
-+1.5 goles<br>
-<b>${over15.toFixed(0)}%</b>
-<div class="bar">
-<div class="fill" style="width:${over15}%;background:#22c55e"></div>
-</div>
-</div>
-
-<div class="mini">
-+2.5 goles<br>
-<b>${over25.toFixed(0)}%</b>
-<div class="bar">
-<div class="fill" style="width:${over25}%;background:#22c55e"></div>
-</div>
-</div>
-
-<div class="mini">
-Corners línea<br>
-<b>${cornersLinea}</b>
-<div class="bar">
-<div class="fill" style="width:${probCorners}%;background:#f59e0b"></div>
-</div>
-${probCorners.toFixed(0)}%
-</div>
-
-</div>
-
-<div class="tip">
-
-APUESTA RECOMENDADA<br>
-<b>${rec}</b>
-
-</div>
-
-</div>
-
-`;
-
-}
-
 </script>
-
 </body>
 </html>

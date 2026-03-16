@@ -1,64 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor ELITE Pro</title>
+    <style>
+        :root{ --bg:#020617; --card:#1e293b; --accent:#10b981; --border:#334155; --text:#f8fafc; --dim:#94a3b8; }
+        body{ font-family: sans-serif; background:var(--bg); color:var(--text); padding:10px; display:flex; flex-direction:column; align-items:center; }
+        .container{ width:100%; max-width:450px; }
+        h1{ color:var(--accent); text-align:center; font-size:24px; margin-bottom:5px; }
+        .card{ background:var(--card); padding:20px; border-radius:16px; border:1px solid var(--border); margin-bottom:15px; }
+        label{ font-size:11px; color:var(--accent); font-weight:bold; display:block; margin:10px 0 5px; }
+        select{ width:100%; padding:12px; border-radius:8px; background:#0f172a; color:white; border:1px solid var(--border); }
+        button{ width:100%; padding:16px; border:none; border-radius:12px; background:linear-gradient(135deg,#10b981,#059669); color:white; font-weight:800; cursor:pointer; margin-top:15px; width:100%; }
+        .res-card{ background:var(--card); border-radius:16px; border:1px solid var(--accent); padding:20px; margin-top:20px; }
+        .prob-bar-container{ margin:15px 0; font-size: 14px; }
+        .bar-bg{ background:#0f172a; height:10px; border-radius:5px; overflow:hidden; margin-bottom:10px; margin-top:4px; }
+        .bar-fill{ height:100%; transition:width 1s ease-out; }
+        .recommendation{ margin-top:15px; background:rgba(16,185,129,0.1); border:1px dashed var(--accent); padding:15px; border-radius:8px; text-align:center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚽ Predictor ELITE</h1>
+    <div class="card">
+        <label>Competición</label>
+        <select id="liga">
+            <option value="">Seleccione Liga</option>
+            <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
+            <option value="140">La Liga 🇪🇸</option>
+            <option value="135">Serie A 🇮🇹</option>
+            <option value="78">Bundesliga 🇩🇪</option>
+            <option value="239">Liga BetPlay 🇨🇴</option>
+            <option value="128">Liga Argentina 🇦🇷</option>
+            <option value="71">Brasileirão 🇧🇷</option>
+        </select>
+
+        <label>Equipo Local</label>
+        <select id="local"><option value="">Seleccione liga primero</option></select>
+
+        <label>Equipo Visitante</label>
+        <select id="visitante"><option value="">Seleccione liga primero</option></select>
+
+        <button onclick="calcular()">ANALIZAR PARTIDO</button>
+    </div>
+    <div id="resultado"></div>
+</div>
+
+<script>
+// USANDO TU KEY ORIGINAL
 const KEY = "ea232d851cb4197391464e2c61df516b"; 
 let db = {};
 
 document.getElementById("liga").onchange = async function() {
-    const liga = this.value;
-    if(!liga) return;
+    const ligaId = this.value;
+    if(!ligaId) return;
     
     const loc = document.getElementById("local");
     const vis = document.getElementById("visitante");
-    loc.innerHTML = vis.innerHTML = "<option>Cargando equipos...</option>";
+    loc.innerHTML = vis.innerHTML = "<option>Cargando datos...</option>";
 
-    // Intentamos temporadas 2024, 2025 o 2026 según disponibilidad
-    const seasons = [2026, 2025, 2024];
+    // Probamos temporadas 2025, 2024 y 2023
+    const seasons = [2025, 2024, 2023];
     let dataFound = false;
 
     for(let s of seasons) {
         if(dataFound) break;
         try {
-            const res = await fetch(`https://v3.football.api-sports.io{liga}&season=${s}`, {
-                headers: { "x-rapidapi-key": KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
+            const response = await fetch(`https://v3.football.api-sports.io{ligaId}&season=${s}`, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': KEY,
+                    'x-rapidapi-host': 'v3.football.api-sports.io'
+                }
             });
-            const data = await res.json();
-            
+            const data = await response.json();
+
+            // REVISIÓN CRÍTICA: La API devuelve la tabla en response[0]
             if(data.response && data.response.length > 0) {
-                // CORRECCIÓN CLAVE: Acceder a la estructura correcta de standings
-                const standingsGroups = data.response[0].league.standings;
-                cargarEquipos(standingsGroups);
+                const standings = data.response[0].league.standings;
+                cargarEquipos(standings);
                 dataFound = true;
+                console.log(`Datos cargados de la temporada ${s}`);
             }
-        } catch(e) { 
-            console.error("Error en temporada " + s, e); 
+        } catch (error) {
+            console.error("Error buscando temporada " + s);
         }
     }
-    
+
     if(!dataFound) {
-        loc.innerHTML = vis.innerHTML = "<option>Error al cargar</option>";
-        alert("No se encontraron datos para esta liga. Revisa tu API Key o conexión.");
+        loc.innerHTML = vis.innerHTML = "<option>No hay datos</option>";
+        alert("No se pudieron obtener equipos. Verifica tu conexión o el límite de tu API Key.");
     }
 };
 
-function cargarEquipos(groups) {
+function cargarEquipos(standings) {
     db = {};
     const loc = document.getElementById("local");
     const vis = document.getElementById("visitante");
     loc.innerHTML = vis.innerHTML = "";
 
-    // Recorremos todos los grupos (por si la liga tiene varias tablas)
-    groups.forEach(group => {
-        group.forEach(t => {
-            const name = t.team.name;
-            const pj = t.all.played || 1;
-            
-            db[name] = {
-                atk: t.all.goals.for / pj,
-                def: t.all.goals.against / pj,
-                form: (t.all.win * 3 + t.all.draw) / (pj * 3)
-            };
-            
-            loc.add(new Option(name, name));
-            vis.add(new Option(name, name));
-        });
+    // Las ligas a veces vienen en grupos (standings[0])
+    const teamsList = standings[0]; 
+
+    teamsList.forEach(item => {
+        const name = item.team.name;
+        const stats = item.all;
+        const pj = stats.played || 1;
+
+        // Guardamos estadísticas base para Poisson
+        db[name] = {
+            atk: stats.goals.for / pj,
+            def: stats.goals.against / pj,
+            form: (stats.win * 3 + stats.draw) / (pj * 3)
+        };
+
+        loc.add(new Option(name, name));
+        vis.add(new Option(name, name));
     });
 }
 
@@ -71,38 +130,54 @@ function poisson(lambda, k) {
 function calcular() {
     const lName = document.getElementById("local").value;
     const vName = document.getElementById("visitante").value;
-    if(!db[lName] || lName === vName) return alert("Selecciona equipos válidos");
-
-    const L = db[lName]; 
-    const V = db[vName];
     
-    // xG Ajustado
-    let expL = (L.atk * V.def * 1.25) + (L.form * 0.3);
-    let expV = (V.atk * L.def * 0.85) + (V.form * 0.2);
+    if(!db[lName] || lName === vName) {
+        alert("Selecciona dos equipos diferentes");
+        return;
+    }
+
+    const L = db[lName];
+    const V = db[vName];
+
+    // Cálculo de Goles Esperados (xG) con ventaja de localía
+    let xG_L = (L.atk * V.def * 1.25) + (L.form * 0.2);
+    let xG_V = (V.atk * L.def * 0.85) + (V.form * 0.1);
 
     let pL = 0, pE = 0, pV = 0;
+    
+    // Matriz 6x6 para mayor precisión
     for(let i=0; i<6; i++) {
         for(let j=0; j<6; j++) {
-            const prob = poisson(expL, i) * poisson(expV, j);
-            if(i > j) pL += prob; else if(i === j) pE += prob; else pV += prob;
+            const prob = poisson(xG_L, i) * poisson(xG_V, j);
+            if(i > j) pL += prob;
+            else if(i === j) pE += prob;
+            else pV += prob;
         }
     }
 
     const total = pL + pE + pV;
-    const resL = (pL/total*100).toFixed(1);
-    const resE = (pE/total*100).toFixed(1);
-    const resV = (pV/total*100).toFixed(1);
+    const finalL = (pL/total*100).toFixed(1);
+    const finalE = (pE/total*100).toFixed(1);
+    const finalV = (pV/total*100).toFixed(1);
+
+    let pick = "Doble Oportunidad";
+    if(parseFloat(finalL) > 50) pick = "Gana Local: " + lName;
+    else if(parseFloat(finalV) > 50) pick = "Gana Visitante: " + vName;
 
     document.getElementById("resultado").innerHTML = `
         <div class="res-card">
-            <div style="text-align:center; margin-bottom:10px;"><b>${lName} vs ${vName}</b></div>
+            <div style="text-align:center; margin-bottom:15px;"><b>${lName} vs ${vName}</b></div>
             <div class="prob-bar-container">
-                Local: ${resL}% <div class="bar-bg"><div class="bar-fill" style="width:${resL}%; background:#10b981"></div></div>
-                Empate: ${resE}% <div class="bar-bg"><div class="bar-fill" style="width:${resE}%; background:#64748b"></div></div>
-                Visitante: ${resV}% <div class="bar-bg"><div class="bar-fill" style="width:${resV}%; background:#ef4444"></div></div>
+                Local: ${finalL}% <div class="bar-bg"><div class="bar-fill" style="width:${finalL}%; background:#10b981"></div></div>
+                Empate: ${finalE}% <div class="bar-bg"><div class="bar-fill" style="width:${finalE}%; background:#64748b"></div></div>
+                Visitante: ${finalV}% <div class="bar-bg"><div class="bar-fill" style="width:${finalV}%; background:#ef4444"></div></div>
             </div>
             <div class="recommendation">
-                <b>Pick: ${parseFloat(resL) > 45 ? 'Gana Local' : (parseFloat(resV) > 45 ? 'Gana Visitante' : 'Doble Oportunidad')}</b>
+                <small>RECOMENDACIÓN</small><br>
+                <b style="font-size:18px">${pick}</b>
             </div>
         </div>`;
 }
+</script>
+</body>
+</html>

@@ -1,85 +1,64 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor ELITE Pro</title>
-    <style>
-        :root{ --bg:#020617; --card:#1e293b; --accent:#10b981; --border:#334155; --text:#f8fafc; --dim:#94a3b8; }
-        body{ font-family:sans-serif; background:var(--bg); color:var(--text); padding:10px; display:flex; flex-direction:column; align-items:center; }
-        .container{ width:100%; max-width:450px; }
-        h1{ color:var(--accent); text-align:center; font-size:24px; }
-        .card{ background:var(--card); padding:20px; border-radius:16px; border:1px solid var(--border); margin-bottom:15px; }
-        label{ font-size:11px; color:var(--accent); font-weight:bold; display:block; margin:10px 0 5px; }
-        select{ width:100%; padding:12px; border-radius:8px; background:#0f172a; color:white; border:1px solid var(--border); }
-        button{ width:100%; padding:16px; border:none; border-radius:12px; background:linear-gradient(135deg,#10b981,#059669); color:white; font-weight:800; cursor:pointer; margin-top:10px; }
-        .res-card{ background:var(--card); border-radius:16px; border:1px solid var(--accent); padding:20px; margin-top:20px; }
-        .prob-bar-container{ margin:15px 0; }
-        .bar-bg{ background:#0f172a; height:8px; border-radius:4px; overflow:hidden; }
-        .bar-fill{ height:100%; transition:width 1s ease-out; }
-        .recommendation{ margin-top:15px; background:rgba(16,185,129,0.1); border:1px dashed var(--accent); padding:15px; border-radius:8px; text-align:center; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>⚽ Predictor ELITE</h1>
-    <div class="card">
-        <label>Competición</label>
-        <select id="liga">
-            <option value="">Seleccione Liga</option>
-            <option value="39">Premier League</option>
-            <option value="140">La Liga</option>
-            <option value="135">Serie A</option>
-            <option value="78">Bundesliga</option>
-            <option value="239">Liga BetPlay</option>
-        </select>
-        <label>Equipo Local</label>
-        <select id="local"></select>
-        <label>Equipo Visitante</label>
-        <select id="visitante"></select>
-        <button onclick="calcular()">ANALIZAR PARTIDO</button>
-    </div>
-    <div id="resultado"></div>
-</div>
-
-<script>
 const KEY = "ea232d851cb4197391464e2c61df516b"; 
 let db = {};
 
 document.getElementById("liga").onchange = async function() {
     const liga = this.value;
     if(!liga) return;
+    
+    const loc = document.getElementById("local");
+    const vis = document.getElementById("visitante");
+    loc.innerHTML = vis.innerHTML = "<option>Cargando equipos...</option>";
+
+    // Intentamos temporadas 2024, 2025 o 2026 según disponibilidad
     const seasons = [2026, 2025, 2024];
+    let dataFound = false;
+
     for(let s of seasons) {
+        if(dataFound) break;
         try {
             const res = await fetch(`https://v3.football.api-sports.io{liga}&season=${s}`, {
                 headers: { "x-rapidapi-key": KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
             });
             const data = await res.json();
-            if(data.response.length > 0) {
-                const standings = data.response[0].league.standings[0];
-                cargarEquipos(standings);
-                break;
+            
+            if(data.response && data.response.length > 0) {
+                // CORRECCIÓN CLAVE: Acceder a la estructura correcta de standings
+                const standingsGroups = data.response[0].league.standings;
+                cargarEquipos(standingsGroups);
+                dataFound = true;
             }
-        } catch(e) { console.log("Error en temporada", s); }
+        } catch(e) { 
+            console.error("Error en temporada " + s, e); 
+        }
+    }
+    
+    if(!dataFound) {
+        loc.innerHTML = vis.innerHTML = "<option>Error al cargar</option>";
+        alert("No se encontraron datos para esta liga. Revisa tu API Key o conexión.");
     }
 };
 
-function cargarEquipos(standings) {
+function cargarEquipos(groups) {
     db = {};
     const loc = document.getElementById("local");
     const vis = document.getElementById("visitante");
     loc.innerHTML = vis.innerHTML = "";
-    standings.forEach(t => {
-        const pj = t.all.played || 1;
-        db[t.team.name] = {
-            atk: t.all.goals.for / pj,
-            def: t.all.goals.against / pj,
-            form: (t.all.win * 3 + t.all.draw) / (pj * 3)
-        };
-        loc.add(new Option(t.team.name, t.team.name));
-        vis.add(new Option(t.team.name, t.team.name));
+
+    // Recorremos todos los grupos (por si la liga tiene varias tablas)
+    groups.forEach(group => {
+        group.forEach(t => {
+            const name = t.team.name;
+            const pj = t.all.played || 1;
+            
+            db[name] = {
+                atk: t.all.goals.for / pj,
+                def: t.all.goals.against / pj,
+                form: (t.all.win * 3 + t.all.draw) / (pj * 3)
+            };
+            
+            loc.add(new Option(name, name));
+            vis.add(new Option(name, name));
+        });
     });
 }
 
@@ -92,9 +71,12 @@ function poisson(lambda, k) {
 function calcular() {
     const lName = document.getElementById("local").value;
     const vName = document.getElementById("visitante").value;
-    if(!db[lName] || lName === vName) return;
+    if(!db[lName] || lName === vName) return alert("Selecciona equipos válidos");
 
-    const L = db[lName]; const V = db[vName];
+    const L = db[lName]; 
+    const V = db[vName];
+    
+    // xG Ajustado
     let expL = (L.atk * V.def * 1.25) + (L.form * 0.3);
     let expV = (V.atk * L.def * 0.85) + (V.form * 0.2);
 
@@ -113,15 +95,14 @@ function calcular() {
 
     document.getElementById("resultado").innerHTML = `
         <div class="res-card">
-            <b>${lName} vs ${vName}</b>
+            <div style="text-align:center; margin-bottom:10px;"><b>${lName} vs ${vName}</b></div>
             <div class="prob-bar-container">
                 Local: ${resL}% <div class="bar-bg"><div class="bar-fill" style="width:${resL}%; background:#10b981"></div></div>
                 Empate: ${resE}% <div class="bar-bg"><div class="bar-fill" style="width:${resE}%; background:#64748b"></div></div>
                 Visitante: ${resV}% <div class="bar-bg"><div class="bar-fill" style="width:${resV}%; background:#ef4444"></div></div>
             </div>
-            <div class="recommendation"><b>Pick: ${parseFloat(resL) > 50 ? 'Gana Local' : 'Doble Oportunidad'}</b></div>
+            <div class="recommendation">
+                <b>Pick: ${parseFloat(resL) > 45 ? 'Gana Local' : (parseFloat(resV) > 45 ? 'Gana Visitante' : 'Doble Oportunidad')}</b>
+            </div>
         </div>`;
 }
-</script>
-</body>
-</html>

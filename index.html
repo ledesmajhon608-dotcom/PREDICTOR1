@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor ULTRA ELITE v6.5</title>
+    <title>Predictor PRO ELITE v7.0 - Dixon-Coles Edition</title>
     <style>
         :root {
             --bg: #020617;
@@ -119,14 +119,13 @@
 <body>
 
 <div class="container">
-    <h1>⚽ PREDICTOR ELITE</h1>
-    <div class="subtitle">Análisis Estadístico Profesional</div>
+    <h1>⚽ PREDICTOR ELITE v7.0</h1>
+    <div class="subtitle">Algoritmo Dixon-Coles & Momentum</div>
 
     <div class="selector-card">
         <label>LIGA / COMPETICIÓN</label>
         <select id="liga">
             <option value="">Seleccione liga...</option>
-            <option value="2">Champions League 🏆</option>
             <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
             <option value="140">La Liga 🇪🇸</option>
             <option value="135">Serie A 🇮🇹</option>
@@ -140,7 +139,7 @@
         <label>LOCAL</label><select id="local"></select>
         <label>VISITANTE</label><select id="visitante"></select>
 
-        <button onclick="calcularTodo()">GENERAR PRONÓSTICO</button>
+        <button onclick="calcularTodo()">GENERAR PRONÓSTICO PROFESIONAL</button>
     </div>
 
     <div id="resultado" class="resultado-container">
@@ -152,27 +151,27 @@
             </div>
 
             <div class="prob-row">
-                <div class="prob-info"><span>Victoria Local</span> <b id="probLVal">0%</b></div>
+                <div class="prob-info"><span>Victoria Local (1)</span> <b id="probLVal">0%</b></div>
                 <div class="bar-outer"><div id="barLFill" class="bar-inner"></div></div>
             </div>
             <div class="prob-row">
-                <div class="prob-info"><span>Empate</span> <b id="probEVal">0%</b></div>
+                <div class="prob-info"><span>Empate (X)</span> <b id="probEVal">0%</b></div>
                 <div class="bar-outer"><div id="barEFill" class="bar-inner" style="background: var(--dim)"></div></div>
             </div>
             <div class="prob-row">
-                <div class="prob-info"><span>Victoria Visitante</span> <b id="probVVal">0%</b></div>
+                <div class="prob-info"><span>Victoria Visitante (2)</span> <b id="probVVal">0%</b></div>
                 <div class="bar-outer"><div id="barVFill" class="bar-inner" style="background: var(--danger)"></div></div>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card"><span>Ambos Marcan</span><b id="probAmbosVal" class="val-accent">0%</b></div>
-                <div class="stat-card"><span>+1.5 Goles</span><b id="probOver15Val" class="val-accent">0%</b></div>
-                <div class="stat-card"><span>+2.5 Goles</span><b id="probOver25Val" class="val-warning">0%</b></div>
-                <div class="stat-card"><span>+7.5 Corners</span><b id="probCornersVal" class="val-info">0%</b></div>
+                <div class="stat-card"><span>Over 1.5</span><b id="probOver15Val" class="val-accent">0%</b></div>
+                <div class="stat-card"><span>Over 2.5</span><b id="probOver25Val" class="val-warning">0%</b></div>
+                <div class="stat-card"><span>Córners (+8.5)</span><b id="probCornersVal" class="val-info">0%</b></div>
             </div>
 
             <div class="bet-tip">
-                <span>SUGERENCIA DE ALTA PROBABILIDAD</span>
+                <span>RECOMENDACIÓN BASADA EN VALOR</span>
                 <b id="recText"></b>
             </div>
         </div>
@@ -198,7 +197,7 @@
                 if(json.response && json.response.length > 0) {
                     procesarData(json.response[0].league.standings);
                     document.getElementById("statusSeason").style.display = "inline-block";
-                    document.getElementById("statusSeason").innerText = "DATOS TEMPORADA: " + anio;
+                    document.getElementById("statusSeason").innerText = "DATOS ACTUALIZADOS: " + anio;
                     exito = true;
                 }
             } catch (e) {}
@@ -212,8 +211,12 @@
             grupo.forEach(t => {
                 const n = t.team.name;
                 baseDatos[n] = { 
-                    hAtk: t.home.goals.for / (t.home.played || 1), hDef: t.home.goals.against / (t.home.played || 1), 
-                    aAtk: t.away.goals.for / (t.away.played || 1), aDef: t.away.goals.against / (t.away.played || 1) 
+                    hAtk: t.home.goals.for / (t.home.played || 1), 
+                    hDef: t.home.goals.against / (t.home.played || 1), 
+                    aAtk: t.away.goals.for / (t.away.played || 1), 
+                    aDef: t.away.goals.against / (t.away.played || 1),
+                    puntos: t.points,
+                    jugados: t.all.played
                 };
                 loc.add(new Option(n, n)); vis.add(new Option(n, n));
             });
@@ -225,36 +228,59 @@
         return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; 
     }
 
+    // Mejora 1: Factor de Forma (Momentum)
+    function calcularFactorForma(equipoNombre) {
+        const stats = baseDatos[equipoNombre];
+        let factor = 1.0;
+        // Si el equipo promedia más de 1.6 puntos por partido, está en buena forma
+        const ppp = stats.puntos / (stats.jugados || 1);
+        if (ppp > 1.8) factor += 0.12; 
+        if (ppp < 1.0) factor -= 0.10;
+        return factor;
+    }
+
     function calcularTodo() {
         const lN = document.getElementById("local").value; 
         const vN = document.getElementById("visitante").value;
-        if(!lN || !vN || lN === vN) return alert("Selecciona dos equipos");
+        if(!lN || !vN || lN === vN) return alert("Selecciona dos equipos distintos");
         
         const L = baseDatos[lN]; const V = baseDatos[vN];
         
-        // Motor de Goles Esperados (xG)
-        let expL = (L.hAtk * V.aDef * 1.10); 
-        let expV = (V.aAtk * L.hDef * 0.95);
+        // Mejora 2: Momentum y Home Advantage Dinámico
+        const formaLocal = calcularFactorForma(lN);
+        const formaVisita = calcularFactorForma(vN);
+        
+        let expL = (L.hAtk * V.aDef * 1.12) * formaLocal; 
+        let expV = (V.aAtk * L.hDef * 0.90) * formaVisita;
 
-        // Matriz de Poisson 6x6 para 1X2 Exacto
+        // Mejora 3: Matriz de Poisson 8x8 con Ajuste Dixon-Coles
+        const RHO = -0.11; 
         let pL = [], pV = [];
-        for(let i=0; i<6; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
+        for(let i=0; i<8; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
 
         let finalL = 0, finalV = 0, finalE = 0;
-        for(let i=0; i<6; i++) {
-            for(let j=0; j<6; j++) {
-                let p = pL[i] * pV[j];
-                if(i > j) finalL += p; else if(i < j) finalV += p; else finalE += p;
+        for(let i=0; i<8; i++) {
+            for(let j=0; j<8; j++) {
+                let probBase = pL[i] * pV[j];
+                let adj = 1;
+                // Aplicación de correlación Dixon-Coles para empates bajos
+                if(i === 0 && j === 0) adj = 1 - (expL * expV * RHO);
+                else if(i === 0 && j === 1) adj = 1 + (expL * RHO);
+                else if(i === 1 && j === 0) adj = 1 + (expV * RHO);
+                else if(i === 1 && j === 1) adj = 1 - RHO;
+                
+                let probFinal = probBase * adj;
+                if(i > j) finalL += probFinal; else if(i < j) finalV += probFinal; else finalE += probFinal;
             }
         }
 
-        // Mercados Secundarios
-        const ambos = (1 - pL[0]) * (1 - pV[0]) * 105; // Ajuste ambos marcan
+        // Cálculo de Mercados Secundarios
+        const ambos = (1 - pL[0]) * (1 - pV[0]) * 1.12 * 100;
         const over15 = (1 - (pL[0] * pV[0])) * 100;
-        const over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0])) * 100;
-        let pCorners = Math.min(95, Math.max(40, ((expL + expV) * 18) + 20));
+        const over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0] + pL[1]*pV[1] + pL[2]*pV[0] + pL[0]*pV[2])) * 100;
+        let pCorners = Math.min(98, Math.max(45, ((expL + expV) * 9.5) + 35));
 
-        // UI
+        // Actualizar UI
         document.getElementById("resultado").style.display = "block";
         document.getElementById("lNameDisplay").innerText = lN;
         document.getElementById("vNameDisplay").innerText = vN;
@@ -271,17 +297,19 @@
             document.getElementById("probOver15Val").innerText = Math.min(99, over15).toFixed(0) + "%";
             document.getElementById("probOver25Val").innerText = Math.min(99, over25).toFixed(0) + "%";
             document.getElementById("probCornersVal").innerText = pCorners.toFixed(0) + "%";
-        }, 100);
+        }, 150);
 
-        // Lógica de Ganancia
+        // Lógica de Sugerencia Profesional
         let tip = "";
-        let fL = finalL * 100; let fV = finalV * 100;
-        if(fL > 65) tip = "LOCAL DIRECTO 🏆";
-        else if(fV > 65) tip = "VISITANTE DIRECTO 🏆";
-        else if(fL > 45) tip = "1X (LOCAL O EMPATE) 🛡️";
-        else if(fV > 45) tip = "X2 (VISITA O EMPATE) 🛡️";
-        else if(ambos > 70) tip = "AMBOS MARCAN ⚽";
-        else tip = "+1.5 GOLES (MÁS SEGURO)";
+        let fL = finalL * 100; let fV = finalV * 100; let fE = finalE * 100;
+        
+        if(fL > 62) tip = "LOCAL (1) DIRECTO 💎";
+        else if(fV > 62) tip = "VISITANTE (2) DIRECTO 💎";
+        else if(ambos > 72) tip = "AMBOS MARCAN ⚽";
+        else if(fL + fE > 80 && fL > 40) tip = "1X (LOCAL O EMPATE) 🛡️";
+        else if(fV + fE > 80 && fV > 40) tip = "X2 (VISITA O EMPATE) 🛡️";
+        else if(over25 > 65) tip = "OVER 2.5 GOLES 🔥";
+        else tip = "OVER 1.5 GOLES (STAKE ALTO)";
         
         document.getElementById("recText").innerText = tip;
     }

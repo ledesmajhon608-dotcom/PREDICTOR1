@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor PRO ELITE v7.0 - Dixon-Coles Edition</title>
+    <title>Predictor PRO ELITE v7.0 - Colombia Altitude Edition</title>
     <style>
         :root {
             --bg: #020617;
@@ -120,29 +120,26 @@
 
 <div class="container">
     <h1>⚽ PREDICTOR ELITE v7.0</h1>
-    <div class="subtitle">Algoritmo Dixon-Coles & Momentum</div>
+    <div class="subtitle">Dixon-Coles + Factor Altitud Colombia</div>
 
     <div class="selector-card">
-    <label>LIGA / COMPETICIÓN</label>
-    <select id="liga">
-        <option value="">Seleccione liga...</option>
-        <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
-        <option value="140">La Liga 🇪🇸</option>
-        <option value="135">Serie A 🇮🇹</option>
-        <option value="78">Bundesliga 🇩🇪</option>
-        <option value="61">Ligue 1 Francia 🇫🇷</option>
-        <option value="239">Liga BetPlay 🇨🇴</option>
-        <option value="71">Brasileirão 🇧🇷</option>
-        <option value="128">Liga Argentina 🇦🇷</option>
-    </select>
-</div>
-
-                                                             
+        <label>LIGA / COMPETICIÓN</label>
+        <select id="liga">
+            <option value="">Seleccione liga...</option>
+            <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
+            <option value="140">La Liga 🇪🇸</option>
+            <option value="135">Serie A 🇮🇹</option>
+            <option value="78">Bundesliga 🇩🇪</option>
+            <option value="61">Ligue 1 Francia 🇫🇷</option>
+            <option value="239">Liga BetPlay 🇨🇴</option>
+            <option value="71">Brasileirão 🇧🇷</option>
+            <option value="128">Liga Argentina 🇦🇷</option>
         </select>
+
         <div id="statusSeason" class="season-badge" style="display:none"></div>
         
-        <label>LOCAL</label><select id="local"></select>
-        <label>VISITANTE</label><select id="visitante"></select>
+        <label>LOCAL</label><select id="local"><option>Cargando...</option></select>
+        <label>VISITANTE</label><select id="visitante"><option>Cargando...</option></select>
 
         <button onclick="calcularTodo()">GENERAR PRONÓSTICO PROFESIONAL</button>
     </div>
@@ -188,10 +185,22 @@
     const API_BASE = "https://v3.football.api-sports.io/standings";
     let baseDatos = {};
 
+    // Base de datos de Altitud (Metros sobre el nivel del mar)
+    const altitudes = {
+        "Pasto": 2527, "Independiente Santa Fe": 2600, "Millonarios": 2600, 
+        "Fortaleza CEIF": 2600, "Boyacá Chicó": 2810, "Patriotas": 2810,
+        "La Equidad": 2600, "Once Caldas": 2150, "Atlético Nacional": 1495, 
+        "Independiente Medellín": 1495, "Envigado": 1575, "Águilas Doradas": 2125,
+        "Deportivo Cali": 1000, "América de Cali": 1000, "Atlético Bucaramanga": 959,
+        "Deportivo Pereira": 1411, "Deportes Tolima": 1285, "Junior": 18, 
+        "Jaguares": 18, "Alianza FC": 30
+    };
+
     document.getElementById("liga").onchange = async function() {
         const ligaId = this.value; if(!ligaId) return;
         const anios = [2026, 2025, 2024]; let exito = false;
         document.getElementById("statusSeason").style.display = "none";
+        
         for(let anio of anios) {
             if(exito) break;
             try {
@@ -205,25 +214,34 @@
                     document.getElementById("statusSeason").innerText = "DATOS ACTUALIZADOS: " + anio;
                     exito = true;
                 }
-            } catch (e) {}
+            } catch (e) { console.error(e); }
         }
     };
 
     function procesarData(data) {
-        baseDatos = {}; const loc = document.getElementById("local"); const vis = document.getElementById("visitante");
-        loc.innerHTML = vis.innerHTML = "";
+        baseDatos = {}; 
+        const loc = document.getElementById("local"); 
+        const vis = document.getElementById("visitante");
+        loc.innerHTML = vis.innerHTML = "<option value=''>Seleccione equipo...</option>";
+        
+        const equiposAgregados = new Set();
+
         data.forEach(grupo => {
             grupo.forEach(t => {
                 const n = t.team.name;
-                baseDatos[n] = { 
-                    hAtk: t.home.goals.for / (t.home.played || 1), 
-                    hDef: t.home.goals.against / (t.home.played || 1), 
-                    aAtk: t.away.goals.for / (t.away.played || 1), 
-                    aDef: t.away.goals.against / (t.away.played || 1),
-                    puntos: t.points,
-                    jugados: t.all.played
-                };
-                loc.add(new Option(n, n)); vis.add(new Option(n, n));
+                if (!equiposAgregados.has(n)) {
+                    baseDatos[n] = { 
+                        hAtk: t.home.goals.for / (t.home.played || 1), 
+                        hDef: t.home.goals.against / (t.home.played || 1), 
+                        aAtk: t.away.goals.for / (t.away.played || 1), 
+                        aDef: t.away.goals.against / (t.away.played || 1),
+                        puntos: t.points,
+                        jugados: t.all.played
+                    };
+                    loc.add(new Option(n, n)); 
+                    vis.add(new Option(n, n));
+                    equiposAgregados.add(n);
+                }
             });
         });
     }
@@ -233,11 +251,9 @@
         return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; 
     }
 
-    // Mejora 1: Factor de Forma (Momentum)
     function calcularFactorForma(equipoNombre) {
         const stats = baseDatos[equipoNombre];
         let factor = 1.0;
-        // Si el equipo promedia más de 1.6 puntos por partido, está en buena forma
         const ppp = stats.puntos / (stats.jugados || 1);
         if (ppp > 1.8) factor += 0.12; 
         if (ppp < 1.0) factor -= 0.10;
@@ -251,14 +267,27 @@
         
         const L = baseDatos[lN]; const V = baseDatos[vN];
         
-        // Mejora 2: Momentum y Home Advantage Dinámico
+        // --- FACTOR ALTITUD ---
+        let altL = altitudes[lN] || 500; 
+        let altV = altitudes[vN] || 500;
+        let difAltitud = altL - altV;
+        let bonoAlturaL = 1.0;
+        let penalizacionV = 1.0;
+
+        if (difAltitud > 1500) {
+            bonoAlturaL = 1.15; 
+            penalizacionV = 1.10; 
+        } else if (difAltitud > 800) {
+            bonoAlturaL = 1.07;
+            penalizacionV = 1.05;
+        }
+
         const formaLocal = calcularFactorForma(lN);
         const formaVisita = calcularFactorForma(vN);
         
-        let expL = (L.hAtk * V.aDef * 1.12) * formaLocal; 
-        let expV = (V.aAtk * L.hDef * 0.90) * formaVisita;
+        let expL = (L.hAtk * V.aDef * 1.12) * formaLocal * bonoAlturaL; 
+        let expV = (V.aAtk * L.hDef * 0.90) * formaVisita / penalizacionV;
 
-        // Mejora 3: Matriz de Poisson 8x8 con Ajuste Dixon-Coles
         const RHO = -0.11; 
         let pL = [], pV = [];
         for(let i=0; i<8; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
@@ -268,7 +297,6 @@
             for(let j=0; j<8; j++) {
                 let probBase = pL[i] * pV[j];
                 let adj = 1;
-                // Aplicación de correlación Dixon-Coles para empates bajos
                 if(i === 0 && j === 0) adj = 1 - (expL * expV * RHO);
                 else if(i === 0 && j === 1) adj = 1 + (expL * RHO);
                 else if(i === 1 && j === 0) adj = 1 + (expV * RHO);
@@ -279,13 +307,11 @@
             }
         }
 
-        // Cálculo de Mercados Secundarios
         const ambos = (1 - pL[0]) * (1 - pV[0]) * 1.12 * 100;
         const over15 = (1 - (pL[0] * pV[0])) * 100;
         const over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0] + pL[1]*pV[1] + pL[2]*pV[0] + pL[0]*pV[2])) * 100;
         let pCorners = Math.min(98, Math.max(45, ((expL + expV) * 9.5) + 35));
 
-        // Actualizar UI
         document.getElementById("resultado").style.display = "block";
         document.getElementById("lNameDisplay").innerText = lN;
         document.getElementById("vNameDisplay").innerText = vN;
@@ -304,7 +330,6 @@
             document.getElementById("probCornersVal").innerText = pCorners.toFixed(0) + "%";
         }, 150);
 
-        // Lógica de Sugerencia Profesional
         let tip = "";
         let fL = finalL * 100; let fV = finalV * 100; let fE = finalE * 100;
         

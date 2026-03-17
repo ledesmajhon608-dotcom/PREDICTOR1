@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor ELITE v4.5</title>
+    <title>Predictor ELITE v4.8 - Full Colombia</title>
     <style>
         :root {
             --bg: #0f172a;
@@ -56,13 +56,11 @@
         .bar-outer { background: #020617; height: 10px; border-radius: 10px; overflow: hidden; }
         .bar-inner { height: 100%; transition: width 1s ease-out; }
 
-        /* Rejilla de Tarjetas (Boxes) */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .stat-card { background: #020617; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
-        .stat-card span { font-size: 9px; color: var(--dim); text-transform: uppercase; display: block; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .stat-card span { font-size: 9px; color: var(--dim); text-transform: uppercase; display: block; margin-bottom: 5px; }
         .stat-card b { font-size: 18px; display: block; }
         
-        /* Colores específicos para los valores */
         .val-accent { color: var(--accent); }
         .val-warning { color: var(--warning); }
         .val-info { color: var(--info); }
@@ -74,8 +72,8 @@
 <body>
 
 <div class="container">
-    <h1>⚽ PREDICTOR ELITE</h1>
-    <div class="subtitle">Versión Optimizada v4.5</div>
+    <h1>⚽ PREDICTOR PRO ELITE</h1>
+    <div class="subtitle">Análisis Inteligente Multitemporada</div>
 
     <div class="selector-card">
         <label>LIGA PROFESIONAL</label>
@@ -88,11 +86,14 @@
             <option value="239">Liga BetPlay 🇨🇴</option>
             <option value="71">Brasileirão 🇧🇷</option>
             <option value="253">MLS 🇺🇸</option>
+            <option value="128">Liga Argentina 🇦🇷</option>
         </select>
         <div id="statusSeason" class="season-badge" style="display:none"></div>
+        
         <label>LOCAL</label><select id="local"></select>
         <label>VISITANTE</label><select id="visitante"></select>
-        <button onclick="calcularTodo()">CALCULAR PREDICCIÓN</button>
+
+        <button onclick="calcularTodo()">GENERAR PREDICCIÓN</button>
     </div>
 
     <div id="resultado" class="resultado-container">
@@ -108,26 +109,14 @@
             <div class="prob-row"><div class="prob-info"><span>Victoria Visitante</span> <b id="probVVal">0%</b></div><div class="bar-outer"><div id="barVFill" class="bar-inner" style="background:var(--danger)"></div></div></div>
 
             <div class="stats-grid">
-                <div class="stat-card">
-                    <span>Ambos Marcan</span>
-                    <b id="probAmbosVal" class="val-accent">0%</b>
-                </div>
-                <div class="stat-card">
-                    <span>Más de 1.5 Goles</span>
-                    <b id="probOver15Val" class="val-accent">0%</b>
-                </div>
-                <div class="stat-card">
-                    <span>Más de 2.5 Goles</span>
-                    <b id="probOver25Val" class="val-warning">0%</b>
-                </div>
-                <div class="stat-card">
-                    <span>Más de 7.5 Corners</span>
-                    <b id="probCornersVal" class="val-info">0%</b>
-                </div>
+                <div class="stat-card"><span>Ambos Marcan</span><b id="probAmbosVal" class="val-accent">0%</b></div>
+                <div class="stat-card"><span>Más de 1.5 Goles</span><b id="probOver15Val" class="val-accent">0%</b></div>
+                <div class="stat-card"><span>Más de 2.5 Goles</span><b id="probOver25Val" class="val-warning">0%</b></div>
+                <div class="stat-card"><span>Más de 7.5 Corners</span><b id="probCornersVal" class="val-info">0%</b></div>
             </div>
 
             <div class="bet-tip">
-                <span>ESTRATEGIA RECOMENDADA</span>
+                <span>SUGERENCIA DE APUESTA</span>
                 <b id="recText"></b>
             </div>
         </div>
@@ -142,43 +131,60 @@
     document.getElementById("liga").onchange = async function() {
         const ligaId = this.value; if(!ligaId) return;
         const anios = [2026, 2025, 2024]; let exito = false;
+        
+        document.getElementById("statusSeason").style.display = "none";
+        
         for(let anio of anios) {
             if(exito) break;
             try {
-                const res = await fetch(`${API_BASE}?league=${ligaId}&season=${anio}`, { headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" } });
+                const res = await fetch(`${API_BASE}?league=${ligaId}&season=${anio}`, { 
+                    headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" } 
+                });
                 const json = await res.json();
                 if(json.response && json.response.length > 0) {
-                    procesarData(json.response[0].league.standings[0]);
+                    // PASAMOS TODOS LOS STANDINGS (ARREGLO DE GRUPOS)
+                    procesarData(json.response[0].league.standings);
                     document.getElementById("statusSeason").style.display = "inline-block";
                     document.getElementById("statusSeason").innerText = "TEMPORADA: " + anio;
                     exito = true;
                 }
-            } catch (e) {}
+            } catch (e) { console.log("Error buscando año " + anio); }
         }
     };
 
     function procesarData(data) {
-        baseDatos = {}; const loc = document.getElementById("local"); const vis = document.getElementById("visitante");
+        baseDatos = {}; 
+        const loc = document.getElementById("local"); 
+        const vis = document.getElementById("visitante");
         loc.innerHTML = vis.innerHTML = "";
-        data.forEach(t => {
-            const n = t.team.name;
-            baseDatos[n] = { 
-                hAtk: t.home.goals.for / (t.home.played || 1), 
-                hDef: t.home.goals.against / (t.home.played || 1), 
-                aAtk: t.away.goals.for / (t.away.played || 1), 
-                aDef: t.away.goals.against / (t.away.played || 1) 
-            };
-            loc.add(new Option(n, n)); vis.add(new Option(n, n));
+        
+        // CORRECCIÓN: Iterar sobre todos los grupos (Standings es un array de arrays)
+        data.forEach(grupo => {
+            grupo.forEach(t => {
+                const n = t.team.name;
+                baseDatos[n] = { 
+                    hAtk: t.home.goals.for / (t.home.played || 1), 
+                    hDef: t.home.goals.against / (t.home.played || 1), 
+                    aAtk: t.away.goals.for / (t.away.played || 1), 
+                    aDef: t.away.goals.against / (t.away.played || 1) 
+                };
+                loc.add(new Option(n, n)); 
+                vis.add(new Option(n, n));
+            });
         });
     }
 
-    function poisson(lambda, k) { let fact = 1; for(let i=1; i<=k; i++) fact *= i; return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; }
+    function poisson(lambda, k) { 
+        let fact = 1; for(let i=1; i<=k; i++) fact *= i; 
+        return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; 
+    }
 
     function calcularTodo() {
-        const lN = document.getElementById("local").value; const vN = document.getElementById("visitante").value;
-        if(lN === vN) return alert("Selecciona equipos diferentes");
-        const L = baseDatos[lN]; const V = baseDatos[vN];
+        const lN = document.getElementById("local").value; 
+        const vN = document.getElementById("visitante").value;
+        if(!lN || !vN || lN === vN) return alert("Seleccione dos equipos diferentes");
         
+        const L = baseDatos[lN]; const V = baseDatos[vN];
         let expL = (L.hAtk * V.aDef * 1.15); 
         let expV = (V.aAtk * L.hDef * 0.92);
 
@@ -190,13 +196,11 @@
         let pLocal = (expL / totalExp) * (100 - probE);
         let pVis = (expV / totalExp) * (100 - probE);
 
-        // Cálculos de tarjetas
         const ambos = (1 - pL0) * (1 - pV0) * 100;
         const over15 = (1 - (pL0 * pV0)) * 100;
         const over25 = (1 - (pL0*pV0 + pL0*pV1 + pL1*pV0)) * 100;
         let probCorners = Math.min(94, Math.max(40, ((expL + expV) * 18) + 15));
 
-        // Actualizar UI
         document.getElementById("lNameDisplay").innerText = lN;
         document.getElementById("vNameDisplay").innerText = vN;
         document.getElementById("probLVal").innerText = pLocal.toFixed(1) + "%";
@@ -206,13 +210,12 @@
         document.getElementById("probVVal").innerText = pVis.toFixed(1) + "%";
         document.getElementById("barVFill").style.width = pVis + "%";
 
-        // Tarjetas inferiores
         document.getElementById("probAmbosVal").innerText = ambos.toFixed(0) + "%";
         document.getElementById("probOver15Val").innerText = over15.toFixed(0) + "%";
         document.getElementById("probOver25Val").innerText = over25.toFixed(0) + "%";
         document.getElementById("probCornersVal").innerText = probCorners.toFixed(0) + "%";
 
-        let tip = pLocal > 55 ? "1X (Local)" : pVis > 55 ? "X2 (Visita)" : "+1.5 Goles";
+        let tip = pLocal > 55 ? "Victoria Local / 1X" : pVis > 55 ? "Victoria Visitante / X2" : "+1.5 Goles";
         document.getElementById("recText").innerText = tip;
         document.getElementById("resultado").style.display = "block";
     }

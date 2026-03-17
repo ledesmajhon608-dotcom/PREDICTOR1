@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor ELITE AI - v3 PRO</title>
+    <title>Predictor ELITE v4 - Marcador Exacto</title>
     <style>
         :root {
             --bg: #0f172a;
@@ -14,6 +14,7 @@
             --dim: #94a3b8;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #3b82f6;
         }
 
         body {
@@ -28,73 +29,52 @@
         }
 
         .container { width: 100%; max-width: 480px; }
-        
         h1 { color: var(--accent); text-align: center; margin: 10px 0 5px 0; font-size: 22px; }
         .subtitle { color: var(--dim); font-size: 11px; text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
         .selector-card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: var(--card); padding: 20px; border-radius: 20px;
+            border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         label { font-size: 10px; color: var(--accent); font-weight: 800; display: block; margin-top: 12px; }
-        
-        select {
-            width: 100%; padding: 12px; border-radius: 10px; background: #020617;
-            color: white; border: 1px solid var(--border); margin-top: 5px; font-size: 14px;
-        }
+        select { width: 100%; padding: 12px; border-radius: 10px; background: #020617; color: white; border: 1px solid var(--border); margin-top: 5px; font-size: 14px; }
+        button { margin-top: 20px; width: 100%; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
 
-        button {
-            margin-top: 20px; width: 100%; padding: 16px; border: none; border-radius: 12px;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; font-weight: bold; font-size: 16px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
-        }
+        .season-badge { background: var(--border); color: var(--text); padding: 4px 10px; border-radius: 20px; font-size: 10px; display: inline-block; margin-top: 10px; }
 
-        .season-badge {
-            background: var(--border); color: var(--text);
-            padding: 4px 10px; border-radius: 20px; font-size: 10px;
-            display: inline-block; margin-top: 10px;
-        }
-
-        /* Resultados */
-        .resultado-container { margin-top: 25px; animation: slideUp 0.4s ease; display: none; }
+        .resultado-container { margin-top: 25px; animation: slideUp 0.4s ease; display: none; width: 100%; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .match-box {
-            background: var(--card); border-radius: 24px; padding: 20px;
-            border: 1px solid var(--border);
-        }
-
+        .match-box { background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid var(--border); }
         .teams-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .team-display { width: 42%; text-align: center; font-weight: bold; font-size: 15px; }
         .vs-circle { background: var(--bg); border: 1px solid var(--accent); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
 
-        .prob-row { margin-bottom: 15px; }
+        .prob-row { margin-bottom: 12px; }
         .prob-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
         .bar-outer { background: #020617; height: 10px; border-radius: 10px; overflow: hidden; }
         .bar-inner { height: 100%; transition: width 1s ease-out; }
 
-        .extra-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .stat-item { background: #020617; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .stat-item b { display: block; color: var(--accent); font-size: 16px; margin-top: 4px; }
-        .stat-item span { font-size: 10px; color: var(--dim); text-transform: uppercase; }
+        .score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .score-item { background: #020617; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .score-item b { display: block; color: var(--warning); font-size: 16px; }
+        .score-item span { font-size: 10px; color: var(--dim); }
 
-        .bet-tip {
-            margin-top: 20px; background: rgba(34, 197, 94, 0.1);
-            border: 2px dashed var(--accent); padding: 15px; border-radius: 15px; text-align: center;
-        }
+        .extra-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .stat-item { background: #020617; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-item b { display: block; color: var(--accent); font-size: 15px; }
+        .stat-item span { font-size: 9px; color: var(--dim); text-transform: uppercase; }
+
+        .bet-tip { margin-top: 20px; background: rgba(34, 197, 94, 0.1); border: 2px dashed var(--accent); padding: 15px; border-radius: 15px; text-align: center; }
         .bet-tip b { color: var(--accent); font-size: 18px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚽ PREDICTOR PRO ELITE v3</h1>
-    <div class="subtitle">Algoritmo Multitemporada 2024-2026</div>
+    <h1>⚽ PREDICTOR ELITE v4</h1>
+    <div class="subtitle">Análisis de Marcador Exacto y Corners</div>
 
     <div class="selector-card">
         <label>LIGA PROFESIONAL</label>
@@ -104,22 +84,14 @@
             <option value="140">La Liga 🇪🇸</option>
             <option value="135">Serie A 🇮🇹</option>
             <option value="78">Bundesliga 🇩🇪</option>
-            <option value="61">Ligue 1 🇫🇷</option>
             <option value="239">Liga BetPlay 🇨🇴</option>
             <option value="71">Brasileirão 🇧🇷</option>
-            <option value="128">Liga Argentina 🇦🇷</option>
             <option value="253">MLS 🇺🇸</option>
         </select>
-
         <div id="statusSeason" class="season-badge" style="display:none"></div>
-
-        <label>LOCAL</label>
-        <select id="local"><option>Esperando liga...</option></select>
-
-        <label>VISITANTE</label>
-        <select id="visitante"><option>Esperando liga...</option></select>
-
-        <button onclick="calcularTodo()">CALCULAR ACIERTO</button>
+        <label>LOCAL</label><select id="local"></select>
+        <label>VISITANTE</label><select id="visitante"></select>
+        <button onclick="calcularTodo()">CALCULAR PREDICCIÓN</button>
     </div>
 
     <div id="resultado" class="resultado-container">
@@ -130,30 +102,24 @@
                 <div id="vNameDisplay" class="team-display"></div>
             </div>
 
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Local</span> <b id="probLVal">0%</b></div>
-                <div class="bar-outer"><div id="barLFill" class="bar-inner" style="width:0%; background:var(--accent)"></div></div>
-            </div>
+            <div class="prob-row"><div class="prob-info"><span>Victoria Local</span> <b id="probLVal">0%</b></div><div class="bar-outer"><div id="barLFill" class="bar-inner" style="background:var(--accent)"></div></div></div>
+            <div class="prob-row"><div class="prob-info"><span>Empate</span> <b id="probEVal">0%</b></div><div class="bar-outer"><div id="barEFill" class="bar-inner" style="background:var(--dim)"></div></div></div>
+            <div class="prob-row"><div class="prob-info"><span>Victoria Visitante</span> <b id="probVVal">0%</b></div><div class="bar-outer"><div id="barVFill" class="bar-inner" style="background:var(--danger)"></div></div></div>
 
-            <div class="prob-row">
-                <div class="prob-info"><span>Empate</span> <b id="probEVal">0%</b></div>
-                <div class="bar-outer"><div id="barEFill" class="bar-inner" style="width:0%; background:var(--dim)"></div></div>
-            </div>
+            <label style="text-align:center; margin:15px 0 5px 0;">MARCADORES MÁS PROBABLES</label>
+            <div id="scoreGrid" class="score-grid"></div>
 
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Visitante</span> <b id="probVVal">0%</b></div>
-                <div class="bar-outer"><div id="barVFill" class="bar-inner" style="width:0%; background:var(--danger)"></div></div>
-            </div>
+            <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+
+            <div class="prob-row"><div class="prob-info"><span>Más de 2.5 Goles</span> <b id="probOver25Val">0%</b></div><div class="bar-outer"><div id="barOver25Fill" class="bar-inner" style="background:var(--warning)"></div></div></div>
+            <div class="prob-row"><div class="prob-info"><span>Más de 7.5 Corners</span> <b id="probCornersVal">0%</b></div><div class="bar-outer"><div id="barCornersFill" class="bar-inner" style="background:var(--info)"></div></div></div>
 
             <div class="extra-stats">
                 <div class="stat-item"><span>Ambos Marcan</span><b id="probAmbosVal">0%</b></div>
-                <div class="stat-item"><span>Más de 1.5</span><b id="probOverVal">0%</b></div>
+                <div class="stat-item"><span>Más de 1.5 Goles</span><b id="probOver15Val">0%</b></div>
             </div>
 
-            <div class="bet-tip">
-                <span>ESTRATEGIA RECOMENDADA (BAJO RIESGO)</span>
-                <b id="recText"></b>
-            </div>
+            <div class="bet-tip"><span>ESTRATEGIA RECOMENDADA</span><b id="recText"></b></div>
         </div>
     </div>
 </div>
@@ -161,142 +127,79 @@
 <script>
     const API_KEY = "ea232d851cb4197391464e2c61df516b";
     const API_BASE = "https://v3.football.api-sports.io/standings";
-    
     let baseDatos = {};
 
-    // BUSCADOR INTELIGENTE DE TEMPORADAS
     document.getElementById("liga").onchange = async function() {
-        const ligaId = this.value;
-        if(!ligaId) return;
-
-        const anios = [2026, 2025, 2024];
-        let exito = false;
-        
-        // Limpiamos los selectores y ocultamos resultados previos
-        document.getElementById("resultado").style.display = "none";
-        document.getElementById("statusSeason").style.display = "none";
-
+        const ligaId = this.value; if(!ligaId) return;
+        const anios = [2026, 2025, 2024]; let exito = false;
         for(let anio of anios) {
             if(exito) break;
             try {
-                const res = await fetch(`${API_BASE}?league=${ligaId}&season=${anio}`, {
-                    headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
-                });
+                const res = await fetch(`${API_BASE}?league=${ligaId}&season=${anio}`, { headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" } });
                 const json = await res.json();
-
                 if(json.response && json.response.length > 0) {
-                    const data = json.response[0].league.standings[0];
-                    procesarData(data);
-                    mostrarBadge(anio);
+                    procesarData(json.response[0].league.standings[0]);
+                    document.getElementById("statusSeason").style.display = "inline-block";
+                    document.getElementById("statusSeason").innerText = "TEMPORADA: " + anio;
                     exito = true;
                 }
-            } catch (e) { console.log("Error en " + anio); }
+            } catch (e) {}
         }
     };
 
-    function mostrarBadge(anio) {
-        const b = document.getElementById("statusSeason");
-        b.style.display = "inline-block";
-        b.innerText = "DATOS DE TEMPORADA: " + anio;
-    }
-
     function procesarData(data) {
-        baseDatos = {};
-        const loc = document.getElementById("local");
-        const vis = document.getElementById("visitante");
-        loc.innerHTML = ""; vis.innerHTML = "";
-
+        baseDatos = {}; const loc = document.getElementById("local"); const vis = document.getElementById("visitante");
+        loc.innerHTML = vis.innerHTML = "";
         data.forEach(t => {
             const n = t.team.name;
-            baseDatos[n] = {
-                // Separamos rendimiento Local y Visitante para más precisión
-                hAtk: t.home.goals.for / (t.home.played || 1),
-                hDef: t.home.goals.against / (t.home.played || 1),
-                aAtk: t.away.goals.for / (t.away.played || 1),
-                aDef: t.away.goals.against / (t.away.played || 1),
-                form: t.form ? t.form : "DDDDD"
-            };
-            loc.add(new Option(n, n));
-            vis.add(new Option(n, n));
+            baseDatos[n] = { hAtk: t.home.goals.for / (t.home.played || 1), hDef: t.home.goals.against / (t.home.played || 1), aAtk: t.away.goals.for / (t.away.played || 1), aDef: t.away.goals.against / (t.away.played || 1) };
+            loc.add(new Option(n, n)); vis.add(new Option(n, n));
         });
     }
 
-    function poisson(lambda, k) {
-        let fact = 1;
-        for(let i=1; i<=k; i++) fact *= i;
-        return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact;
-    }
+    function poisson(lambda, k) { let fact = 1; for(let i=1; i<=k; i++) fact *= i; return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; }
 
     function calcularTodo() {
-        const lN = document.getElementById("local").value;
-        const vN = document.getElementById("visitante").value;
-        
+        const lN = document.getElementById("local").value; const vN = document.getElementById("visitante").value;
         if(lN === vN) return alert("Selecciona equipos diferentes");
+        const L = baseDatos[lN]; const V = baseDatos[vN];
+        let expL = (L.hAtk * V.aDef * 1.15); let expV = (V.aAtk * L.hDef * 0.92);
 
-        const L = baseDatos[lN];
-        const V = baseDatos[vN];
+        // Probabilidades Goles por Equipo (0-4 goles)
+        let pL = [], pV = [];
+        for(let i=0; i<5; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
 
-        // MOTOR DE CÁLCULO ELITE
-        // El local usa stats de HOME, el visitante usa stats de AWAY
-        let expL = (L.hAtk * V.aDef * 1.15); // Bonus 15% localía
-        let expV = (V.aAtk * L.hDef * 0.92); // Penalización visitante
+        // Marcadores
+        let scores = [];
+        for(let i=0; i<4; i++) { for(let j=0; j<4; j++) { scores.push({ s: `${i} - ${j}`, p: pL[i] * pV[j] }); } }
+        scores.sort((a,b) => b.p - a.p);
+        
+        let grid = document.getElementById("scoreGrid"); grid.innerHTML = "";
+        scores.slice(0, 3).forEach(x => {
+            grid.innerHTML += `<div class="score-item"><b>${x.s}</b><span>Prob: ${(x.p*100).toFixed(1)}%</span></div>`;
+        });
 
-        // Factor forma (W=1pt, D=0.5pt, L=0pt)
-        const getFormScore = (f) => {
-            let s = 0;
-            f.split('').slice(-5).forEach(c => { if(c==='W') s+=0.2; if(c==='D') s+=0.1; });
-            return s;
-        };
-
-        expL += getFormScore(L.form);
-        expV += getFormScore(V.form);
-
-        // Probabilidades base 1X2
-        const pL0 = poisson(expL, 0); const pL1 = poisson(expL, 1);
-        const pV0 = poisson(expV, 0); const pV1 = poisson(expV, 1);
-
-        const probE = ((pL0 * pV0) + (pL1 * pV1) + (poisson(expL,2)*poisson(expV,2))) * 100;
+        // 1X2, Corners y Over
+        const probE = ((pL[0]*pV[0]) + (pL[1]*pV[1]) + (pL[2]*pV[2])) * 100;
         const totalExp = expL + expV;
-        let probL = (expL / totalExp) * (100 - probE);
-        let probV = (expV / totalExp) * (100 - probE);
+        let pLocal = (expL / totalExp) * (100 - probE);
+        let pVis = (expV / totalExp) * (100 - probE);
+        const over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0])) * 100;
+        let probCorners = Math.min(94, Math.max(40, ((expL + expV) * 18) + 15));
 
-        // Mercados de seguridad
-        const ambos = (1 - pL0) * (1 - pV0) * 100;
-        const over15 = (1 - (pL0 * pV0)) * 100;
-
-        // Recomendación Conservadora (Para no perder)
-        let tip = "";
-        if(probL > 58) tip = "Local o Empate (1X)";
-        else if(probV > 58) tip = "Visitante o Empate (X2)";
-        else if(ambos > 65) tip = "Ambos Marcan: SI";
-        else if(over15 > 75) tip = "Más de 1.5 Goles";
-        else tip = "Baja de 3.5 Goles";
-
-        // RENDERIZADO CORREGIDO EN LA INTERFAZ
+        // UI
+        document.getElementById("lNameDisplay").innerText = lN; document.getElementById("vNameDisplay").innerText = vN;
+        document.getElementById("probLVal").innerText = pLocal.toFixed(1) + "%"; document.getElementById("barLFill").style.width = pLocal + "%";
+        document.getElementById("probEVal").innerText = probE.toFixed(1) + "%"; document.getElementById("barEFill").style.width = probE + "%";
+        document.getElementById("probVVal").innerText = pVis.toFixed(1) + "%"; document.getElementById("barVFill").style.width = pVis + "%";
+        document.getElementById("probOver25Val").innerText = over25.toFixed(1) + "%"; document.getElementById("barOver25Fill").style.width = over25 + "%";
+        document.getElementById("probCornersVal").innerText = probCorners.toFixed(1) + "%"; document.getElementById("barCornersFill").style.width = probCorners + "%";
+        document.getElementById("probAmbosVal").innerText = ((1-pL[0])*(1-pV[0])*100).toFixed(0) + "%";
+        document.getElementById("probOver15Val").innerText = ((1-pL[0]*pV[0])*100).toFixed(0) + "%";
         
-        // Nombres
-        document.getElementById("lNameDisplay").innerText = lN;
-        document.getElementById("vNameDisplay").innerText = vN;
-        
-        // Textos de porcentajes
-        document.getElementById("probLVal").innerText = probL.toFixed(1) + "%";
-        document.getElementById("probEVal").innerText = probE.toFixed(1) + "%";
-        document.getElementById("probVVal").innerText = probV.toFixed(1) + "%";
-        document.getElementById("probAmbosVal").innerText = ambos.toFixed(0) + "%";
-        document.getElementById("probOverVal").innerText = over15.toFixed(0) + "%";
-        
-        // Ancho de las barras
-        document.getElementById("barLFill").style.width = probL + "%";
-        document.getElementById("barEFill").style.width = probE + "%";
-        document.getElementById("barVFill").style.width = probV + "%";
-        
-        // Recomendación
-        document.getElementById("recText").innerText = tip;
-
-        // Mostramos el contenedor de resultados
+        document.getElementById("recText").innerText = pLocal > 55 ? "1X (Local)" : pVis > 55 ? "X2 (Visita)" : "+1.5 Goles";
         document.getElementById("resultado").style.display = "block";
     }
 </script>
-
 </body>
 </html>

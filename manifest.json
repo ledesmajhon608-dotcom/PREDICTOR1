@@ -1,14 +1,14 @@
 {
-  "name": "Predicciones Futbol",
-  "short_name": "Predicciones",
-  "start_url": "index.html",
+  "name": "Predictor Elite PRO",
+  "short_name": "Predictor",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#111111",
+  "background_color": "#020617",
+  "theme_color": "#22c55e",
   "icons": [
     {
-      "src": "icon.png",
-      "sizes": "192x192",
+      "src": "https://cdn-icons-png.flaticon.com/512/5323/5323977.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]

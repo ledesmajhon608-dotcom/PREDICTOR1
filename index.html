@@ -3,82 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Predictor Elite PRO v10.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
+    <title>Predictor Elite GLOBAL v11.0</title>
     <style>
         :root {
             --bg: #020617; --card: #1e293b; --accent: #22c55e;
             --border: #334155; --text: #f8fafc; --dim: #94a3b8;
             --danger: #ef4444; --warning: #f59e0b;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
             color: var(--text); margin: 0; padding: 15px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
-
         .container { width: 100%; max-width: 480px; }
-
-        .header { text-align: center; margin-bottom: 20px; padding-top: 10px; }
-        .header h1 { color: var(--accent); margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px; }
-        .header p { color: var(--dim); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin: 5px 0; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--accent); margin: 0; font-size: 26px; font-weight: 900; }
+        .header p { color: var(--dim); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
 
         .selector-card {
             background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px);
-            padding: 25px; border-radius: 28px; border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 20px; border-radius: 24px; border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
-
-        label { display: block; margin-top: 15px; color: var(--accent); font-size: 11px; font-weight: 800; text-transform: uppercase; }
-        
+        label { display: block; margin-top: 12px; color: var(--accent); font-size: 10px; font-weight: 800; text-transform: uppercase; }
         select {
-            width: 100%; padding: 14px; margin-top: 6px; border-radius: 12px;
-            background: #0f172a; color: white; border: 1px solid var(--border);
-            outline: none; font-size: 15px; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+            width: 100%; padding: 14px; margin-top: 5px; border-radius: 12px;
+            background: #0f172a; color: white; border: 1px solid var(--border); outline: none; font-size: 14px;
         }
-
         button {
-            width: 100%; padding: 18px; margin-top: 25px; border: none; border-radius: 16px;
+            width: 100%; padding: 18px; margin-top: 25px; border: none; border-radius: 15px;
             background: linear-gradient(135deg, #22c55e, #16a34a); color: white; 
-            font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2); transition: 0.3s;
+            font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s;
         }
-        button:active { transform: scale(0.97); }
+        button:active { transform: scale(0.96); }
 
-        /* RESULTADOS */
-        .resultado-container { margin-top: 25px; display: none; width: 100%; animation: slideUp 0.5s ease; }
-        .res-card { background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
+        .resultado-container { margin-top: 25px; display: none; width: 100%; animation: fadeIn 0.4s ease; }
+        .res-card { background: var(--card); padding: 20px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .match-header { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
+        .team-box { text-align: center; width: 35%; }
+        .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 12px; font-weight: 700; }
 
-        .match-header { display: flex; justify-content: space-around; align-items: center; margin-bottom: 25px; }
-        .team-box { text-align: center; width: 40%; }
-        .team-logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
-        .team-name { font-size: 13px; font-weight: 800; }
+        .prob-item { margin-bottom: 12px; }
+        .prob-info { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; font-weight: 600; }
+        .bar-bg { background: #0f172a; height: 8px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; transition: width 1s ease-out; }
 
-        .prob-row { margin-bottom: 15px; }
-        .prob-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
-        .bar-bg { background: #0f172a; height: 10px; border-radius: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; transition: width 1.2s cubic-bezier(0.1, 0, 0.1, 1); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .stat-box { background: #0f172a; padding: 12px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
+        .stat-val { font-size: 18px; font-weight: 900; color: var(--accent); display: block; }
+        .stat-desc { font-size: 9px; color: var(--dim); text-transform: uppercase; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .stat-box { background: #0f172a; padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--border); }
-        .stat-val { font-size: 20px; font-weight: 900; color: var(--accent); display: block; }
-        .stat-desc { font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
-
-        .pick-box { 
-            margin-top: 20px; padding: 18px; border-radius: 20px; text-align: center;
+        .ai-pick { 
+            margin-top: 20px; padding: 15px; border-radius: 18px; text-align: center;
             background: rgba(34, 197, 94, 0.1); border: 1px dashed var(--accent);
         }
-        .pick-title { font-size: 10px; color: var(--accent); font-weight: 900; text-transform: uppercase; }
-        .pick-text { font-size: 18px; font-weight: 900; margin: 5px 0; color: #fff; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -86,19 +69,31 @@
 <div class="container">
     <div class="header">
         <h1>⚽ PREDICTOR ELITE</h1>
-        <p>AI Deep Analysis • 2026 Edition</p>
+        <p>Global Football Analytics</p>
     </div>
 
     <div class="selector-card">
-        <label>Competición</label>
+        <label>Liga / Competición</label>
         <select id="liga">
-            <option value="">Selecciona liga...</option>
-            <option value="239">Liga BetPlay 🇨🇴</option>
-            <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
-            <option value="140">La Liga 🇪🇸</option>
-            <option value="135">Serie A 🇮🇹</option>
-            <option value="262">Liga MX 🇲🇽</option>
-            <option value="71">Brasileirão 🇧🇷</option>
+            <option value="">Selecciona una liga...</option>
+            <optgroup label="Sudamérica">
+                <option value="239">Liga BetPlay 🇨🇴</option>
+                <option value="71">Brasileirão Serie A 🇧🇷</option>
+                <option value="128">Liga Argentina 🇦🇷</option>
+                <option value="262">Liga MX 🇲🇽</option>
+            </optgroup>
+            <optgroup label="Europa">
+                <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
+                <option value="140">La Liga 🇪🇸</option>
+                <option value="135">Serie A 🇮🇹</option>
+                <option value="78">Bundesliga 🇩🇪</option>
+                <option value="61">Ligue 1 🇫🇷</option>
+                <option value="94">Primeira Liga 🇵🇹</option>
+            </optgroup>
+            <optgroup label="Norteamérica / Otros">
+                <option value="253">MLS 🇺🇸</option>
+                <option value="2">Champions League 🇪🇺</option>
+            </optgroup>
         </select>
 
         <label>Local</label>
@@ -107,45 +102,43 @@
         <label>Visitante</label>
         <select id="visitante"><option value="">-- Elige liga primero --</option></select>
 
-        <button onclick="analizar()">ANALIZAR PARTIDO</button>
+        <button onclick="calcular()">GENERAR PRONÓSTICO</button>
     </div>
 
     <div id="resultado" class="resultado-container"></div>
 </div>
 
 <script>
-    const API_KEY = "ea232d851cb4197391464e2c61df516b"; // Tu API KEY
-    let baseDatos = {};
+    const API_KEY = "ea232d851cb4197391464e2c61df516b";
+    let db = {};
 
-    // Cargar equipos al cambiar la liga
     document.getElementById("liga").onchange = async function() {
         const id = this.value; if(!id) return;
         this.disabled = true;
-        
         try {
             const res = await fetch(`https://v3.football.api-sports.io/standings?league=${id}&season=2025`, {
                 headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
             });
             const json = await res.json();
-            const standings = json.response[0].league.standings[0];
+            const data = json.response[0].league.standings[0];
             
             const loc = document.getElementById("local");
             const vis = document.getElementById("visitante");
             loc.innerHTML = vis.innerHTML = "";
-            baseDatos = {};
+            db = {};
 
-            standings.forEach(t => {
-                baseDatos[t.team.name] = {
-                    hAtk: (t.home.goals.for / (t.home.played || 1)) || 1.2,
-                    hDef: (t.home.goals.against / (t.home.played || 1)) || 1.0,
-                    aAtk: (t.away.goals.for / (t.away.played || 1)) || 1.0,
-                    aDef: (t.away.goals.against / (t.away.played || 1)) || 1.2,
+            data.forEach(t => {
+                db[t.team.name] = {
+                    hAtk: t.home.goals.for / (t.home.played || 1),
+                    hDef: t.home.goals.against / (t.home.played || 1),
+                    aAtk: t.away.goals.for / (t.away.played || 1),
+                    aDef: t.away.goals.against / (t.away.played || 1),
                     logo: t.team.logo
                 };
                 loc.add(new Option(t.team.name, t.team.name));
                 vis.add(new Option(t.team.name, t.team.name));
             });
-        } catch (e) { alert("Error de conexión. Intenta de nuevo."); }
+        } catch (e) { alert("Error al conectar con la API."); }
         this.disabled = false;
     };
 
@@ -154,13 +147,13 @@
         return (Math.pow(l, k) * Math.exp(-l)) / (f[k] || 5040);
     }
 
-    function analizar() {
+    function calcular() {
         const nL = document.getElementById("local").value;
         const nV = document.getElementById("visitante").value;
-        if(!baseDatos[nL]) return;
+        if(!db[nL]) return;
 
-        const L = baseDatos[nL]; const V = baseDatos[nV];
-        let xgL = L.hAtk * V.aDef; let xgV = V.aAtk * L.hDef;
+        const L = db[nL]; const V = db[nV];
+        let xgL = L.hAtk * V.aDef * 1.05; let xgV = V.aAtk * L.hDef;
 
         let pL = 0, pE = 0, pV = 0;
         for(let i=0; i<6; i++) {
@@ -170,14 +163,9 @@
             }
         }
 
-        let probHT = (1 - Math.exp(-(xgL + xgV) * 0.44)) * 100;
         let ambos = ((1 - Math.exp(-xgL)) * (1 - Math.exp(-xgV))) * 100;
         let mas15 = (1 - (poisson(xgL+xgV, 0) + poisson(xgL+xgV, 1))) * 100;
-        let corners = (xgL + xgV) * 3.8 + 2.5;
-
-        let pick = pL > pV ? "Victoria Local" : "Victoria Visitante";
-        if (pE > 0.30) pick = "Doble Oportunidad (1X)";
-        if (ambos > 65) pick = "Ambos Marcan (Sí)";
+        let probHT = (1 - Math.exp(-(xgL + xgV) * 0.44)) * 100;
 
         const res = document.getElementById("resultado");
         res.style.display = "block";
@@ -185,20 +173,20 @@
             <div class="res-card">
                 <div class="match-header">
                     <div class="team-box"><img src="${L.logo}" class="team-logo"><div class="team-name">${nL}</div></div>
-                    <div style="font-weight:900; color:var(--accent); font-size:20px;">VS</div>
+                    <div style="font-size:20px; font-weight:900; color:var(--dim);">VS</div>
                     <div class="team-box"><img src="${V.logo}" class="team-logo"><div class="team-name">${nV}</div></div>
                 </div>
 
-                <div class="prob-row">
-                    <div class="prob-info"><span>Victoria Local</span> <span>${(pL*100).toFixed(0)}%</span></div>
+                <div class="prob-item">
+                    <div class="prob-info"><span>Victoria Local</span><span>${(pL*100).toFixed(0)}%</span></div>
                     <div class="bar-bg"><div class="bar-fill" style="width:${pL*100}%; background:var(--accent)"></div></div>
                 </div>
-                <div class="prob-row">
-                    <div class="prob-info"><span>Empate</span> <span>${(pE*100).toFixed(0)}%</span></div>
+                <div class="prob-item">
+                    <div class="prob-info"><span>Empate</span><span>${(pE*100).toFixed(0)}%</span></div>
                     <div class="bar-bg"><div class="bar-fill" style="width:${pE*100}%; background:var(--dim)"></div></div>
                 </div>
-                <div class="prob-row">
-                    <div class="prob-info"><span>Victoria Visitante</span> <span>${(pV*100).toFixed(0)}%</span></div>
+                <div class="prob-item">
+                    <div class="prob-info"><span>Victoria Visitante</span><span>${(pV*100).toFixed(0)}%</span></div>
                     <div class="bar-bg"><div class="bar-fill" style="width:${pV*100}%; background:var(--danger)"></div></div>
                 </div>
 
@@ -206,13 +194,13 @@
                     <div class="stat-box"><span class="stat-val">${probHT.toFixed(0)}%</span><span class="stat-desc">Gol 1er T.</span></div>
                     <div class="stat-box"><span class="stat-val">${ambos.toFixed(0)}%</span><span class="stat-desc">Ambos Marcan</span></div>
                     <div class="stat-box"><span class="stat-val">${mas15.toFixed(0)}%</span><span class="stat-desc">+1.5 Goles</span></div>
-                    <div class="stat-box"><span class="stat-val">${corners.toFixed(1)}</span><span class="stat-desc">Córners Est.</span></div>
+                    <div class="stat-box"><span class="stat-val">${((xgL + xgV) * 3.8 + 2).toFixed(1)}</span><span class="stat-desc">Córners Est.</span></div>
                 </div>
 
-                <div class="pick-box">
-                    <div class="pick-title">Recomendación AI</div>
-                    <div class="pick-text">${pick}</div>
-                    <div style="font-size:11px; color:var(--accent)">Nivel de Confianza: ${(Math.max(pL,pV,pE)*10).toFixed(1)}/10</div>
+                <div class="ai-pick">
+                    <div style="font-size:10px; color:var(--accent); font-weight:900; text-transform:uppercase;">Pick Sugerido</div>
+                    <div style="font-size:18px; font-weight:900; margin:5px 0;">${pL > pV ? '1X / Local' : 'X2 / Visitante'}</div>
+                    <div style="font-size:11px; color:var(--dim);">Nivel Confianza: ${(Math.max(pL, pV, pE) * 10).toFixed(1)}/10</div>
                 </div>
             </div>`;
     }

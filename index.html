@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor PRO ELITE v7.0 - Colombia Altitude Edition</title>
+    <title>Predictor PRO ELITE v7.5 - Full Edition</title>
     <style>
         :root {
             --bg: #020617;
@@ -82,7 +82,6 @@
         .teams-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .team-display { width: 40%; text-align: center; font-weight: 800; font-size: 14px; }
         
-        /* Estilo para los Escudos */
         .team-logo {
             width: 60px;
             height: 60px;
@@ -113,7 +112,7 @@
             text-align: center; border: 1px solid var(--border);
         }
         .stat-card span { font-size: 9px; color: var(--dim); text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: 700; }
-        .stat-card b { font-size: 20px; display: block; font-weight: 800; }
+        .stat-card b { font-size: 18px; display: block; font-weight: 800; }
         
         .val-accent { color: var(--accent); }
         .val-warning { color: var(--warning); }
@@ -125,13 +124,19 @@
         }
         .bet-tip span { font-size: 10px; color: var(--dim); font-weight: 800; text-transform: uppercase; }
         .bet-tip b { color: var(--accent); font-size: 20px; display: block; margin-top: 5px; }
+
+        .score-badge {
+            margin-top: 15px; background: #0f172a; padding: 10px; border-radius: 12px;
+            font-size: 12px; color: var(--dim); text-align: center; border: 1px solid var(--border);
+        }
+        .score-badge b { color: white; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚽ PREDICTOR ELITE v7.0</h1>
-    <div class="subtitle">Dixon-Coles + Factor Altitud Colombia</div>
+    <h1>⚽ PREDICTOR ELITE v7.5</h1>
+    <div class="subtitle">Dixon-Coles + HT Factor + Colombia Altitude</div>
 
     <div class="selector-card">
         <label>LIGA / COMPETICIÓN</label>
@@ -149,8 +154,8 @@
 
         <div id="statusSeason" class="season-badge" style="display:none"></div>
         
-        <label>LOCAL</label><select id="local"><option>Cargando...</option></select>
-        <label>VISITANTE</label><select id="visitante"><option>Cargando...</option></select>
+        <label>LOCAL</label><select id="local"><option>Esperando liga...</option></select>
+        <label>VISITANTE</label><select id="visitante"><option>Esperando liga...</option></select>
 
         <button onclick="calcularTodo()">GENERAR PRONÓSTICO PROFESIONAL</button>
     </div>
@@ -183,11 +188,13 @@
             </div>
 
             <div class="stats-grid">
+                <div class="stat-card"><span>Gol 1er Tiempo</span><b id="probHTVal" class="val-info">0%</b></div>
                 <div class="stat-card"><span>Ambos Marcan</span><b id="probAmbosVal" class="val-accent">0%</b></div>
-                <div class="stat-card"><span>Over 1.5</span><b id="probOver15Val" class="val-accent">0%</b></div>
-                <div class="stat-card"><span>Over 2.5</span><b id="probOver25Val" class="val-warning">0%</b></div>
-                <div class="stat-card"><span>Córners (+8.5)</span><b id="probCornersVal" class="val-info">0%</b></div>
+                <div class="stat-card"><span>Over 1.5 Total</span><b id="probOver15Val" class="val-accent">0%</b></div>
+                <div class="stat-card"><span>Over 2.5 Total</span><b id="probOver25Val" class="val-warning">0%</b></div>
             </div>
+
+            <div class="score-badge">MARCADOR MÁS PROBABLE: <b id="exactScore">0 - 0</b></div>
 
             <div class="bet-tip">
                 <span>RECOMENDACIÓN BASADA EN VALOR</span>
@@ -215,7 +222,6 @@
     document.getElementById("liga").onchange = async function() {
         const ligaId = this.value; if(!ligaId) return;
         const anios = [2026, 2025, 2024]; let exito = false;
-        document.getElementById("statusSeason").style.display = "none";
         
         for(let anio of anios) {
             if(exito) break;
@@ -239,13 +245,11 @@
         const loc = document.getElementById("local"); 
         const vis = document.getElementById("visitante");
         loc.innerHTML = vis.innerHTML = "<option value=''>Seleccione equipo...</option>";
-        
         const equiposAgregados = new Set();
 
         data.forEach(grupo => {
             grupo.forEach(t => {
                 const n = t.team.name;
-                const logo = t.team.logo; // Capturamos la URL del logo
                 if (!equiposAgregados.has(n)) {
                     baseDatos[n] = { 
                         hAtk: t.home.goals.for / (t.home.played || 1), 
@@ -254,7 +258,7 @@
                         aDef: t.away.goals.against / (t.away.played || 1),
                         puntos: t.points,
                         jugados: t.all.played,
-                        logo: logo // Guardamos el logo en la base de datos
+                        logo: t.team.logo
                     };
                     loc.add(new Option(n, n)); 
                     vis.add(new Option(n, n));
@@ -269,71 +273,44 @@
         return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; 
     }
 
-    function calcularFactorForma(equipoNombre) {
-        const stats = baseDatos[equipoNombre];
-        let factor = 1.0;
-        const ppp = stats.puntos / (stats.jugados || 1);
-        if (ppp > 1.8) factor += 0.12; 
-        if (ppp < 1.0) factor -= 0.10;
-        return factor;
-    }
-
     function calcularTodo() {
         const lN = document.getElementById("local").value; 
         const vN = document.getElementById("visitante").value;
         if(!lN || !vN || lN === vN) return alert("Selecciona dos equipos distintos");
         
         const L = baseDatos[lN]; const V = baseDatos[vN];
-        
-        // Actualizar Escudos
         document.getElementById("logoL").src = L.logo;
         document.getElementById("logoV").src = V.logo;
 
-        // --- FACTOR ALTITUD ---
-        let altL = altitudes[lN] || 500; 
-        let altV = altitudes[vN] || 500;
-        let difAltitud = altL - altV;
-        let bonoAlturaL = 1.0;
-        let penalizacionV = 1.0;
+        // Factor Altitud
+        let altL = altitudes[lN] || 500; let altV = altitudes[vN] || 500;
+        let bonoAlturaL = (altL - altV > 1000) ? 1.12 : 1.0;
+        let penalV = (altL - altV > 1000) ? 1.08 : 1.0;
 
-        if (difAltitud > 1500) {
-            bonoAlturaL = 1.15; 
-            penalizacionV = 1.10; 
-        } else if (difAltitud > 800) {
-            bonoAlturaL = 1.07;
-            penalizacionV = 1.05;
-        }
+        let expL = (L.hAtk * V.aDef * 1.10) * bonoAlturaL; 
+        let expV = (V.aAtk * L.hDef * 0.90) / penalV;
 
-        const formaLocal = calcularFactorForma(lN);
-        const formaVisita = calcularFactorForma(vN);
-        
-        let expL = (L.hAtk * V.aDef * 1.12) * formaLocal * bonoAlturaL; 
-        let expV = (V.aAtk * L.hDef * 0.90) * formaVisita / penalizacionV;
-
-        const RHO = -0.11; 
+        // Distribución Poisson
         let pL = [], pV = [];
-        for(let i=0; i<8; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
+        for(let i=0; i<6; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
 
-        let finalL = 0, finalV = 0, finalE = 0;
-        for(let i=0; i<8; i++) {
-            for(let j=0; j<8; j++) {
-                let probBase = pL[i] * pV[j];
-                let adj = 1;
-                if(i === 0 && j === 0) adj = 1 - (expL * expV * RHO);
-                else if(i === 0 && j === 1) adj = 1 + (expL * RHO);
-                else if(i === 1 && j === 0) adj = 1 + (expV * RHO);
-                else if(i === 1 && j === 1) adj = 1 - RHO;
-                
-                let probFinal = probBase * adj;
-                if(i > j) finalL += probFinal; else if(i < j) finalV += probFinal; else finalE += probFinal;
+        let finalL = 0, finalV = 0, finalE = 0, maxP = 0, score = "1 - 1";
+        for(let i=0; i<6; i++) {
+            for(let j=0; j<6; j++) {
+                let p = pL[i] * pV[j];
+                if(i > j) finalL += p; else if(i < j) finalV += p; else finalE += p;
+                if(p > maxP) { maxP = p; score = `${i} - ${j}`; }
             }
         }
 
-        const ambos = (1 - pL[0]) * (1 - pV[0]) * 1.12 * 100;
-        const over15 = (1 - (pL[0] * pV[0])) * 100;
-        const over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0] + pL[1]*pV[1] + pL[2]*pV[0] + pL[0]*pV[2])) * 100;
-        let pCorners = Math.min(98, Math.max(45, ((expL + expV) * 9.5) + 35));
+        // Cálculos HT y Over/Under
+        let expHT = (expL + expV) * 0.44;
+        let probHT = (1 - Math.exp(-expHT)) * 100;
+        let ambos = (1 - pL[0]) * (1 - pV[0]) * 1.10 * 100;
+        let over15 = (1 - (pL[0] * pV[0])) * 100;
+        let over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0] + pL[1]*pV[1])) * 100;
 
+        // Mostrar resultados
         document.getElementById("resultado").style.display = "block";
         document.getElementById("lNameDisplay").innerText = lN;
         document.getElementById("vNameDisplay").innerText = vN;
@@ -346,22 +323,19 @@
             document.getElementById("probVVal").innerText = (finalV*100).toFixed(1) + "%";
             document.getElementById("barVFill").style.width = (finalV*100) + "%";
 
+            document.getElementById("probHTVal").innerText = Math.min(95, probHT).toFixed(0) + "%";
             document.getElementById("probAmbosVal").innerText = Math.min(99, ambos).toFixed(0) + "%";
             document.getElementById("probOver15Val").innerText = Math.min(99, over15).toFixed(0) + "%";
             document.getElementById("probOver25Val").innerText = Math.min(99, over25).toFixed(0) + "%";
-            document.getElementById("probCornersVal").innerText = pCorners.toFixed(0) + "%";
+            document.getElementById("exactScore").innerText = score;
         }, 150);
 
-        let tip = "";
-        let fL = finalL * 100; let fV = finalV * 100; let fE = finalE * 100;
-        
-        if(fL > 62) tip = "LOCAL (1) DIRECTO 💎";
-        else if(fV > 62) tip = "VISITANTE (2) DIRECTO 💎";
-        else if(ambos > 72) tip = "AMBOS MARCAN ⚽";
-        else if(fL + fE > 80 && fL > 40) tip = "1X (LOCAL O EMPATE) 🛡️";
-        else if(fV + fE > 80 && fV > 40) tip = "X2 (VISITA O EMPATE) 🛡️";
-        else if(over25 > 65) tip = "OVER 2.5 GOLES 🔥";
-        else tip = "OVER 1.5 GOLES (STAKE ALTO)";
+        // Lógica de recomendación
+        let tip = "OVER 1.5 GOLES";
+        if (probHT > 75) tip = "GOL EN EL 1er TIEMPO 🔥";
+        else if (finalL*100 > 60) tip = "LOCAL (1) DIRECTO 💎";
+        else if (ambos > 70) tip = "AMBOS MARCAN ⚽";
+        else if (over25 > 60) tip = "OVER 2.5 GOLES 🚀";
         
         document.getElementById("recText").innerText = tip;
     }

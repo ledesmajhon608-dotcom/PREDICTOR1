@@ -3,90 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Predictor Elite PRO ⚽</title>
-    
-    <meta name="theme-color" content="#22c55e">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5323/5323977.png">
-
+    <title>Predictor Elite PRO v9.0</title>
     <style>
         :root {
-            --bg: #020617; 
-            --card: #1e293b; 
-            --accent: #22c55e;
-            --border: #334155; 
-            --text: #f8fafc; 
-            --dim: #94a3b8;
+            --bg: #020617; --card: #1e293b; --accent: #22c55e;
+            --border: #334155; --text: #f8fafc; --dim: #94a3b8;
+            --danger: #ef4444; --warning: #f59e0b;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
-            color: var(--text); margin: 0; padding: 15px;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center;
         }
 
         .container { width: 100%; max-width: 480px; }
-
-        h1 { 
-            text-align: center; color: var(--accent); margin: 20px 0 5px 0; 
-            font-size: 28px; font-weight: 800; letter-spacing: -1px; 
-        }
-
-        .subtitle { 
-            text-align: center; color: var(--dim); font-size: 10px; 
-            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 25px; 
-        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--accent); margin: 0; font-size: 26px; font-weight: 900; }
+        .header p { color: var(--dim); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin: 5px 0; }
 
         .selector-card {
             background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 20px; border-radius: 24px; border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        label { display: block; margin-top: 15px; color: var(--accent); font-size: 11px; font-weight: 800; text-transform: uppercase; }
-
+        label { display: block; margin-top: 12px; color: var(--accent); font-size: 10px; font-weight: 800; text-transform: uppercase; }
         select {
-            width: 100%; padding: 14px; margin-top: 6px; border-radius: 12px;
-            background: #0f172a; color: white; border: 1px solid var(--border); 
-            outline: none; font-size: 15px; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+            width: 100%; padding: 12px; margin-top: 5px; border-radius: 10px;
+            background: #0f172a; color: white; border: 1px solid var(--border); outline: none; font-size: 14px;
         }
 
         button {
-            width: 100%; padding: 18px; margin-top: 25px; border: none; border-radius: 16px;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; font-weight: 900; text-transform: uppercase; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3); transition: 0.3s;
+            width: 100%; padding: 18px; margin-top: 20px; border: none; border-radius: 15px;
+            background: linear-gradient(135deg, #22c55e, #16a34a); color: white; 
+            font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s;
         }
+        button:active { transform: scale(0.96); }
 
-        button:active { transform: scale(0.97); }
+        .resultado-container { margin-top: 25px; display: none; width: 100%; animation: fadeIn 0.5s ease; }
+        .res-card { background: var(--card); padding: 25px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); }
 
-        .resultado-container { margin-top: 25px; display: none; width: 100%; }
+        /* Análisis de Ganador */
+        .match-header { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; }
+        .team-box { text-align: center; width: 35%; }
+        .team-logo { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; }
+        .team-name { font-size: 12px; font-weight: 700; color: var(--text); }
 
-        .res-card {
-            background: var(--card); padding: 25px; border-radius: 28px; 
-            border: 1px solid rgba(255,255,255,0.05);
-            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Barras de Probabilidad */
+        .prob-item { margin-bottom: 12px; }
+        .prob-info { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; font-weight: 600; }
+        .bar-bg { background: #0f172a; height: 8px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Grid de Mercados */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .stat-box { background: #0f172a; padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--border); }
+        .stat-val { font-size: 18px; font-weight: 900; color: var(--accent); display: block; }
+        .stat-desc { font-size: 9px; color: var(--dim); text-transform: uppercase; margin-top: 3px; }
+
+        /* Cuadro de Stake (Recomendación) */
+        .stake-box { 
+            margin-top: 20px; padding: 15px; border-radius: 18px; text-align: center;
+            background: rgba(34, 197, 94, 0.1); border: 1px dashed var(--accent);
         }
+        .stake-title { font-size: 10px; color: var(--accent); font-weight: 800; text-transform: uppercase; }
+        .stake-pick { font-size: 16px; font-weight: 900; color: white; margin: 5px 0; }
 
-        .team-logo { width: 55px; height: 55px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
-
-        .bar-bg { background: #0f172a; height: 12px; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid rgba(255,255,255,0.05); }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); transition: width 1.2s cubic-bezier(0.1, 0, 0.1, 1); width: 0%; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚽ PREDICTOR ELITE</h1>
-    <div class="subtitle">AI Statistical Analysis v8.0</div>
+    <div class="header">
+        <h1>⚽ PREDICTOR ELITE</h1>
+        <p>Statistical Intelligence & AI Pick</p>
+    </div>
 
     <div class="selector-card">
         <label>Competición</label>
@@ -100,13 +94,13 @@
             <option value="71">Brasileirão 🇧🇷</option>
         </select>
 
-        <label>Local</label>
-        <select id="local"><option value="">Elija liga...</option></select>
+        <label>Equipo Local</label>
+        <select id="local"><option value="">Cargando...</option></select>
 
-        <label>Visitante</label>
-        <select id="visitante"><option value="">Elija liga...</option></select>
+        <label>Equipo Visitante</label>
+        <select id="visitante"><option value="">Cargando...</option></select>
 
-        <button onclick="calcularTodo()">Generar Pronóstico</button>
+        <button onclick="generarAnalisis()">GENERAR PRONÓSTICO PRO</button>
     </div>
 
     <div id="resultado" class="resultado-container"></div>
@@ -115,16 +109,6 @@
 <script>
     const API_KEY = "ea232d851cb4197391464e2c61df516b";
     let baseDatos = {};
-    const altitudes = { "Pasto": 2527, "Independiente Santa Fe": 2600, "Millonarios": 2600, "Boyacá Chicó": 2810, "Patriotas": 2810, "La Equidad": 2600, "Once Caldas": 2150 };
-
-    // Registro Service Worker para PWA
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            const swCode = `self.addEventListener('fetch', function(e) {});`; // SW Básico
-            const blob = new Blob([swCode], {type: 'text/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(blob));
-        });
-    }
 
     document.getElementById("liga").onchange = async function() {
         const id = this.value; if(!id) return;
@@ -137,7 +121,7 @@
             
             const loc = document.getElementById("local");
             const vis = document.getElementById("visitante");
-            loc.innerHTML = vis.innerHTML = '<option value="">Selecciona equipo...</option>';
+            loc.innerHTML = vis.innerHTML = "";
             
             data.forEach(t => {
                 baseDatos[t.team.name] = {
@@ -150,44 +134,79 @@
                 loc.add(new Option(t.team.name, t.team.name));
                 vis.add(new Option(t.team.name, t.team.name));
             });
-        } catch (e) { console.log("Error API"); }
+        } catch (e) { alert("Error al cargar datos."); }
     };
 
-    function calcularTodo() {
-        const lN = document.getElementById("local").value;
-        const vN = document.getElementById("visitante").value;
-        if(!lN || !vN || lN === vN) return;
+    function poisson(l, k) {
+        const fact = [1, 1, 2, 6, 24, 120, 720];
+        return (Math.pow(l, k) * Math.exp(-l)) / (fact[k] || 5040);
+    }
 
-        const L = baseDatos[lN]; const V = baseDatos[vN];
-        let altL = altitudes[lN] || 500; let altV = altitudes[vN] || 500;
-        let bonoAlt = (altL - altV > 1500) ? 1.18 : 1.0;
+    function generarAnalisis() {
+        const nL = document.getElementById("local").value;
+        const nV = document.getElementById("visitante").value;
+        if(!nL || !nV || nL === nV) return;
 
-        let expL = L.hAtk * V.aDef * 1.10 * bonoAlt;
-        let expV = V.aAtk * L.hDef * 0.90 / bonoAlt;
-        let probHT = (1 - Math.exp(-(expL + expV) * 0.44)) * 100;
-        let ambos = ((1 - Math.exp(-expL)) * (1 - Math.exp(-expV))) * 100;
+        const L = baseDatos[nL]; const V = baseDatos[nV];
+        let xgL = L.hAtk * V.aDef; let xgV = V.aAtk * L.hDef;
+
+        // Probabilidades 1X2
+        let pL = 0, pE = 0, pV = 0;
+        for(let i=0; i<6; i++) {
+            for(let j=0; j<6; j++) {
+                let p = poisson(xgL, i) * poisson(xgV, j);
+                if(i > j) pL += p; else if(i === j) pE += p; else pV += p;
+            }
+        }
+
+        // Mercados Adicionales
+        let probHT = (1 - Math.exp(-(xgL + xgV) * 0.44)) * 100;
+        let ambos = ((1 - Math.exp(-xgL)) * (1 - Math.exp(-xgV))) * 100;
+        let mas15 = (1 - (poisson(xgL+xgV, 0) + poisson(xgL+xgV, 1))) * 100;
+        let corners = (xgL + xgV) * 3.5 + 2.5; // Algoritmo de presión
+
+        // Lógica de Stake y Pick
+        let pick = "Gana " + nL;
+        if(pE > pL && pE > pV) pick = "Empate o -2.5 Goles";
+        if(pV > pL) pick = "Gana " + nV;
+        if(ambos > 65) pick = "Ambos Marcan (BTTS)";
+        
+        let stake = (Math.max(pL, pE, pV) * 10).toFixed(1);
 
         const resContainer = document.getElementById("resultado");
         resContainer.style.display = "block";
         resContainer.innerHTML = `
             <div class="res-card">
-                <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:20px;">
-                    <img src="${L.logo}" class="team-logo"> <b style="font-size:18px; color:var(--dim);">VS</b> <img src="${V.logo}" class="team-logo">
+                <div class="match-header">
+                    <div class="team-box"><img src="${L.logo}" class="team-logo"><div class="team-name">${nL}</div></div>
+                    <div style="font-size:24px; font-weight:900; color:var(--dim);">VS</div>
+                    <div class="team-box"><img src="${V.logo}" class="team-logo"><div class="team-name">${nV}</div></div>
                 </div>
-                <div style="text-align:center; margin-bottom:20px;">
-                    <span style="font-size:11px; color:var(--dim); font-weight:700;">GOL EN 1er TIEMPO</span>
-                    <div style="font-size:42px; font-weight:900; color:var(--accent);">${probHT.toFixed(0)}%</div>
-                    <div class="bar-bg"><div class="bar-fill" style="width:${probHT}%"></div></div>
+
+                <div class="prob-item">
+                    <div class="prob-info"><span>Victoria Local</span><span>${(pL*100).toFixed(0)}%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${pL*100}%; background:var(--accent)"></div></div>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
-                    <div style="background:#0f172a; padding:15px; border-radius:18px; border:1px solid var(--border);">
-                        <span style="font-size:9px; color:var(--dim);">AMBOS MARCAN</span>
-                        <div style="font-weight:bold; color:#3b82f6; font-size:18px;">${ambos.toFixed(0)}%</div>
-                    </div>
-                    <div style="background:#0f172a; padding:15px; border-radius:18px; border:1px solid var(--border);">
-                        <span style="font-size:9px; color:var(--dim);">XG ESTIMADO</span>
-                        <div style="font-weight:bold; color:#f59e0b; font-size:18px;">${(expL + expV).toFixed(2)}</div>
-                    </div>
+                <div class="prob-item">
+                    <div class="prob-info"><span>Empate</span><span>${(pE*100).toFixed(0)}%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${pE*100}%; background:var(--dim)"></div></div>
+                </div>
+                <div class="prob-item">
+                    <div class="prob-info"><span>Victoria Visitante</span><span>${(pV*100).toFixed(0)}%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${pV*100}%; background:var(--danger)"></div></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box"><span class="stat-val">${probHT.toFixed(0)}%</span><span class="stat-desc">Gol 1er Tiempo</span></div>
+                    <div class="stat-box"><span class="stat-val">${ambos.toFixed(0)}%</span><span class="stat-desc">Ambos Marcan</span></div>
+                    <div class="stat-box"><span class="stat-val">${mas15.toFixed(0)}%</span><span class="stat-desc">Más 1.5 Goles</span></div>
+                    <div class="stat-box"><span class="stat-val">${corners.toFixed(1)}</span><span class="stat-desc">Córners Est.</span></div>
+                </div>
+
+                <div class="stake-box">
+                    <div class="stake-title">AI Recomendación</div>
+                    <div class="stake-pick">${pick}</div>
+                    <div style="font-size:11px; color:var(--accent);">Stake Sugerido: ${stake}/10</div>
                 </div>
             </div>`;
     }

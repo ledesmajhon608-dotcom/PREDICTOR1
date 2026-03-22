@@ -3,41 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Predictor Elite PRO</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Predictor PRO ELITE v8.5</title>
+    <meta name="theme-color" content="#020617">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#22c55e">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5323/5323977.png">
 </head>
 <body>
 
-    <div class="container">
-        <h1>⚽ PREDICTOR ELITE</h1>
-        <div class="subtitle">Dixon-Coles + HT Factor</div>
+<div class="container">
+    <h1>⚽ PREDICTOR ELITE</h1>
+    <div class="subtitle">Poisson + Altitude Factor + HT v8.5</div>
 
-        <div class="selector-card">
-            <label>LIGA</label>
-            <select id="liga">
-                <option value="">Seleccione liga...</option>
-                <option value="239">Liga BetPlay 🇨🇴</option>
+    <div class="selector-card">
+        <label>LIGA / COMPETICIÓN</label>
+        <select id="liga">
+            <option value="">Seleccione liga...</option>
+            <optgroup label="Europa">
                 <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
                 <option value="140">La Liga 🇪🇸</option>
-            </select>
-            
-            <div id="statusSeason" class="season-badge" style="display:none"></div>
+                <option value="135">Serie A 🇮🇹</option>
+                <option value="78">Bundesliga 🇩🇪</option>
+                <option value="61">Ligue 1 🇫🇷</option>
+            </optgroup>
+            <optgroup label="América">
+                <option value="239">Liga BetPlay 🇨🇴</option>
+                <option value="71">Brasileirão 🇧🇷</option>
+                <option value="128">Liga Argentina 🇦🇷</option>
+                <option value="262">Liga MX 🇲🇽</option>
+                <option value="253">Major League Soccer 🇺🇸</option>
+            </optgroup>
+        </select>
 
-            <label>LOCAL</label>
-            <select id="local"><option>Cargando...</option></select>
-            
-            <label>VISITANTE</label>
-            <select id="visitante"><option>Cargando...</option></select>
+        <label>LOCAL</label>
+        <select id="local"><option>Elige una liga...</option></select>
+        
+        <label>VISITANTE</label>
+        <select id="visitante"><option>Elige una liga...</option></select>
 
-            <button onclick="calcularTodo()">GENERAR PRONÓSTICO</button>
-        </div>
-
-        <div id="resultado" class="resultado-container"></div>
+        <button onclick="calcularTodo()">GENERAR PRONÓSTICO</button>
     </div>
 
-    <script src="app.js"></script>
+    <div id="resultado" class="resultado-container"></div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>

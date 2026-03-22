@@ -2,187 +2,194 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor ELITE v8.0 - Global Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Predictor Elite PRO ⚽</title>
+    
+    <meta name="theme-color" content="#22c55e">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5323/5323977.png">
+
     <style>
         :root {
-            --bg: #020617; --card: #1e293b; --accent: #22c55e;
-            --border: #334155; --text: #f8fafc; --dim: #94a3b8;
-            --danger: #ef4444; --warning: #f59e0b; --info: #3b82f6;
+            --bg: #020617; 
+            --card: #1e293b; 
+            --accent: #22c55e;
+            --border: #334155; 
+            --text: #f8fafc; 
+            --dim: #94a3b8;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
-            color: var(--text); padding: 15px; display: flex;
-            flex-direction: column; align-items:center; margin: 0; min-height: 100vh;
+            color: var(--text); margin: 0; padding: 15px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
+
         .container { width: 100%; max-width: 480px; }
-        h1 { background: linear-gradient(to right, #22c55e, #4ade80); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; margin: 15px 0 5px 0; font-size: 26px; font-weight: 900; }
-        .subtitle { color: var(--dim); font-size: 10px; text-align: center; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
-        .selector-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        label { font-size: 11px; color: var(--accent); font-weight: 800; display: block; margin-top: 15px; }
-        select { width: 100%; padding: 14px; border-radius: 12px; background: #0f172a; color: white; border: 1px solid var(--border); margin-top: 6px; font-size: 14px; outline: none; transition: 0.3s; }
-        select:focus { border-color: var(--accent); }
-        button { margin-top: 25px; width: 100%; padding: 18px; border: none; border-radius: 15px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; font-weight: 900; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        button:active { transform: scale(0.98); }
-        .resultado-container { margin-top: 30px; display: none; width: 100%; animation: slideUp 0.5s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .match-box { background: var(--card); border-radius: 28px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        .teams-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .team-display { width: 40%; text-align: center; font-weight: 800; font-size: 14px; }
-        .team-logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; background: #ffffff10; border-radius: 50%; padding: 5px; }
-        .prob-row { margin-bottom: 15px; }
-        .prob-info { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
-        .bar-outer { background: #0f172a; height: 12px; border-radius: 20px; overflow: hidden; }
-        .bar-inner { height: 100%; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--accent); width: 0%; }
-        .altitude-tag { font-size: 10px; color: var(--warning); background: rgba(245, 158, 11, 0.1); padding: 5px 10px; border-radius: 20px; margin-top: 10px; display: none; text-align: center; border: 1px solid var(--warning); }
+
+        h1 { 
+            text-align: center; color: var(--accent); margin: 20px 0 5px 0; 
+            font-size: 28px; font-weight: 800; letter-spacing: -1px; 
+        }
+
+        .subtitle { 
+            text-align: center; color: var(--dim); font-size: 10px; 
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 25px; 
+        }
+
+        .selector-card {
+            background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        label { display: block; margin-top: 15px; color: var(--accent); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+
+        select {
+            width: 100%; padding: 14px; margin-top: 6px; border-radius: 12px;
+            background: #0f172a; color: white; border: 1px solid var(--border); 
+            outline: none; font-size: 15px; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+        }
+
+        button {
+            width: 100%; padding: 18px; margin-top: 25px; border: none; border-radius: 16px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white; font-weight: 900; text-transform: uppercase; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3); transition: 0.3s;
+        }
+
+        button:active { transform: scale(0.97); }
+
+        .resultado-container { margin-top: 25px; display: none; width: 100%; }
+
+        .res-card {
+            background: var(--card); padding: 25px; border-radius: 28px; 
+            border: 1px solid rgba(255,255,255,0.05);
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .team-logo { width: 55px; height: 55px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+
+        .bar-bg { background: #0f172a; height: 12px; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid rgba(255,255,255,0.05); }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); transition: width 1.2s cubic-bezier(0.1, 0, 0.1, 1); width: 0%; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>⚽ PREDICTOR ELITE v8.0</h1>
-    <div class="subtitle">Multi-League & Altitude Processor</div>
+    <h1>⚽ PREDICTOR ELITE</h1>
+    <div class="subtitle">AI Statistical Analysis v8.0</div>
 
     <div class="selector-card">
-        <label>LIGA / COMPETICIÓN</label>
+        <label>Competición</label>
         <select id="liga">
-            <option value="">Seleccione liga...</option>
+            <option value="">Selecciona liga...</option>
             <option value="239">Liga BetPlay 🇨🇴</option>
             <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
             <option value="140">La Liga 🇪🇸</option>
             <option value="135">Serie A 🇮🇹</option>
-            <option value="78">Bundesliga 🇩🇪</option>
-            <option value="61">Ligue 1 🇫🇷</option>
-            <option value="71">Brasileirão 🇧🇷</option>
-            <option value="128">Liga Argentina 🇦🇷</option>
             <option value="262">Liga MX 🇲🇽</option>
-            <option value="253">MLS 🇺🇸</option>
-            <option value="2">Champions League 🇪🇺</option>
+            <option value="71">Brasileirão 🇧🇷</option>
         </select>
 
-        <label>EQUIPO LOCAL</label>
-        <select id="local"><option value="">Cargando liga...</option></select>
-        
-        <label>EQUIPO VISITANTE</label>
-        <select id="visitante"><option value="">Cargando liga...</option></select>
+        <label>Local</label>
+        <select id="local"><option value="">Elija liga...</option></select>
 
-        <button onclick="calcular()">GENERAR PRONÓSTICO</button>
+        <label>Visitante</label>
+        <select id="visitante"><option value="">Elija liga...</option></select>
+
+        <button onclick="calcularTodo()">Generar Pronóstico</button>
     </div>
 
-    <div id="resultado" class="resultado-container">
-        <div class="match-box">
-            <div class="teams-header">
-                <div class="team-display"><img id="logoL" class="team-logo" src="" alt=""><div id="nameL"></div></div>
-                <div style="color:var(--accent); font-weight:900; font-size: 20px;">VS</div>
-                <div class="team-display"><img id="logoV" class="team-logo" src="" alt=""><div id="nameV"></div></div>
-            </div>
-
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Local (1)</span> <b id="pLText">0%</b></div>
-                <div class="bar-outer"><div id="barL" class="bar-inner"></div></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Empate (X)</span> <b id="pEText">0%</b></div>
-                <div class="bar-outer"><div id="barE" class="bar-inner" style="background:var(--dim)"></div></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Visitante (2)</span> <b id="pVText">0%</b></div>
-                <div class="bar-outer"><div id="barV" class="bar-inner" style="background:var(--danger)"></div></div>
-            </div>
-
-            <div id="altAlert" class="altitude-tag">⚠️ EFECTO ALTITUD: Ventaja local calculada</div>
-        </div>
-    </div>
+    <div id="resultado" class="resultado-container"></div>
 </div>
 
 <script>
     const API_KEY = "ea232d851cb4197391464e2c61df516b";
-    let db = {};
+    let baseDatos = {};
+    const altitudes = { "Pasto": 2527, "Independiente Santa Fe": 2600, "Millonarios": 2600, "Boyacá Chicó": 2810, "Patriotas": 2810, "La Equidad": 2600, "Once Caldas": 2150 };
 
-    const altitudes = {
-        "Pasto": 2527, "Independiente Santa Fe": 2600, "Millonarios": 2600, 
-        "Fortaleza CEIF": 2600, "Boyacá Chicó": 2810, "Patriotas": 2810,
-        "La Equidad": 2600, "Once Caldas": 2150, "Atlético Nacional": 1495, 
-        "Independiente Medellín": 1495, "Junior": 18, "Jaguares": 18, "Alianza FC": 30
-    };
+    // Registro Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swCode = `self.addEventListener('fetch', function(e) {});`; // SW Básico
+            const blob = new Blob([swCode], {type: 'text/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob));
+        });
+    }
 
     document.getElementById("liga").onchange = async function() {
         const id = this.value; if(!id) return;
-        this.disabled = true;
-        
         try {
             const res = await fetch(`https://v3.football.api-sports.io/standings?league=${id}&season=2025`, {
                 headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
             });
-            const data = await res.json();
-            const standings = data.response[0].league.standings[0];
+            const json = await res.json();
+            const data = json.response[0].league.standings[0];
             
             const loc = document.getElementById("local");
             const vis = document.getElementById("visitante");
-            loc.innerHTML = vis.innerHTML = "";
-            db = {};
-
-            standings.forEach(t => {
-                db[t.team.name] = {
-                    hAtk: t.home.goals.for / (t.home.played || 1),
-                    hDef: t.home.goals.against / (t.home.played || 1),
-                    aAtk: t.away.goals.for / (t.away.played || 1),
-                    aDef: t.away.goals.against / (t.away.played || 1),
+            loc.innerHTML = vis.innerHTML = '<option value="">Selecciona equipo...</option>';
+            
+            data.forEach(t => {
+                baseDatos[t.team.name] = {
+                    hAtk: (t.home.goals.for / (t.home.played || 1)) || 1.1,
+                    hDef: (t.home.goals.against / (t.home.played || 1)) || 1.0,
+                    aAtk: (t.away.goals.for / (t.away.played || 1)) || 1.0,
+                    aDef: (t.away.goals.against / (t.away.played || 1)) || 1.1,
                     logo: t.team.logo
                 };
                 loc.add(new Option(t.team.name, t.team.name));
                 vis.add(new Option(t.team.name, t.team.name));
             });
-        } catch(e) { alert("Error al conectar con el servidor."); }
-        this.disabled = false;
+        } catch (e) { console.log("Error API"); }
     };
 
-    function poisson(lambda, k) {
-        let factorial = 1; for(let i=1; i<=k; i++) factorial *= i;
-        return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial;
-    }
+    function calcularTodo() {
+        const lN = document.getElementById("local").value;
+        const vN = document.getElementById("visitante").value;
+        if(!lN || !vN || lN === vN) return;
 
-    function calcular() {
-        const nL = document.getElementById("local").value;
-        const nV = document.getElementById("visitante").value;
-        if(!nL || !nV || nL === nV) return;
+        const L = baseDatos[lN]; const V = baseDatos[vN];
+        let altL = altitudes[lN] || 500; let altV = altitudes[vN] || 500;
+        let bonoAlt = (altL - altV > 1500) ? 1.18 : 1.0;
 
-        const L = db[nL]; const V = db[nV];
-        
-        // Factor Altitud (Solo si aplica)
-        let altL = altitudes[nL] || 500;
-        let altV = altitudes[nV] || 500;
-        let dif = altL - altV;
-        let bonusL = dif > 1500 ? 1.18 : (dif > 800 ? 1.08 : 1.0);
-        
-        document.getElementById("altAlert").style.display = bonusL > 1 ? "block" : "none";
+        let expL = L.hAtk * V.aDef * 1.10 * bonoAlt;
+        let expV = V.aAtk * L.hDef * 0.90 / bonoAlt;
+        let probHT = (1 - Math.exp(-(expL + expV) * 0.44)) * 100;
+        let ambos = ((1 - Math.exp(-expL)) * (1 - Math.exp(-expV))) * 100;
 
-        let xgL = L.hAtk * V.aDef * bonusL;
-        let xgV = V.aAtk * L.hDef;
-
-        let resL = 0, resE = 0, resV = 0;
-        for(let i=0; i<7; i++) {
-            for(let j=0; j<7; j++) {
-                let p = poisson(xgL, i) * poisson(xgV, j);
-                if(i > j) resL += p; else if(i === j) resE += p; else resV += p;
-            }
-        }
-
-        document.getElementById("resultado").style.display = "block";
-        document.getElementById("logoL").src = L.logo;
-        document.getElementById("logoV").src = V.logo;
-        document.getElementById("nameL").innerText = nL;
-        document.getElementById("nameV").innerText = nV;
-
-        setTimeout(() => {
-            document.getElementById("pLText").innerText = (resL*100).toFixed(1) + "%";
-            document.getElementById("barL").style.width = (resL*100) + "%";
-            document.getElementById("pEText").innerText = (resE*100).toFixed(1) + "%";
-            document.getElementById("barE").style.width = (resE*100) + "%";
-            document.getElementById("pVText").innerText = (resV*100).toFixed(1) + "%";
-            document.getElementById("barV").style.width = (resV*100) + "%";
-        }, 50);
+        const resContainer = document.getElementById("resultado");
+        resContainer.style.display = "block";
+        resContainer.innerHTML = `
+            <div class="res-card">
+                <div style="display:flex; justify-content:space-around; align-items:center; margin-bottom:20px;">
+                    <img src="${L.logo}" class="team-logo"> <b style="font-size:18px; color:var(--dim);">VS</b> <img src="${V.logo}" class="team-logo">
+                </div>
+                <div style="text-align:center; margin-bottom:20px;">
+                    <span style="font-size:11px; color:var(--dim); font-weight:700;">GOL EN 1er TIEMPO</span>
+                    <div style="font-size:42px; font-weight:900; color:var(--accent);">${probHT.toFixed(0)}%</div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${probHT}%"></div></div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
+                    <div style="background:#0f172a; padding:15px; border-radius:18px; border:1px solid var(--border);">
+                        <span style="font-size:9px; color:var(--dim);">AMBOS MARCAN</span>
+                        <div style="font-weight:bold; color:#3b82f6; font-size:18px;">${ambos.toFixed(0)}%</div>
+                    </div>
+                    <div style="background:#0f172a; padding:15px; border-radius:18px; border:1px solid var(--border);">
+                        <span style="font-size:9px; color:var(--dim);">XG ESTIMADO</span>
+                        <div style="font-weight:bold; color:#f59e0b; font-size:18px;">${(expL + expV).toFixed(2)}</div>
+                    </div>
+                </div>
+            </div>`;
     }
 </script>
 </body>

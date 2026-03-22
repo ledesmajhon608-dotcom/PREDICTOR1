@@ -1,130 +1,60 @@
-document.addEventListener("DOMContentLoaded", function(){
+const API_KEY = "ea232d851cb4197391464e2c61df516b";
+let baseDatos = {};
 
-const equipos = {
-
-"Liga MX":[
-{name:"America",ataque:1.4,defensa:0.9,corners:6},
-{name:"Chivas",ataque:1.1,defensa:1.1,corners:5},
-{name:"Tigres",ataque:1.3,defensa:1.0,corners:6},
-{name:"Monterrey",ataque:1.2,defensa:1.0,corners:5}
-],
-
-"MLS":[
-{name:"Inter Miami",ataque:1.5,defensa:1.3,corners:6},
-{name:"LA Galaxy",ataque:1.2,defensa:1.4,corners:5},
-{name:"Atlanta United",ataque:1.3,defensa:1.5,corners:6},
-{name:"Seattle Sounders",ataque:1.1,defensa:1.2,corners:5}
-]
-
+// 1. Cargar equipos desde la API
+document.getElementById("liga").onchange = async function() {
+    const ligaId = this.value;
+    const res = await fetch(`https://v3.football.api-sports.io/standings?league=${ligaId}&season=2024`, {
+        headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
+    });
+    const json = await res.json();
+    procesarData(json.response[0].league.standings[0]);
 };
 
-const promedioLiga = 1.35;
-
-const liga = document.getElementById("liga");
-const local = document.getElementById("local");
-const visitante = document.getElementById("visitante");
-const btn = document.getElementById("btnCalcular");
-
-liga.addEventListener("change", function(){
-
-local.innerHTML='<option>Equipo Local</option>';
-visitante.innerHTML='<option>Equipo Visitante</option>';
-
-equipos[liga.value].forEach(e=>{
-
-let o1=document.createElement("option");
-o1.value=e.name;
-o1.textContent=e.name;
-
-let o2=document.createElement("option");
-o2.value=e.name;
-o2.textContent=e.name;
-
-local.appendChild(o1);
-visitante.appendChild(o2);
-
-});
-
-});
-
-function poisson(lambda,k){
-
-let p=Math.pow(lambda,k)*Math.exp(-lambda)/factorial(k);
-return p;
-
+function procesarData(data) {
+    const loc = document.getElementById("local");
+    const vis = document.getElementById("visitante");
+    loc.innerHTML = vis.innerHTML = "";
+    data.forEach(t => {
+        baseDatos[t.team.name] = {
+            hAtk: t.home.goals.for / t.home.played,
+            hDef: t.home.goals.against / t.home.played,
+            aAtk: t.away.goals.for / t.away.played,
+            aDef: t.away.goals.against / t.away.played,
+            logo: t.team.logo
+        };
+        loc.add(new Option(t.team.name, t.team.name));
+        vis.add(new Option(t.team.name, t.team.name));
+    });
 }
 
-function factorial(n){
-
-if(n==0) return 1;
-
-let r=1;
-for(let i=1;i<=n;i++) r*=i;
-
-return r;
-
+// 2. Lógica de Predicción
+function poisson(lambda, k) {
+    return (Math.pow(lambda, k) * Math.exp(-lambda)) / (k <= 1 ? 1 : Array.from({length: k}, (_, i) => i + 1).reduce((a, b) => a * b));
 }
 
-btn.addEventListener("click", function(){
+function calcularTodo() {
+    const lN = document.getElementById("local").value;
+    const vN = document.getElementById("visitante").value;
+    const L = baseDatos[lN]; const V = baseDatos[vN];
 
-const ligaSel=liga.value;
+    const expL = L.hAtk * V.aDef * 1.10;
+    const expV = V.aAtk * L.hDef * 0.90;
 
-const eqLocal=equipos[ligaSel].find(e=>e.name===local.value);
-const eqVisit=equipos[ligaSel].find(e=>e.name===visitante.value);
+    // Probabilidad Gol 1er Tiempo (44% de expectativa total)
+    const probHT = (1 - Math.exp(-(expL + expV) * 0.44)) * 100;
 
-if(!eqLocal||!eqVisit){
-
-alert("Selecciona equipos");
-return;
-
+    document.getElementById("resultado").style.display = "block";
+    document.getElementById("resultado").innerHTML = `
+        <div class="res-card">
+            <h3 style="text-align:center">${lN} vs ${vN}</h3>
+            <p>Probabilidad Gol 1er Tiempo: <b>${probHT.toFixed(0)}%</b></p>
+            <div class="bar-outer"><div class="bar-inner" style="width:${probHT}%"></div></div>
+        </div>
+    `;
 }
 
-const xgLocal=eqLocal.ataque*eqVisit.defensa*promedioLiga;
-const xgVisit=eqVisit.ataque*eqLocal.defensa*promedioLiga;
-
-let probLocal=0;
-let probEmpate=0;
-let probVisit=0;
-
-for(let i=0;i<6;i++){
-
-for(let j=0;j<6;j++){
-
-let p=poisson(xgLocal,i)*poisson(xgVisit,j);
-
-if(i>j) probLocal+=p;
-else if(i==j) probEmpate+=p;
-else probVisit+=p;
-
+// 3. REGISTRO PARA ACTUALIZACIÓN AUTOMÁTICA (PWA)
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(() => console.log("App lista."));
 }
-
-}
-
-const ambos=(xgLocal>1 && xgVisit>1)?"SI":"NO";
-
-const corners=eqLocal.corners+eqVisit.corners;
-
-document.getElementById("resultado").innerHTML=
-
-`
-<div style="background:#1e1e1e;padding:20px;margin:20px;border-radius:10px">
-
-<h2>${eqLocal.name} vs ${eqVisit.name}</h2>
-
-<p>🏆 Local: ${(probLocal*100).toFixed(1)}%</p>
-<p>🤝 Empate: ${(probEmpate*100).toFixed(1)}%</p>
-<p>✈️ Visita: ${(probVisit*100).toFixed(1)}%</p>
-
-<p>⚽ xG Local: ${xgLocal.toFixed(2)}</p>
-<p>⚽ xG Visitante: ${xgVisit.toFixed(2)}</p>
-
-<p>🔥 Ambos marcan: ${ambos}</p>
-
-<p>🚩 Corners estimados: ${corners}</p>
-
-</div>
-`;
-
-});
-
-});

@@ -2,369 +2,42 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor PRO ELITE v7.0 - Colombia Altitude Edition</title>
-    <style>
-        :root {
-            --bg: #020617;
-            --card: #1e293b;
-            --accent: #22c55e;
-            --border: #334155;
-            --text: #f8fafc;
-            --dim: #94a3b8;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-        }
-
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
-            color: var(--text);
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items:center;
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        .container { width: 100%; max-width: 480px; }
-        
-        h1 { 
-            background: linear-gradient(to right, #22c55e, #4ade80);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center; margin: 15px 0 5px 0; font-size: 26px; font-weight: 900;
-        }
-
-        .subtitle { color: var(--dim); font-size: 10px; text-align: center; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
-
-        .selector-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 25px; border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        label { font-size: 11px; color: var(--accent); font-weight: 800; display: block; margin-top: 15px; }
-        
-        select { 
-            width: 100%; padding: 14px; border-radius: 12px; background: #0f172a; 
-            color: white; border: 1px solid var(--border); margin-top: 6px; font-size: 14px;
-            outline: none;
-        }
-
-        button {
-            margin-top: 25px; width: 100%; padding: 18px; border: none; border-radius: 15px;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; font-weight: 900; font-size: 16px; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
-            transition: 0.3s;
-        }
-
-        .season-badge { 
-            background: rgba(34, 197, 94, 0.2); color: var(--accent);
-            padding: 5px 12px; border-radius: 8px; font-size: 10px;
-            font-weight: bold; display: inline-block; margin-top: 10px;
-        }
-
-        .resultado-container { margin-top: 30px; animation: slideUp 0.5s ease-out; display: none; width: 100%; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .match-box { 
-            background: var(--card); border-radius: 28px; padding: 25px; 
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .teams-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .team-display { width: 40%; text-align: center; font-weight: 800; font-size: 14px; }
-        
-        /* Estilo para los Escudos */
-        .team-logo {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-        }
-
-        .vs-circle { 
-            background: #0f172a; border: 2px solid var(--accent); 
-            width: 42px; height: 42px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 12px; font-weight: 900; color: var(--accent);
-            margin-top: -20px;
-        }
-
-        .prob-row { margin-bottom: 15px; }
-        .prob-info { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
-        .bar-outer { background: #0f172a; height: 12px; border-radius: 20px; overflow: hidden; }
-        .bar-inner { 
-            height: 100%; transition: width 1.2s cubic-bezier(0.1, 0, 0.1, 1); 
-            background: linear-gradient(90deg, var(--accent), #4ade80);
-        }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
-        .stat-card { 
-            background: #0f172a; padding: 18px; border-radius: 18px; 
-            text-align: center; border: 1px solid var(--border);
-        }
-        .stat-card span { font-size: 9px; color: var(--dim); text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: 700; }
-        .stat-card b { font-size: 20px; display: block; font-weight: 800; }
-        
-        .val-accent { color: var(--accent); }
-        .val-warning { color: var(--warning); }
-        .val-info { color: var(--info); }
-
-        .bet-tip { 
-            margin-top: 25px; background: rgba(34,197,94,0.1);
-            border: 2px dashed var(--accent); padding: 20px; border-radius: 20px; text-align: center;
-        }
-        .bet-tip span { font-size: 10px; color: var(--dim); font-weight: 800; text-transform: uppercase; }
-        .bet-tip b { color: var(--accent); font-size: 20px; display: block; margin-top: 5px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Predictor Elite PRO</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#22c55e">
+    <link rel="apple-touch-icon" href="icon.png">
 </head>
 <body>
 
-<div class="container">
-    <h1>⚽ PREDICTOR ELITE v7.0</h1>
-    <div class="subtitle">Dixon-Coles + Factor Altitud Colombia</div>
+    <div class="container">
+        <h1>⚽ PREDICTOR ELITE</h1>
+        <div class="subtitle">Dixon-Coles + HT Factor</div>
 
-    <div class="selector-card">
-        <label>LIGA / COMPETICIÓN</label>
-        <select id="liga">
-            <option value="">Seleccione liga...</option>
-            <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
-            <option value="140">La Liga 🇪🇸</option>
-            <option value="135">Serie A 🇮🇹</option>
-            <option value="78">Bundesliga 🇩🇪</option>
-            <option value="61">Ligue 1 Francia 🇫🇷</option>
-            <option value="239">Liga BetPlay 🇨🇴</option>
-            <option value="71">Brasileirão 🇧🇷</option>
-            <option value="128">Liga Argentina 🇦🇷</option>
-        </select>
+        <div class="selector-card">
+            <label>LIGA</label>
+            <select id="liga">
+                <option value="">Seleccione liga...</option>
+                <option value="239">Liga BetPlay 🇨🇴</option>
+                <option value="39">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
+                <option value="140">La Liga 🇪🇸</option>
+            </select>
+            
+            <div id="statusSeason" class="season-badge" style="display:none"></div>
 
-        <div id="statusSeason" class="season-badge" style="display:none"></div>
-        
-        <label>LOCAL</label><select id="local"><option>Cargando...</option></select>
-        <label>VISITANTE</label><select id="visitante"><option>Cargando...</option></select>
+            <label>LOCAL</label>
+            <select id="local"><option>Cargando...</option></select>
+            
+            <label>VISITANTE</label>
+            <select id="visitante"><option>Cargando...</option></select>
 
-        <button onclick="calcularTodo()">GENERAR PRONÓSTICO PROFESIONAL</button>
-    </div>
-
-    <div id="resultado" class="resultado-container">
-        <div class="match-box">
-            <div class="teams-header">
-                <div class="team-display">
-                    <img id="logoL" class="team-logo" src="" alt="">
-                    <div id="lNameDisplay"></div>
-                </div>
-                <div class="vs-circle">VS</div>
-                <div class="team-display">
-                    <img id="logoV" class="team-logo" src="" alt="">
-                    <div id="vNameDisplay"></div>
-                </div>
-            </div>
-
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Local (1)</span> <b id="probLVal">0%</b></div>
-                <div class="bar-outer"><div id="barLFill" class="bar-inner"></div></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Empate (X)</span> <b id="probEVal">0%</b></div>
-                <div class="bar-outer"><div id="barEFill" class="bar-inner" style="background: var(--dim)"></div></div>
-            </div>
-            <div class="prob-row">
-                <div class="prob-info"><span>Victoria Visitante (2)</span> <b id="probVVal">0%</b></div>
-                <div class="bar-outer"><div id="barVFill" class="bar-inner" style="background: var(--danger)"></div></div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card"><span>Ambos Marcan</span><b id="probAmbosVal" class="val-accent">0%</b></div>
-                <div class="stat-card"><span>Over 1.5</span><b id="probOver15Val" class="val-accent">0%</b></div>
-                <div class="stat-card"><span>Over 2.5</span><b id="probOver25Val" class="val-warning">0%</b></div>
-                <div class="stat-card"><span>Córners (+8.5)</span><b id="probCornersVal" class="val-info">0%</b></div>
-            </div>
-
-            <div class="bet-tip">
-                <span>RECOMENDACIÓN BASADA EN VALOR</span>
-                <b id="recText"></b>
-            </div>
+            <button onclick="calcularTodo()">GENERAR PRONÓSTICO</button>
         </div>
+
+        <div id="resultado" class="resultado-container"></div>
     </div>
-</div>
 
-<script>
-    const API_KEY = "ea232d851cb4197391464e2c61df516b";
-    const API_BASE = "https://v3.football.api-sports.io/standings";
-    let baseDatos = {};
-
-    const altitudes = {
-        "Pasto": 2527, "Independiente Santa Fe": 2600, "Millonarios": 2600, 
-        "Fortaleza CEIF": 2600, "Boyacá Chicó": 2810, "Patriotas": 2810,
-        "La Equidad": 2600, "Once Caldas": 2150, "Atlético Nacional": 1495, 
-        "Independiente Medellín": 1495, "Envigado": 1575, "Águilas Doradas": 2125,
-        "Deportivo Cali": 1000, "América de Cali": 1000, "Atlético Bucaramanga": 959,
-        "Deportivo Pereira": 1411, "Deportes Tolima": 1285, "Junior": 18, 
-        "Jaguares": 18, "Alianza FC": 30
-    };
-
-    document.getElementById("liga").onchange = async function() {
-        const ligaId = this.value; if(!ligaId) return;
-        const anios = [2026, 2025, 2024]; let exito = false;
-        document.getElementById("statusSeason").style.display = "none";
-        
-        for(let anio of anios) {
-            if(exito) break;
-            try {
-                const res = await fetch(`${API_BASE}?league=${ligaId}&season=${anio}`, { 
-                    headers: { "x-rapidapi-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" } 
-                });
-                const json = await res.json();
-                if(json.response && json.response.length > 0) {
-                    procesarData(json.response[0].league.standings);
-                    document.getElementById("statusSeason").style.display = "inline-block";
-                    document.getElementById("statusSeason").innerText = "DATOS ACTUALIZADOS: " + anio;
-                    exito = true;
-                }
-            } catch (e) { console.error(e); }
-        }
-    };
-
-    function procesarData(data) {
-        baseDatos = {}; 
-        const loc = document.getElementById("local"); 
-        const vis = document.getElementById("visitante");
-        loc.innerHTML = vis.innerHTML = "<option value=''>Seleccione equipo...</option>";
-        
-        const equiposAgregados = new Set();
-
-        data.forEach(grupo => {
-            grupo.forEach(t => {
-                const n = t.team.name;
-                const logo = t.team.logo; // Capturamos la URL del logo
-                if (!equiposAgregados.has(n)) {
-                    baseDatos[n] = { 
-                        hAtk: t.home.goals.for / (t.home.played || 1), 
-                        hDef: t.home.goals.against / (t.home.played || 1), 
-                        aAtk: t.away.goals.for / (t.away.played || 1), 
-                        aDef: t.away.goals.against / (t.away.played || 1),
-                        puntos: t.points,
-                        jugados: t.all.played,
-                        logo: logo // Guardamos el logo en la base de datos
-                    };
-                    loc.add(new Option(n, n)); 
-                    vis.add(new Option(n, n));
-                    equiposAgregados.add(n);
-                }
-            });
-        });
-    }
-
-    function poisson(lambda, k) { 
-        let fact = 1; for(let i=1; i<=k; i++) fact *= i; 
-        return (Math.pow(lambda, k) * Math.exp(-lambda)) / fact; 
-    }
-
-    function calcularFactorForma(equipoNombre) {
-        const stats = baseDatos[equipoNombre];
-        let factor = 1.0;
-        const ppp = stats.puntos / (stats.jugados || 1);
-        if (ppp > 1.8) factor += 0.12; 
-        if (ppp < 1.0) factor -= 0.10;
-        return factor;
-    }
-
-    function calcularTodo() {
-        const lN = document.getElementById("local").value; 
-        const vN = document.getElementById("visitante").value;
-        if(!lN || !vN || lN === vN) return alert("Selecciona dos equipos distintos");
-        
-        const L = baseDatos[lN]; const V = baseDatos[vN];
-        
-        // Actualizar Escudos
-        document.getElementById("logoL").src = L.logo;
-        document.getElementById("logoV").src = V.logo;
-
-        // --- FACTOR ALTITUD ---
-        let altL = altitudes[lN] || 500; 
-        let altV = altitudes[vN] || 500;
-        let difAltitud = altL - altV;
-        let bonoAlturaL = 1.0;
-        let penalizacionV = 1.0;
-
-        if (difAltitud > 1500) {
-            bonoAlturaL = 1.15; 
-            penalizacionV = 1.10; 
-        } else if (difAltitud > 800) {
-            bonoAlturaL = 1.07;
-            penalizacionV = 1.05;
-        }
-
-        const formaLocal = calcularFactorForma(lN);
-        const formaVisita = calcularFactorForma(vN);
-        
-        let expL = (L.hAtk * V.aDef * 1.12) * formaLocal * bonoAlturaL; 
-        let expV = (V.aAtk * L.hDef * 0.90) * formaVisita / penalizacionV;
-
-        const RHO = -0.11; 
-        let pL = [], pV = [];
-        for(let i=0; i<8; i++) { pL.push(poisson(expL, i)); pV.push(poisson(expV, i)); }
-
-        let finalL = 0, finalV = 0, finalE = 0;
-        for(let i=0; i<8; i++) {
-            for(let j=0; j<8; j++) {
-                let probBase = pL[i] * pV[j];
-                let adj = 1;
-                if(i === 0 && j === 0) adj = 1 - (expL * expV * RHO);
-                else if(i === 0 && j === 1) adj = 1 + (expL * RHO);
-                else if(i === 1 && j === 0) adj = 1 + (expV * RHO);
-                else if(i === 1 && j === 1) adj = 1 - RHO;
-                
-                let probFinal = probBase * adj;
-                if(i > j) finalL += probFinal; else if(i < j) finalV += probFinal; else finalE += probFinal;
-            }
-        }
-
-        const ambos = (1 - pL[0]) * (1 - pV[0]) * 1.12 * 100;
-        const over15 = (1 - (pL[0] * pV[0])) * 100;
-        const over25 = (1 - (pL[0]*pV[0] + pL[0]*pV[1] + pL[1]*pV[0] + pL[1]*pV[1] + pL[2]*pV[0] + pL[0]*pV[2])) * 100;
-        let pCorners = Math.min(98, Math.max(45, ((expL + expV) * 9.5) + 35));
-
-        document.getElementById("resultado").style.display = "block";
-        document.getElementById("lNameDisplay").innerText = lN;
-        document.getElementById("vNameDisplay").innerText = vN;
-        
-        setTimeout(() => {
-            document.getElementById("probLVal").innerText = (finalL*100).toFixed(1) + "%";
-            document.getElementById("barLFill").style.width = (finalL*100) + "%";
-            document.getElementById("probEVal").innerText = (finalE*100).toFixed(1) + "%";
-            document.getElementById("barEFill").style.width = (finalE*100) + "%";
-            document.getElementById("probVVal").innerText = (finalV*100).toFixed(1) + "%";
-            document.getElementById("barVFill").style.width = (finalV*100) + "%";
-
-            document.getElementById("probAmbosVal").innerText = Math.min(99, ambos).toFixed(0) + "%";
-            document.getElementById("probOver15Val").innerText = Math.min(99, over15).toFixed(0) + "%";
-            document.getElementById("probOver25Val").innerText = Math.min(99, over25).toFixed(0) + "%";
-            document.getElementById("probCornersVal").innerText = pCorners.toFixed(0) + "%";
-        }, 150);
-
-        let tip = "";
-        let fL = finalL * 100; let fV = finalV * 100; let fE = finalE * 100;
-        
-        if(fL > 62) tip = "LOCAL (1) DIRECTO 💎";
-        else if(fV > 62) tip = "VISITANTE (2) DIRECTO 💎";
-        else if(ambos > 72) tip = "AMBOS MARCAN ⚽";
-        else if(fL + fE > 80 && fL > 40) tip = "1X (LOCAL O EMPATE) 🛡️";
-        else if(fV + fE > 80 && fV > 40) tip = "X2 (VISITA O EMPATE) 🛡️";
-        else if(over25 > 65) tip = "OVER 2.5 GOLES 🔥";
-        else tip = "OVER 1.5 GOLES (STAKE ALTO)";
-        
-        document.getElementById("recText").innerText = tip;
-    }
-</script>
+    <script src="app.js"></script>
 </body>
 </html>
